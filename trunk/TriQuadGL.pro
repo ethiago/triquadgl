@@ -4,6 +4,7 @@ TARGET = TriQuadGL
 TEMPLATE = app
 
 unix{
+    LIBS += -L/opt/local/lib/
     LIBS += -lGLU -lglut
 }
 
