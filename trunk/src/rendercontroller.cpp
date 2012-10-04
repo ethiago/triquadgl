@@ -7,18 +7,20 @@
 #include "GLDisplay.h"
 #include "mainwindow.h"
 #include "Object3D.h"
-#include "triquad.h"
+#include "triquadmesh.h"
+#include "sketchcontroller.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
     QObject(parent)
 {
+    skC = new SketchController();
     this->display = new GLDisplay();
     mainWindow->setGLDisplay(display);
     {  // esta ordem deve ser mantida
         display->updateGL();
 
-        triquad = new TriQuad();
+        triquad = new TriQuadMesh();
 
         connect(display, SIGNAL(drawModel()),
                 this, SLOT(drawModel()));
@@ -64,14 +66,21 @@ void RenderController::updateGL(void)
 void RenderController::drawModel(void)
 {
     triquad->draw();
+    skC->draw();
 }
 
 void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 {
+    skC->mouseRigthMove(triquad->unproject(curr));
+    display->updateGL();
 }
 
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
+    skC->mouseRigthFinish();
+    triquad->fitting(skC->getPoints());
+    skC->cancel();
+    display->updateGL();
 }
 
 void RenderController::mouseLeftMove(QPoint ini, QPoint curr)
@@ -88,6 +97,7 @@ void RenderController::mouseLefthFinish(QPoint ini, QPoint curr)
 
 void RenderController::mouseCancel()
 {
+    skC->cancel();
     triquad->cancel();
     display->updateGL();
 }

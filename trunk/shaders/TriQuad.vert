@@ -17,7 +17,7 @@ void main ()
     Q[2][1] = Q[1][2] = def[1]*0.5;
     Q[2][2]           = def[2];
 
-    p = (gl_ModelViewMatrix * gl_Vertex).xyw;
+    p =  (gl_Vertex).xyw;
 
     gl_Position =   ftransform();
     gl_FrontColor = gl_Color;

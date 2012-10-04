@@ -1,44 +1,38 @@
-#include "triquad.h"
+#include "triquadmesh.h"
 #include <QGLShader>
 #include <QVector3D>
+#include <QtOpenGL>
+#include "fitting.h"
 
-#ifdef __APPLE__
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glext.h>
-#else
-    #include <GL/gl.h>
-#endif
-
-TriQuad::TriQuad(const QVector3D& center, QObject *parent):
+TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1)
 {
     setInputType(GL_TRIANGLES);
     buildObject();
 }
 
-TriQuad::TriQuad(const TriQuad& tt): Object3D(tt), origin(false), idxMaisProximo(-1)
+TriQuadMesh::TriQuadMesh(const TriQuadMesh& tt): Object3D(tt), origin(false), idxMaisProximo(-1)
 {
     buildObject();
 }
 
-Object3D* TriQuad::copy() const
+Object3D* TriQuadMesh::copy() const
 {
-    return new TriQuad(*this);
+    return new TriQuadMesh(*this);
 }
 
-TriQuad::~TriQuad()
+TriQuadMesh::~TriQuadMesh()
 {
 }
 
-void TriQuad::beforeTransformations(void)
+void TriQuadMesh::beforeTransformations(void)
 {
     if(origin)
         drawOrigin();
 }
 
-void TriQuad::drawGeometry(void)
+void TriQuadMesh::drawGeometry(void)
 {
-
     if(showMesh)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -77,7 +71,7 @@ void TriQuad::drawGeometry(void)
 
 }
 
-Quadric TriQuad::makeQuadric(float x2, float y2, float xy, float x, float y, float c)
+Quadric TriQuadMesh::makeQuadric(float x2, float y2, float xy, float x, float y, float c)
 {
     Quadric q;
     q.a_b_c = QVector3D(x2,xy,x);
@@ -85,14 +79,14 @@ Quadric TriQuad::makeQuadric(float x2, float y2, float xy, float x, float y, flo
     return q;
 }
 
-void TriQuad::buildObject()
+void TriQuadMesh::buildObject()
 {
     showMesh = true;
 
-    vertices.append(QVector4D( -1.0, -1.0, 0.0, 1.0));
-    vertices.append(QVector4D(  1.0, -1.0, 0.0, 1.0));
-    vertices.append(QVector4D(  1.0,  1.0, 0.0, 1.0));
-    vertices.append(QVector4D( -1.0,  1.0, 0.0, 1.0));
+    vertices.append(QVector4D( -1.0, -1.0, 1.0, 1.0));
+    vertices.append(QVector4D(  1.0, -1.0, 1.0, 1.0));
+    vertices.append(QVector4D(  1.0,  1.0, 1.0, 1.0));
+    vertices.append(QVector4D( -1.0,  1.0, 1.0, 1.0));
 
     quadrics.append(PARABOLA);
     quadrics.append(CIRCLE);
@@ -101,8 +95,10 @@ void TriQuad::buildObject()
 
     NO no;
     no.idx[0] = 0; no.idx[1] = 1; no.idx[2] = 2;
+    buildInv(no);
     triquads.append(no);
     no.idx[0] = 2; no.idx[1] = 3; no.idx[2] = 0;
+    buildInv(no);
     triquads.append(no);
 
     QGLShader *vert = new QGLShader(QGLShader::Vertex  );
@@ -122,22 +118,22 @@ void TriQuad::buildObject()
     locationDEF = program.attributeLocation("def");
 }
 
-void TriQuad::setQuadric(int idx,  const Quadric& q)
+void TriQuadMesh::setQuadric(int idx,  const Quadric& q)
 {
     quadrics[idx] = q;
 }
 
-bool TriQuad::isProgramLinked()
+bool TriQuadMesh::isProgramLinked()
 {
     return program.isLinked();
 }
 
-void TriQuad::viewMesh(bool v)
+void TriQuadMesh::viewMesh(bool v)
 {
     showMesh = v;
 }
 
-void TriQuad::drawOrigin()
+void TriQuadMesh::drawOrigin()
 {
     GLboolean isLighting;
     GLfloat color[4];
@@ -162,12 +158,12 @@ void TriQuad::drawOrigin()
         glEnable(GL_LIGHTING);
 }
 
-void TriQuad::changeOrigin(bool v)
+void TriQuadMesh::changeOrigin(bool v)
 {
     origin = v;
 }
 
-QMatrix4x4 TriQuad::glGetMatrix(GLenum fetchType)
+QMatrix4x4 TriQuadMesh::glGetMatrix(GLenum fetchType)
 {
     QMatrix4x4 ret;
     GLfloat mat[16];
@@ -178,7 +174,7 @@ QMatrix4x4 TriQuad::glGetMatrix(GLenum fetchType)
 
     return ret;
 }
-void TriQuad::afterTransformations(void)
+void TriQuadMesh::afterTransformations(void)
 {
     glGetIntegerv(GL_VIEWPORT, vwp);
 
@@ -188,7 +184,7 @@ void TriQuad::afterTransformations(void)
     mvpi = (pjm*mvm).inverted();
 }
 
-QVector4D TriQuad::unproject(const QPoint& p)
+QVector4D TriQuadMesh::unproject(const QPoint& p)
 {
     QVector4D v(p);
     v.setW( 1.0 );
@@ -197,10 +193,13 @@ QVector4D TriQuad::unproject(const QPoint& p)
     v.setX(v.x()/vwp[2] -1.0);
     v.setY(-(v.y()/vwp[3] -1.0));
 
-    return mvpi*v;
+    v = mvpi*v;
+    v /= v.w();
+    v.setZ(1.0);
+    return v;
 }
 
-void TriQuad::move(const QPoint& ini, const QPoint& curr)
+void TriQuadMesh::move(const QPoint& ini, const QPoint& curr)
 {
     if(idxMaisProximo < 0)
     {
@@ -211,18 +210,18 @@ void TriQuad::move(const QPoint& ini, const QPoint& curr)
     vertices[idxMaisProximo] = maisProximo + (unproject(curr)-unproject(ini));
 }
 
-void TriQuad::finish()
+void TriQuadMesh::finish()
 {
     idxMaisProximo = -1;
 }
 
-void TriQuad::cancel()
+void TriQuadMesh::cancel()
 {
     vertices[idxMaisProximo] = maisProximo;
     idxMaisProximo = -1;
 }
 
-int TriQuad::busca(const QVector4D& p)
+int TriQuadMesh::busca(const QVector4D& p)
 {
     int _idxMaisProximo = 0;
     float dist = (vertices[0]-p).length();
@@ -237,4 +236,35 @@ int TriQuad::busca(const QVector4D& p)
         }
     }
     return _idxMaisProximo;
+}
+
+void TriQuadMesh::fitting(const QVector<QVector4D>& inPoints)
+{
+    QVector4D p;
+    QVector<QVector2D> pontos;
+    buildInv(triquads[0]);
+    for(int i = 0; i < inPoints.size(); ++i)
+    {
+        p = triquads[0].inv * inPoints[i];
+        if(p.x() >= -0.5 && p.x() <= 1.5 && p.y() >= -0.5 && p.y() <= 1.5 && p.z() >= -0.5 && p.z() <= 1.5)
+            pontos.push_back(inPoints[i].toVector2D());
+    }
+    QVector<Quadric> qs = fittingGSL(triquads[0].inv, pontos);
+
+    for(int i = 0; i < 3; ++i)
+        quadrics[triquads[0].idx[i]] = qs[i];
+}
+
+void TriQuadMesh::buildInv(NO& no)
+{
+    QMatrix4x4 m;
+    for(int i = 0; i < 3; ++i)
+    {
+        m(0,i) = vertices[no.idx[i]].x();
+        m(1,i) = vertices[no.idx[i]].y();
+        m(2,i) = 1.0;
+        m(3,i) = m(i,3) = 0.0;
+    }
+    m(3,3) = 1.0;
+    no.inv = m.inverted();
 }

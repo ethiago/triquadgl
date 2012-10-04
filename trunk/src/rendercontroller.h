@@ -11,16 +11,18 @@
 
 class MainWindow;
 class Object3D;
-class TriQuad;
+class TriQuadMesh;
 
 class GLDisplay;
+class SketchController;
 
 class RenderController : public QObject
 {
     Q_OBJECT
 
     GLDisplay *display;
-    TriQuad *triquad;
+    TriQuadMesh *triquad;
+    SketchController *skC;
 
 public:
     explicit RenderController(MainWindow *mainWindow,

@@ -1,13 +1,13 @@
-#ifndef TRIQUAD_H
-#define TRIQUAD_H
+#ifndef TRIQUADMESH_H
+#define TRIQUADMESH_H
 
 #include "QGLShaderProgram"
 #include "Object3D.h"
 #include "QVector"
 
-#define CIRCLE   TriQuad::makeQuadric(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
-#define CIRCLE2  TriQuad::makeQuadric(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
-#define PARABOLA TriQuad::makeQuadric(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+#define CIRCLE   TriQuadMesh::makeQuadric(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
+#define CIRCLE2  TriQuadMesh::makeQuadric(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
+#define PARABOLA TriQuadMesh::makeQuadric(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
 typedef struct _Quadric
 {
@@ -15,13 +15,15 @@ typedef struct _Quadric
     QVector3D d_e_f;
 }Quadric;
 
-typedef struct _NO
+typedef struct
 {
     int idx[3];
+    QMatrix4x4 inv;
 }NO;
 
-class TriQuad : public Object3D
+class TriQuadMesh : public Object3D
 {
+    QVector<QVector4D> inPoints;
     QVector<QVector4D> vertices;
     QVector<Quadric> quadrics;
     QVector<NO> triquads;
@@ -40,10 +42,10 @@ class TriQuad : public Object3D
     QVector4D maisProximo;
 
 public:
-    explicit TriQuad(const QVector3D& center = QVector3D(),
+    explicit TriQuadMesh(const QVector3D& center = QVector3D(),
                     QObject *parent = 0);
-    explicit TriQuad(const TriQuad& tt);
-    ~TriQuad();
+    explicit TriQuadMesh(const TriQuadMesh& tt);
+    ~TriQuadMesh();
 
     virtual Object3D* copy() const;
 
@@ -62,6 +64,7 @@ public:
     void move(const QPoint& ini, const QPoint& curr);
     void finish();
     void cancel();
+    void fitting(const QVector<QVector4D>&);
 
 private:
     void drawOrigin();
@@ -70,6 +73,7 @@ private:
     virtual void afterTransformations(void);
     QMatrix4x4 glGetMatrix(GLenum fetchType);
     void buildObject();
+    void buildInv(NO&);
 };
 
-#endif // TRIQUAD_H
+#endif // TRIQUADMESH_H

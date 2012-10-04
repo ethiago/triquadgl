@@ -3,9 +3,11 @@ QT       += core gui opengl
 TARGET = TriQuadGL
 TEMPLATE = app
 
+INCLUDEPATH += /opt/local/include
+
 unix{
-    LIBS += -L/opt/local/lib/
-    LIBS += -lGLU -lglut
+    LIBS += -L/opt/local/lib/ -lgsl -lcblas
+    #LIBS += -lGLU -lglut
 }
 
 SOURCES += src/main.cpp\
@@ -13,14 +15,18 @@ SOURCES += src/main.cpp\
     src/GLDisplay.cpp \
     src/rendercontroller.cpp \
     src/Object3D.cpp \
-    src/triquad.cpp
+    src/sketchcontroller.cpp \
+    src/triquadmesh.cpp \
+    src/fitting.cpp
 
 
 HEADERS  += src/mainwindow.h\
     src/GLDisplay.h \
     src/rendercontroller.h \
     src/Object3D.h \
-    src/triquad.h
+    src/sketchcontroller.h \
+    src/triquadmesh.h \
+    src/fitting.h
 
 FORMS    += src/mainwindow.ui
 
