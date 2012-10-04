@@ -24,4 +24,6 @@ private:
 
 };
 
+
+
 #endif // SKETCHCONTROLLER_H

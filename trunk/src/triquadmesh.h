@@ -18,7 +18,6 @@ typedef struct _Quadric
 typedef struct
 {
     int idx[3];
-    QMatrix4x4 inv;
 }NO;
 
 class TriQuadMesh : public Object3D
@@ -73,7 +72,10 @@ private:
     virtual void afterTransformations(void);
     QMatrix4x4 glGetMatrix(GLenum fetchType);
     void buildObject();
-    void buildInv(NO&);
+    QMatrix4x4 buildInv(NO&);
 };
+
+QDebug operator<< (QDebug d, const Quadric &model);
+
 
 #endif // TRIQUADMESH_H

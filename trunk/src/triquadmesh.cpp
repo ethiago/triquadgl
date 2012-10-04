@@ -242,20 +242,24 @@ void TriQuadMesh::fitting(const QVector<QVector4D>& inPoints)
 {
     QVector4D p;
     QVector<QVector2D> pontos;
-    buildInv(triquads[0]);
+    QMatrix4x4 inv(buildInv(triquads[0]));
     for(int i = 0; i < inPoints.size(); ++i)
     {
-        p = triquads[0].inv * inPoints[i];
-        if(p.x() >= -0.5 && p.x() <= 1.5 && p.y() >= -0.5 && p.y() <= 1.5 && p.z() >= -0.5 && p.z() <= 1.5)
+        p = inv * inPoints[i];
+        if(p.x() >= 0.0 && p.x() <= 1.0 && p.y() >= 0.0 && p.y() <= 1.0 && p.z() >= 0.0 && p.z() <= 1.0)
             pontos.push_back(inPoints[i].toVector2D());
     }
-    QVector<Quadric> qs = fittingGSL(triquads[0].inv, pontos);
+    QVector<Quadric> qs = fittingGSL(inv, pontos);
 
     for(int i = 0; i < 3; ++i)
+    {
         quadrics[triquads[0].idx[i]] = qs[i];
+        qDebug() << qs[i];
+    }
+
 }
 
-void TriQuadMesh::buildInv(NO& no)
+QMatrix4x4 TriQuadMesh::buildInv(NO& no)
 {
     QMatrix4x4 m;
     for(int i = 0; i < 3; ++i)
@@ -266,5 +270,14 @@ void TriQuadMesh::buildInv(NO& no)
         m(3,i) = m(i,3) = 0.0;
     }
     m(3,3) = 1.0;
-    no.inv = m.inverted();
+    return m.inverted();
+}
+
+QDebug operator<< (QDebug d, const Quadric &model)
+{
+    d.nospace() << "Quadric[";
+    d.nospace() << "A="<< model.a_b_c.x() << ", B=" << model.a_b_c.y() << ", C=" << model.a_b_c.z();
+    d.nospace() << ", D="<< model.d_e_f.x() << ", E=" << model.d_e_f.y() << ", F=" << model.d_e_f.z() << " ]";
+    d.space() <<"";
+    return d;
 }

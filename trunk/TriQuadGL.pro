@@ -6,7 +6,7 @@ TEMPLATE = app
 INCLUDEPATH += /opt/local/include
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lcblas
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
     #LIBS += -lGLU -lglut
 }
 

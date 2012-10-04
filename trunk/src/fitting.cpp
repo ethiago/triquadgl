@@ -40,11 +40,12 @@ QVector<Quadric> processa()
     gsl_vector * x = gsl_vector_alloc(15);
     gsl_vector_set_all(B, 1.0);
 
-    real chisq;
+    real chisq = 0.0;
     gsl_multifit_linear_workspace * work = gsl_multifit_linear_alloc (n,15);
     gsl_multifit_linear (A, B, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
+    qDebug() << chisq;
 
     QVector<Quadric> resp;
     Quadric q;
