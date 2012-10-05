@@ -4,20 +4,25 @@
 #include <QObject>
 #include <QVector>
 #include <QVector4D>
+#include "curven.hpp"
+
+typedef PolygonalCurve<float, 2> Curve;
+
 
 class SketchController : public QObject
 {
     Q_OBJECT
 
+    Curve curve2;
     QVector<QVector4D> curve;
 
 public:
     explicit SketchController(QObject *parent = 0);
     void draw();
-    void mouseRigthMove(const QVector4D& curr);
+    void mouseRigthMove(const QPoint& curr, const QVector4D& proj);
     void mouseRigthFinish();
     void cancel();
-    const QVector<QVector4D>& getPoints(void);
+    QVector<QPoint> getPointsLinearFilter(void);
 
 private:
     void processaCurva();

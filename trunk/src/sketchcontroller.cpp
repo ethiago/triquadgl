@@ -1,5 +1,6 @@
 #include "sketchcontroller.h"
 #include <QtOpenGL>
+#include "vectorn.hpp"
 
 SketchController::SketchController(QObject *parent) :
     QObject(parent)
@@ -7,9 +8,13 @@ SketchController::SketchController(QObject *parent) :
 }
 
 
-void SketchController::mouseRigthMove(const QVector4D &curr)
+void SketchController::mouseRigthMove(const QPoint &curr, const QVector4D &proj)
 {
-    curve.append(curr);
+    PointN<float,2> p;
+    p[0] = curr.x();
+    p[1] = curr.y();
+    curve2.add(p);
+    curve.append(proj);
 }
 
 void SketchController::mouseRigthFinish()
@@ -19,11 +24,13 @@ void SketchController::mouseRigthFinish()
 
 void SketchController::cancel()
 {
+    curve2.clear();
     curve.clear();
 }
 
 void SketchController::processaCurva()
 {
+    curve2.lineFilter();
 }
 
 void SketchController::draw()
@@ -35,12 +42,17 @@ void SketchController::draw()
     {
         for(int i = 0; i < curve.size(); ++i)
         {
-            glVertex4fv(reinterpret_cast<const GLfloat *>(&(curve[i])));
+            glVertex4fv(reinterpret_cast<const GLfloat *>(&curve[i]));
         }
     }glEnd();
 }
 
-const QVector<QVector4D> &SketchController::getPoints(void)
+QVector<QPoint> SketchController::getPointsLinearFilter(void)
 {
-    return curve;
+    QVector<QPoint> resp;
+    for(int i = 0; i < curve2.size(); ++i)
+    {
+        resp.push_back(QPoint(curve2[i][0],curve2[i][1]));
+    }
+    return resp;
 }

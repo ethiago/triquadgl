@@ -71,14 +71,14 @@ void RenderController::drawModel(void)
 
 void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 {
-    skC->mouseRigthMove(triquad->unproject(curr));
+    skC->mouseRigthMove(curr, triquad->unproject(curr));
     display->updateGL();
 }
 
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-    triquad->fitting(skC->getPoints());
+    triquad->fitting(skC->getPointsLinearFilter());
     skC->cancel();
     display->updateGL();
 }

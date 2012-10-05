@@ -26,7 +26,10 @@ HEADERS  += src/mainwindow.h\
     src/Object3D.h \
     src/sketchcontroller.h \
     src/triquadmesh.h \
-    src/fitting.h
+    src/fitting.h \
+    src/curven.hpp \
+    src/catmullrom.hpp \
+    src/vectorn.hpp
 
 FORMS    += src/mainwindow.ui
 
