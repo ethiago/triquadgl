@@ -31,8 +31,23 @@ void TriQuadMesh::beforeTransformations(void)
         drawOrigin();
 }
 
+void TriQuadMesh::drawPoints(const QVector<QVector2D>& ps)
+{
+    static QVector<QVector2D> p;
+    if(ps.size() > 0)
+        p = ps;
+
+    glColor3f(1.0,0.0,0.0);
+    glBegin(GL_POINTS);
+    for(int i = 0; i < p.size(); ++i)
+        glVertex2fv(reinterpret_cast<const GLfloat *>(&p[i]));
+    glEnd();
+}
+
 void TriQuadMesh::drawGeometry(void)
 {
+    drawPoints();
+
     if(showMesh)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -74,8 +89,8 @@ void TriQuadMesh::drawGeometry(void)
 Quadric TriQuadMesh::makeQuadric(float x2, float y2, float xy, float x, float y, float c)
 {
     Quadric q;
-    q.a_b_c = QVector3D(x2,xy,x);
-    q.d_e_f = QVector3D(y2, y,c);
+    q.a_b_c = QVector3D(x2,xy/2.0,x/2.0);
+    q.d_e_f = QVector3D(y2, y/2.0,c);
     return q;
 }
 
@@ -238,16 +253,18 @@ int TriQuadMesh::busca(const QVector4D& p)
     return _idxMaisProximo;
 }
 
-void TriQuadMesh::fitting(const QVector<QVector4D>& inPoints)
+void TriQuadMesh::fitting(const QVector<QPoint>& inPoints)
 {
+    QVector4D bary;
     QVector4D p;
     QVector<QVector2D> pontos;
     QMatrix4x4 inv(buildInv(triquads[0]));
     for(int i = 0; i < inPoints.size(); ++i)
     {
-        p = inv * inPoints[i];
-        if(p.x() >= 0.0 && p.x() <= 1.0 && p.y() >= 0.0 && p.y() <= 1.0 && p.z() >= 0.0 && p.z() <= 1.0)
-            pontos.push_back(inPoints[i].toVector2D());
+        p = unproject(inPoints[i]);
+        bary = inv * p;
+        if(bary.x() >= 0.0 && bary.x() <= 1.0 && bary.y() >= 0.0 && bary.y() <= 1.0 && bary.z() >= 0.0 && bary.z() <= 1.0)
+            pontos.push_back(p.toVector2D());
     }
     QVector<Quadric> qs = fittingGSL(inv, pontos);
 
@@ -256,6 +273,9 @@ void TriQuadMesh::fitting(const QVector<QVector4D>& inPoints)
         quadrics[triquads[0].idx[i]] = qs[i];
         qDebug() << qs[i];
     }
+    qDebug() << "";
+
+    drawPoints(pontos);
 
 }
 
@@ -275,7 +295,7 @@ QMatrix4x4 TriQuadMesh::buildInv(NO& no)
 
 QDebug operator<< (QDebug d, const Quadric &model)
 {
-    d.nospace() << "Quadric[";
+    d.nospace() << "Quadric[ ";
     d.nospace() << "A="<< model.a_b_c.x() << ", B=" << model.a_b_c.y() << ", C=" << model.a_b_c.z();
     d.nospace() << ", D="<< model.d_e_f.x() << ", E=" << model.d_e_f.y() << ", F=" << model.d_e_f.z() << " ]";
     d.space() <<"";

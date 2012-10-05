@@ -63,10 +63,11 @@ public:
     void move(const QPoint& ini, const QPoint& curr);
     void finish();
     void cancel();
-    void fitting(const QVector<QVector4D>&);
+    void fitting(const QVector<QPoint> &);
 
 private:
     void drawOrigin();
+    void drawPoints(const QVector<QVector2D>& ps = QVector<QVector2D>());
     virtual void drawGeometry(void);
     virtual void beforeTransformations(void);
     virtual void afterTransformations(void);
