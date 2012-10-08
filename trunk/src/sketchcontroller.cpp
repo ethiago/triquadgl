@@ -30,7 +30,7 @@ void SketchController::cancel()
 
 void SketchController::processaCurva()
 {
-    curve2.lineFilter();
+   // curve2.lineFilter();
 }
 
 void SketchController::draw()

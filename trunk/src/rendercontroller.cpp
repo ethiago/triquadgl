@@ -78,7 +78,7 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-    triquad->fitting(skC->getPointsLinearFilter());
+    triquad->fittingG(skC->getPointsLinearFilter());
     skC->cancel();
     display->updateGL();
 }
