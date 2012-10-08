@@ -6,8 +6,7 @@ TEMPLATE = app
 INCLUDEPATH += /opt/local/include
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
-    #LIBS += -lGLU -lglut
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas #-lGLU
 }
 
 SOURCES += src/main.cpp\

@@ -9,7 +9,7 @@
 #define CIRCLE2  TriQuadMesh::makeQuadric(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
 #define PARABOLA TriQuadMesh::makeQuadric(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
-typedef struct _Quadric
+typedef struct
 {
     QVector3D a_b_c;
     QVector3D d_e_f;
@@ -23,7 +23,7 @@ typedef struct
 class TriQuadMesh : public Object3D
 {
     QVector<QVector4D> inPoints;
-    QVector<QVector4D> vertices;
+    QVector<QVector2D> vertices;
     QVector<Quadric> quadrics;
     QVector<NO> triquads;
 
@@ -38,7 +38,7 @@ class TriQuadMesh : public Object3D
     QMatrix4x4 mvpi;
 
     int idxMaisProximo;
-    QVector4D maisProximo;
+    QVector2D maisProximo;
 
 public:
     explicit TriQuadMesh(const QVector3D& center = QVector3D(),
@@ -64,6 +64,7 @@ public:
     void finish();
     void cancel();
     void fitting(const QVector<QPoint> &);
+    void fittingG(const QVector<QPoint> & in);
 
 private:
     void drawOrigin();
@@ -74,6 +75,8 @@ private:
     QMatrix4x4 glGetMatrix(GLenum fetchType);
     void buildObject();
     QMatrix4x4 buildInv(NO&);
+    QVector4D buscaNo(const QVector4D& p, int *idx);
+    int configPoints(const QVector<QPoint> & in, QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
 };
 
 QDebug operator<< (QDebug d, const Quadric &model);
