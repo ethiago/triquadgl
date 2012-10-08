@@ -4,16 +4,12 @@
 #include <QObject>
 #include <QVector>
 #include <QVector4D>
-#include "curven.hpp"
-
-typedef PolygonalCurve<float, 2> Curve;
-
 
 class SketchController : public QObject
 {
     Q_OBJECT
 
-    Curve curve2;
+    QVector<QPoint> curve2;
     QVector<QVector4D> curve;
 
 public:

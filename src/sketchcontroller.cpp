@@ -1,6 +1,5 @@
 #include "sketchcontroller.h"
 #include <QtOpenGL>
-#include "vectorn.hpp"
 
 SketchController::SketchController(QObject *parent) :
     QObject(parent)
@@ -10,10 +9,7 @@ SketchController::SketchController(QObject *parent) :
 
 void SketchController::mouseRigthMove(const QPoint &curr, const QVector4D &proj)
 {
-    PointN<float,2> p;
-    p[0] = curr.x();
-    p[1] = curr.y();
-    curve2.add(p);
+    curve2.append(curr);
     curve.append(proj);
 }
 
@@ -30,7 +26,6 @@ void SketchController::cancel()
 
 void SketchController::processaCurva()
 {
-   // curve2.lineFilter();
 }
 
 void SketchController::draw()
@@ -49,10 +44,5 @@ void SketchController::draw()
 
 QVector<QPoint> SketchController::getPointsLinearFilter(void)
 {
-    QVector<QPoint> resp;
-    for(int i = 0; i < curve2.size(); ++i)
-    {
-        resp.push_back(QPoint(curve2[i][0],curve2[i][1]));
-    }
-    return resp;
+    return curve2;
 }

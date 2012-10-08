@@ -65,6 +65,7 @@ public:
     void cancel();
     void fitting(const QVector<QPoint> &);
     void fittingG(const QVector<QPoint> & in);
+    void fittingG2(const QVector<QPoint> & in);
 
 private:
     void drawOrigin();

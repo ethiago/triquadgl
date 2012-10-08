@@ -16,7 +16,8 @@ SOURCES += src/main.cpp\
     src/Object3D.cpp \
     src/sketchcontroller.cpp \
     src/triquadmesh.cpp \
-    src/fitting.cpp
+    src/fitting.cpp \
+    src/Curve.cpp
 
 
 HEADERS  += src/mainwindow.h\
@@ -26,9 +27,8 @@ HEADERS  += src/mainwindow.h\
     src/sketchcontroller.h \
     src/triquadmesh.h \
     src/fitting.h \
-    src/curven.hpp \
-    src/catmullrom.hpp \
-    src/vectorn.hpp
+    src/Curve.h \
+    src/Curvature.h
 
 FORMS    += src/mainwindow.ui
 

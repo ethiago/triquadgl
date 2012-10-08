@@ -146,7 +146,7 @@ QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B)
         q.a_b_c = QVector3D(x1,x2,x3);
         x1 = gsl_vector_get(x, i*5 + 3);
         x2 = gsl_vector_get(x, i*5 + 4);
-        q.d_e_f = QVector3D(x1, x2, -1.0);
+        q.d_e_f = QVector3D(x1, x2, -2.0);
         resp.push_back(q);
     }
 
