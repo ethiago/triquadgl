@@ -78,6 +78,7 @@ private:
     QMatrix4x4 buildInv(NO&);
     QVector4D buscaNo(const QVector4D& p, int *idx);
     int configPoints(const QVector<QPoint> & in, QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
+    QVector3D bary(const QVector4D& p, int &idx);
 };
 
 QDebug operator<< (QDebug d, const Quadric &model);
