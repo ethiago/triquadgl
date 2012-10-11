@@ -471,3 +471,49 @@ QDebug operator<< (QDebug d, const Quadric &model)
     d.space() <<"";
     return d;
 }
+
+
+void TriQuadMesh::saveSketch(const QVector<QPoint>& points)
+{
+    static int cnt = 0;
+
+    QFile f("scketch"+QString::number(cnt)+".txt");
+
+    f.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    f.write((QString::number(points.size()) + "\n").toAscii());
+
+    for(int i = 0;i < points.size(); ++i)
+    {
+        QVector4D p = unproject(points[i]);
+        f.write((QString::number(p.x()) + " " + QString::number(p.y()) + "\n").toAscii());
+    }
+    f.close();
+    ++cnt;
+}
+
+void TriQuadMesh::saveMesh()
+{
+    static int cnt = 0;
+
+    QFile f("mesh"+QString::number(cnt)+".txt");
+
+    f.open(QIODevice::WriteOnly | QIODevice::Text);
+
+    f.write((QString::number(vertices.size()) + "\n").toAscii());
+    for(int i = 0;i < vertices.size(); ++i)
+    {
+        QVector2D p = vertices[i];
+        f.write((QString::number(p.x()) + " " + QString::number(p.y()) + "\n").toAscii());
+    }
+    f.write((QString::number(triquads.size()) + "\n").toAscii());
+    for(int i = 0;i < triquads.size(); ++i)
+    {
+        int i0 = triquads[i].idx[0];
+        int i1 = triquads[i].idx[1];
+        int i2 = triquads[i].idx[2];
+        f.write((QString::number(i0) + " " + QString::number(i1) + " " + QString::number(i2) + "\n").toAscii());
+    }
+    f.close();
+    ++cnt;
+}

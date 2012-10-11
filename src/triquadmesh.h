@@ -66,6 +66,8 @@ public:
     void fitting(const QVector<QPoint> &);
     void fittingG(const QVector<QPoint> & in);
     void fittingG2(const QVector<QPoint> & in);
+    void saveSketch(const QVector<QPoint> &points);
+    void saveMesh();
 
 private:
     void drawOrigin();

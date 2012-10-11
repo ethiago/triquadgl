@@ -26,7 +26,6 @@ void SketchController::cancel()
 
 void SketchController::processaCurva()
 {
-
 }
 
 void SketchController::draw()

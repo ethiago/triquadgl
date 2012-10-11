@@ -47,6 +47,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewMesh(bool)),
             this, SLOT(viewMesh(bool)));
 
+    connect(mainWindow, SIGNAL(saveMesh()),
+            this, SLOT(saveMesh()));
+
     mainWindow->showMaximized();
 
 }
@@ -78,7 +81,7 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-    triquad->fittingG2(skC->getPointsLinearFilter());
+    triquad->saveSketch(skC->getPointsLinearFilter());
     skC->cancel();
     display->updateGL();
 }
@@ -143,4 +146,9 @@ void RenderController::viewMesh(bool v)
 {
     triquad->viewMesh(v);
     display->updateGL();
+}
+
+void RenderController::saveMesh()
+{
+    triquad->saveMesh();
 }

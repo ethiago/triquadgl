@@ -43,6 +43,7 @@ public slots:
     void mouseCancel();
     void saveResultAsImage();
     void viewMesh(bool);
+    void saveMesh();
 };
 
 #endif // RENDERCONTROLLER_H
