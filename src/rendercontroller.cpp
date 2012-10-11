@@ -78,7 +78,7 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-    triquad->fittingG2(skC->getPointsLinearFilter());
+    triquad->fittingG(skC->getPointsLinearFilter());
     skC->cancel();
     display->updateGL();
 }
@@ -102,9 +102,11 @@ void RenderController::mouseCancel()
     display->updateGL();
 }
 
-void RenderController::saveResultAsImage()
+void RenderController::saveResultAsImage(const QString& fn)
 {
-    QString filePath = saveImage();
+    QString filePath = fn;
+    if(filePath.isEmpty())
+        filePath = saveImage();
 
     if(filePath.isEmpty())
         return;
@@ -143,4 +145,29 @@ void RenderController::viewMesh(bool v)
 {
     triquad->viewMesh(v);
     display->updateGL();
+}
+
+void RenderController::benchmark()
+{
+    QDir d1(":/meshes/meshes");
+    QDir d2(":/sketches/sketches");
+
+    QStringList meshes   = d1.entryList();
+    QStringList sketches = d2.entryList();
+
+    int cnt1 = 0;
+    int cnt2 = 0;
+    foreach(const QString& mesh, meshes){
+        triquad->loadMesh(d1.filePath(mesh));
+        foreach(const QString& sketch, sketches){
+            QVector<QVector2D> skt = skC->loadSketch(d2.filePath(sketch));
+
+            triquad->fittingBenchG1(skt);
+            display->updateGL();
+            saveResultAsImage("simples"+QString::number(cnt1++)+".png");
+            triquad->fittingBenchG2(skt);
+            display->updateGL();
+            saveResultAsImage("camadas"+QString::number(cnt2++)+".png");
+        }
+    }
 }

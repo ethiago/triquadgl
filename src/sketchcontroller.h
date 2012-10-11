@@ -20,6 +20,8 @@ public:
     void cancel();
     QVector<QPoint> getPointsLinearFilter(void);
 
+    static QVector<QVector2D> loadSketch(const QString& fn );
+
 private:
     void processaCurva();
 

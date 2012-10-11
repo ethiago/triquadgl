@@ -1,12 +1,12 @@
 QT       += core gui opengl
 
-TARGET = TriQuadGL
+TARGET = TriQuadGLBenchmark
 TEMPLATE = app
 
 INCLUDEPATH += /opt/local/include
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas #-lGLU
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
 }
 
 SOURCES += src/main.cpp\
@@ -33,7 +33,7 @@ HEADERS  += src/mainwindow.h\
 FORMS    += src/mainwindow.ui
 
 RESOURCES += \
-    Shaders.qrc
+    resources.qrc
 
 OTHER_FILES += shaders/TriQuad.vert \
         shaders/TriQuad.frag

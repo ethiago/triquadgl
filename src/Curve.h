@@ -148,6 +148,8 @@ public :
 
   int  refine() ;
 
+  void buildT();
+
 protected :
   int  resample(const int &p, const int &q, real *&xr, real *&yr) ;
 };

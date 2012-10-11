@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="triquadFrag">shaders/TriQuad.frag</file>
-        <file alias="triquadVert">shaders/TriQuad.vert</file>
-    </qresource>
-</RCC>

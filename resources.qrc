@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="triquadFrag">shaders/TriQuad.frag</file>
+        <file alias="triquadVert">shaders/TriQuad.vert</file>
+    </qresource>
+    <qresource prefix="/meshes">
+        <file>meshes/mesh0.txt</file>
+        <file>meshes/mesh1.txt</file>
+        <file>meshes/mesh2.txt</file>
+        <file>meshes/mesh3.txt</file>
+        <file>meshes/mesh4.txt</file>
+    </qresource>
+    <qresource prefix="/sketches">
+        <file>sketches/scketch0.txt</file>
+        <file>sketches/scketch1.txt</file>
+        <file>sketches/scketch2.txt</file>
+        <file>sketches/scketch3.txt</file>
+        <file>sketches/scketch4.txt</file>
+        <file>sketches/scketch5.txt</file>
+        <file>sketches/scketch6.txt</file>
+        <file>sketches/scketch7.txt</file>
+        <file>sketches/scketch8.txt</file>
+        <file>sketches/scketch9.txt</file>
+        <file>sketches/scketch10.txt</file>
+        <file>sketches/scketch11.txt</file>
+        <file>sketches/scketch12.txt</file>
+        <file>sketches/scketch13.txt</file>
+        <file>sketches/scketch14.txt</file>
+        <file>sketches/scketch15.txt</file>
+        <file>sketches/scketch16.txt</file>
+        <file>sketches/scketch17.txt</file>
+        <file>sketches/scketch18.txt</file>
+        <file>sketches/scketch19.txt</file>
+        <file>sketches/scketch20.txt</file>
+        <file>sketches/scketch21.txt</file>
+        <file>sketches/scketch22.txt</file>
+        <file>sketches/scketch23.txt</file>
+        <file>sketches/scketch24.txt</file>
+    </qresource>
+</RCC>

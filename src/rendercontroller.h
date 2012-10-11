@@ -41,8 +41,9 @@ public slots:
     void mouseLeftMove(QPoint ini, QPoint curr);
     void mouseLefthFinish(QPoint ini, QPoint curr);
     void mouseCancel();
-    void saveResultAsImage();
+    void saveResultAsImage(const QString& fn = QString());
     void viewMesh(bool);
+    void benchmark();
 };
 
 #endif // RENDERCONTROLLER_H

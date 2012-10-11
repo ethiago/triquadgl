@@ -26,7 +26,6 @@ void SketchController::cancel()
 
 void SketchController::processaCurva()
 {
-
 }
 
 void SketchController::draw()
@@ -46,4 +45,27 @@ void SketchController::draw()
 QVector<QPoint> SketchController::getPointsLinearFilter(void)
 {
     return curve2;
+}
+
+QVector<QVector2D> SketchController::loadSketch(const QString& fn )
+{
+    QVector<QVector2D> ret;
+    QFile f(fn);
+
+    if(!f.open(QIODevice::ReadOnly))
+        return ret;
+
+    QTextStream s(f.readAll());
+    f.close();
+
+    int qtd;
+    s >> qtd;
+
+    for(int i = 0; i < qtd; ++i)
+    {
+        float x,y;
+        s >> x >> y;
+        ret.append(QVector2D(x,y));
+    }
+    return ret;
 }
