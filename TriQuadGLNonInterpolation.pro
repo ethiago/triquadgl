@@ -1,12 +1,12 @@
 QT       += core gui opengl
 
-TARGET = TriQuadGL
+TARGET = TriQuadGLNonInterpolation
 TEMPLATE = app
 
 INCLUDEPATH += /opt/local/include
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas #-lGLU
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
 }
 
 SOURCES += src/main.cpp\

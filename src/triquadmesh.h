@@ -28,8 +28,9 @@ class TriQuadMesh : public Object3D
     QVector<NO> triquads;
 
     QGLShaderProgram program;
-    int locationABC;
-    int locationDEF;
+    int locationQ0;
+    int locationQ1;
+    int locationQ2;
 
     bool showMesh;
     bool origin;
