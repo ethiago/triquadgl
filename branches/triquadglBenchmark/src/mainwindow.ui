@@ -40,6 +40,7 @@
    </attribute>
    <addaction name="actionSaveImageAs"/>
    <addaction name="actionView_Mesh"/>
+   <addaction name="actionRun"/>
   </widget>
   <action name="actionSaveImageAs">
    <property name="text">
@@ -58,6 +59,11 @@
    </property>
    <property name="text">
     <string>View Mesh</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="text">
+    <string>Run</string>
    </property>
   </action>
  </widget>

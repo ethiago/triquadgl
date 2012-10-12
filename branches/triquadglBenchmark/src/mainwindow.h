@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 signals:
     void saveResultAsImage();
     void viewMesh(bool);
+    void run();
 
 public:
     explicit MainWindow(QWidget *parent = 0);

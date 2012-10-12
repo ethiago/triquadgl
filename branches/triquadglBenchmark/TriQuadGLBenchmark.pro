@@ -3,11 +3,17 @@ QT       += core gui opengl
 TARGET = TriQuadGLBenchmark
 TEMPLATE = app
 
-INCLUDEPATH += /opt/local/include
+win32 {
+    LIBS += -L"C:\Program Files\GnuWin32\lib"
+    INCLUDEPATH += "C:\Program Files\GnuWin32\include"
+}
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
+    LIBS += -L/opt/local/lib/
+    INCLUDEPATH += /opt/local/include
 }
+
+LIBS += -lgsl -lgslcblas
 
 SOURCES += src/main.cpp\
     src/mainwindow.cpp\
