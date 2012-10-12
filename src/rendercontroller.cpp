@@ -47,6 +47,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewMesh(bool)),
             this, SLOT(viewMesh(bool)));
 
+    connect(mainWindow, SIGNAL(run()),
+            this, SLOT(benchmark()));
+
     mainWindow->showMaximized();
 
 }

@@ -121,7 +121,7 @@ inline const int  rint ( const real &x ) { return (int)x ; }
 
 #ifndef INTERVAL_REAL
 
-#ifdef WIN32
+#ifndef WIN32
 inline int isnan( real x ) { return _isnan(x) ; }
 static const real NaN  = (real) (-sqrt(-1.0));
 inline const real nan() { return NaN ; }
