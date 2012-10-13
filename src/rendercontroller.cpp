@@ -8,19 +8,24 @@
 #include "mainwindow.h"
 #include "Object3D.h"
 #include "triquadmesh.h"
-#include "sketchcontroller.h"
+#include "cubic.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
     QObject(parent)
 {
-    skC = new SketchController();
     this->display = new GLDisplay();
     mainWindow->setGLDisplay(display);
     {  // esta ordem deve ser mantida
         display->updateGL();
 
         triquad = new TriQuadMesh();
+        cubic = new Cubic();
+
+        cubic->setTraslation(QVector3D(-2,0,0));
+        triquad->setTraslation(QVector3D(2,0,0));
+
+        cubic->setConsts(1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-1.0, 0.0);
 
         connect(display, SIGNAL(drawModel()),
                 this, SLOT(drawModel()));
@@ -47,6 +52,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewMesh(bool)),
             this, SLOT(viewMesh(bool)));
 
+    connect(mainWindow, SIGNAL(buildTriQuad()),
+            this, SLOT(buildTriQuad()));
+
     mainWindow->showMaximized();
 
 }
@@ -65,22 +73,17 @@ void RenderController::updateGL(void)
 
 void RenderController::drawModel(void)
 {
+    triquad->getTriangle(0, (*cubic)[0], (*cubic)[1], (*cubic)[2]);
     triquad->draw();
-    skC->draw();
+    cubic->draw();
 }
 
 void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 {
-    skC->mouseRigthMove(curr, triquad->unproject(curr));
-    display->updateGL();
 }
 
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
-    skC->mouseRigthFinish();
-    triquad->fittingG2(skC->getPointsLinearFilter());
-    skC->cancel();
-    display->updateGL();
 }
 
 void RenderController::mouseLeftMove(QPoint ini, QPoint curr)
@@ -97,7 +100,6 @@ void RenderController::mouseLefthFinish(QPoint ini, QPoint curr)
 
 void RenderController::mouseCancel()
 {
-    skC->cancel();
     triquad->cancel();
     display->updateGL();
 }
@@ -141,6 +143,11 @@ QString RenderController::saveImage()
 
 void RenderController::viewMesh(bool v)
 {
-    triquad->viewMesh(v);
+    display->updateGL();
+}
+
+void RenderController::buildTriQuad()
+{
+    triquad->fromCubic(cubic->getConsts());
     display->updateGL();
 }

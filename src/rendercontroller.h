@@ -14,7 +14,7 @@ class Object3D;
 class TriQuadMesh;
 
 class GLDisplay;
-class SketchController;
+class Cubic;
 
 class RenderController : public QObject
 {
@@ -22,7 +22,7 @@ class RenderController : public QObject
 
     GLDisplay *display;
     TriQuadMesh *triquad;
-    SketchController *skC;
+    Cubic *cubic;
 
 public:
     explicit RenderController(MainWindow *mainWindow,
@@ -43,6 +43,7 @@ public slots:
     void mouseCancel();
     void saveResultAsImage();
     void viewMesh(bool);
+    void buildTriQuad();
 };
 
 #endif // RENDERCONTROLLER_H

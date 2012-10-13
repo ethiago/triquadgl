@@ -8,6 +8,6 @@ void main ()
 {
         gl_FragColor = vec4(1.0) ;
 
-        if(abs(dot(p,Q*p)) > abs(fwidth(dot(p,Q*p)))*0.5)
+        if(abs(dot(p,Q*p)) > abs(fwidth(dot(p,Q*p)))/2.0)
             discard;
 }

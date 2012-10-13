@@ -164,4 +164,28 @@ QMatrix4x4 Object3D::glGetMatrix(GLenum fetchType)
     return ret;
 }
 
+void Object3D::drawOrigin()
+{
+    GLboolean isLighting;
+    GLfloat color[4];
+    glGetBooleanv(GL_LIGHTING,&isLighting);
+    glGetFloatv(GL_CURRENT_COLOR,color);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_LINES);
+    glColor3f(1.0, 0, 0);
+    glVertex3i(0, 0, 0);
+    glVertex3i(1, 0, 0);
+
+    glColor3f(0, 1.0, 0);
+    glVertex3i(0, 0, 0);
+    glVertex3i(0, 1, 0);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+    glColor4fv(color);
+    if(isLighting)
+        glEnable(GL_LIGHTING);
+}
 

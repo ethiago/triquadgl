@@ -28,7 +28,7 @@
 #include <gsl/gsl_randist.h>
 #include "Curvature.h"
 #include "Curve.h"
-
+#include <cstring>
 
 //___________________________________________________________________________________
 //
@@ -924,7 +924,7 @@ void Curve::compute_utcke_curv(const int &q)
     }
 
     gsl_blas_dgemm( CblasTrans, CblasNoTrans, 1.0,M, M, 0.0, A );
-    if( gsl_linalg_cholesky_decomp( A ) == GSL_EDOM ) { _k[p] = nan() ; return ; }
+    if( gsl_linalg_cholesky_decomp( A ) == GSL_EDOM ) { _k[p] = nan("") ; return ; }
 
     real a = gsl_matrix_get(A,0,0) * gsl_matrix_get(A,1,1) * gsl_matrix_get(A,2,2) ;
     real b = gsl_matrix_get(A,0,0) * gsl_matrix_get(A,1,1) * gsl_matrix_get(A,2,3) ;
@@ -1066,7 +1066,7 @@ void Curve::compute_estrozi_curv(const int &q)
     }
 
     int res = gsl_fft_complex_forward( u1data, 1, nq, wavetable, workspace ) ;
-    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = nan() ; return ; }
+    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = _nan() ; return ; }
     memcpy( u2data, u1data, 2*nq*sizeof(double) ) ;
 
     real re,im ;
@@ -1085,9 +1085,9 @@ void Curve::compute_estrozi_curv(const int &q)
       IMAG(u2data,i) *= d ;
     }
     res = gsl_fft_complex_backward( u1data, 1, nq, wavetable, workspace ) ;
-    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = nan() ; return ; }
+    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = _nan() ; return ; }
     res = gsl_fft_complex_backward( u2data, 1, nq, wavetable, workspace ) ;
-    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = nan() ; return ; }
+    if( res == GSL_EDOM || res == GSL_EINVAL )  { _k[p] = _nan() ; return ; }
 
     _tx[p] = REAL(u1data,q) ;
     _ty[p] = IMAG(u1data,q) ;

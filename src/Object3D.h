@@ -69,6 +69,8 @@ public:
     QMatrix4x4 modelViewMatrix();
     QMatrix4x4 projectionMatrix();
 
+    void drawOrigin();
+
 protected:
 
     void setInputType(int input);

@@ -9,6 +9,6 @@
 #include "triquadmesh.h"
 
 QVector<Quadric> fittingGSL(const QMatrix4x4& inv, const QVector<QVector2D>& points);
-QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f);
+QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B);
 
 #endif // FITTING_H

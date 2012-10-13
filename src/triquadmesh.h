@@ -48,14 +48,13 @@ public:
 
     virtual Object3D* copy() const;
 
+    void getTriangle(int i, QVector2D& v1, QVector2D& v2, QVector2D& v3);
+
     void setQuadric(int idx, const Quadric& c);
 
     bool isProgramLinked();
-    void viewMesh(bool v);
 
     static Quadric makeQuadric(float x2, float y2, float xy, float x, float y, float c);
-
-    void changeOrigin(bool v);
 
     QVector4D unproject(const QPoint&);
     int busca(const QVector4D&);
@@ -63,12 +62,9 @@ public:
     void move(const QPoint& ini, const QPoint& curr);
     void finish();
     void cancel();
-    void fitting(const QVector<QPoint> &);
-    void fittingG(const QVector<QPoint> & in);
-    void fittingG2(const QVector<QPoint> & in);
+    void fromCubic(float * consts);
 
 private:
-    void drawOrigin();
     void drawPoints(const QVector<QVector2D>& ps = QVector<QVector2D>());
     virtual void drawGeometry(void);
     virtual void beforeTransformations(void);
@@ -78,7 +74,6 @@ private:
     QMatrix4x4 buildInv(NO&);
     QVector4D buscaNo(const QVector4D& p, int *idx);
     int configPoints(const QVector<QPoint> & in, QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
-    QVector3D bary(const QVector4D& p, int &idx);
 };
 
 QDebug operator<< (QDebug d, const Quadric &model);

@@ -122,10 +122,10 @@ inline const int  rint ( const real &x ) { return (int)x ; }
 #ifndef INTERVAL_REAL
 
 #ifdef WIN32
-inline int isnan( real x ) { return _isnan(x) ; }
-static const real NaN  = (real) (-sqrt(-1.0));
-inline const real nan() { return NaN ; }
-inline int rint ( real x ) { return (int)x ; }
+//inline int isnan( real x ) { return _isnan(x) ; }
+//static const real NaN  = (real) (-sqrt(-1.0));
+//inline const real nan() { return NaN ; }
+//inline int rint ( real x ) { return (int)x ; }
 
 #pragma warning(disable:4786)
 
