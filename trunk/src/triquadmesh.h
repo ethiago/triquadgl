@@ -8,6 +8,7 @@
 #define CIRCLE   TriQuadMesh::makeQuadric(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
 #define CIRCLE2  TriQuadMesh::makeQuadric(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
 #define PARABOLA TriQuadMesh::makeQuadric(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+#define ZERO     TriQuadMesh::makeQuadric(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
 
 typedef struct
 {
@@ -22,7 +23,7 @@ typedef struct
 
 class TriQuadMesh : public Object3D
 {
-    QVector<QVector4D> inPoints;
+    //QVector<QVector4D> inPoints;
     QVector<QVector2D> vertices;
     QVector<Quadric> quadrics;
     QVector<NO> triquads;
@@ -64,12 +65,15 @@ public:
     void finish();
     void cancel();
     void fitting(const QVector<QPoint> &);
-    void fittingG(const QVector<QPoint> & in);
-    void fittingG2(const QVector<QPoint> & in);
+    void fittingG(QVector<QVector4D> &in);
+    void fittingG2(QVector<QVector4D> & in);
+    void fittingGG(QVector<QVector4D> &in);
 
 private:
     void drawOrigin();
     void drawPoints(const QVector<QVector2D>& ps = QVector<QVector2D>());
+    void drawPoints1(const QVector<QVector2D>& ps = QVector<QVector2D>());
+    void drawPoints2(const QVector<QVector2D>& ps = QVector<QVector2D>());
     virtual void drawGeometry(void);
     virtual void beforeTransformations(void);
     virtual void afterTransformations(void);
@@ -77,8 +81,8 @@ private:
     void buildObject();
     QMatrix4x4 buildInv(NO&);
     QVector4D buscaNo(const QVector4D& p, int *idx);
-    int configPoints(const QVector<QPoint> & in, QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
-    QVector3D bary(const QVector4D& p, int &idx);
+    int configPoints(QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
+    QVector3D bary(const QVector4D& p, int *idx);
 };
 
 QDebug operator<< (QDebug d, const Quadric &model);

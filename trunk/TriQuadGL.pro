@@ -5,8 +5,13 @@ TEMPLATE = app
 
 INCLUDEPATH += /opt/local/include
 
+win32 {
+    LIBS += -L"C:\Program Files\GnuWin32\lib" -lgsl -lgslcblas
+    INCLUDEPATH += "C:\Program Files\GnuWin32\include"
+}
+
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas #-lGLU
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas
 }
 
 SOURCES += src/main.cpp\

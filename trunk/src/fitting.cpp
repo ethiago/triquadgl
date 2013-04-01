@@ -128,9 +128,10 @@ QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
 
     gsl_multifit_linear_workspace * work = gsl_multifit_linear_alloc (A->size1,A->size2);
     real chisq = 0.0;
-    real tol = 0.0001 ;
+    real tol = 0.000001 ;
     size_t rank = 0 ;
     gsl_multifit_linear_svd( A,B, tol, &rank, x, cov, &chisq, work);
+    //gsl_multifit_linear(A,B, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
     qDebug() << chisq;
