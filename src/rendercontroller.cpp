@@ -47,6 +47,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewMesh(bool)),
             this, SLOT(viewMesh(bool)));
 
+    connect(mainWindow, SIGNAL(openMesh()),
+            this, SLOT(openMesh()));
+
     mainWindow->showMaximized();
 
 }
@@ -78,7 +81,14 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-    triquad->fittingG2(skC->getPointsLinearFilter());
+
+    QVector<QVector4D> pontosOut;
+    QVector<QPoint> pontosIn = skC->getPointsLinearFilter();
+
+    for(int i = 0; i < pontosIn.size(); ++i)
+        pontosOut.append(triquad->unproject(pontosIn[i]));
+
+    triquad->fittingG(pontosOut);
     skC->cancel();
     display->updateGL();
 }
@@ -142,5 +152,17 @@ QString RenderController::saveImage()
 void RenderController::viewMesh(bool v)
 {
     triquad->viewMesh(v);
+    display->updateGL();
+}
+
+void RenderController::openMesh()
+{
+    QString filename = QFileDialog::getOpenFileName();
+
+    if(filename.isEmpty())
+        return;
+
+    QVector<QVector4D> pontos = SketchController::loadSketch(filename);
+    triquad->fittingG2(pontos);
     display->updateGL();
 }

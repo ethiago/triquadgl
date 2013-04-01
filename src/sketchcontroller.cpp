@@ -47,3 +47,26 @@ QVector<QPoint> SketchController::getPointsLinearFilter(void)
 {
     return curve2;
 }
+
+QVector<QVector4D> SketchController::loadSketch(const QString& fn )
+{
+    QVector<QVector4D> ret;
+    QFile f(fn);
+
+    if(!f.open(QIODevice::ReadOnly))
+        return ret;
+
+    QTextStream s(f.readAll());
+    f.close();
+
+    int qtd;
+    s >> qtd;
+
+    for(int i = 0; i < qtd; ++i)
+    {
+        float x,y;
+        s >> x >> y;
+        ret.append(QVector4D(x,y, 1.0, 1.0));
+    }
+    return ret;
+}

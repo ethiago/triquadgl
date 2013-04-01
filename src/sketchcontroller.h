@@ -20,6 +20,8 @@ public:
     void cancel();
     QVector<QPoint> getPointsLinearFilter(void);
 
+    static QVector<QVector4D> loadSketch(const QString& fileName);
+
 private:
     void processaCurva();
 
