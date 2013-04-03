@@ -88,7 +88,7 @@ void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
     for(int i = 0; i < pontosIn.size(); ++i)
         pontosOut.append(triquad->unproject(pontosIn[i]));
 
-    triquad->fittingG(pontosOut);
+    triquad->globalFittingWithNormals(pontosOut);
     skC->cancel();
     display->updateGL();
 }

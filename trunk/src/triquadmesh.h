@@ -68,6 +68,7 @@ public:
     void fittingG(QVector<QVector4D> &in);
     void fittingG2(QVector<QVector4D> & in);
     void fittingGG(QVector<QVector4D> &in);
+    void globalFittingWithNormals(QVector<QVector4D> & in);
 
 private:
     void drawOrigin();

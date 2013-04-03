@@ -539,6 +539,82 @@ void TriQuadMesh::fittingGG(QVector<QVector4D> & pontos)
     drawPoints(pontos2D);
 }
 
+void TriQuadMesh::globalFittingWithNormals(QVector<QVector4D> & pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2D;
+
+    int np = configPoints(pontos, b, idx);
+    np--;
+    qDebug() << "PASSOU";
+    int nq = vertices.size();
+    int nc = 5;
+    int nLihasPerPoint = 3;
+    if(np*nLihasPerPoint < nq*nc)
+        return;
+
+    gsl_matrix * A = gsl_matrix_calloc (np*nLihasPerPoint, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*nLihasPerPoint);
+
+    QVector<QMatrix4x4> invs(triquads.size());
+    for(int i = 0; i < triquads.size(); ++i)
+        invs[i] = buildInv(triquads[i]);
+
+    for (int i = 0; i < np; ++i)
+    {
+        double bary[3];
+        QVector4D p = pontos[i];
+        NO* no = &triquads[idx[i]];
+        bary[0] = b[i].x();
+        bary[1] = b[i].y();
+        bary[2] = b[i].z();
+        double s = bary[0] + bary[1] + bary[2];
+        QMatrix4x4 W(invs[idx[i]]);
+        QVector2D tang = pontos[i+1].toVector2D() - pontos[i].toVector2D();
+        tang.normalize();
+        for (int k = 0; k < 3; ++k)
+        {
+            //ponto
+            gsl_matrix_set (A, i*nLihasPerPoint, no->idx[k]*nc    ,     p.x()*p.x()*bary[k]); //x^2 * B_k
+            gsl_matrix_set (A, i*nLihasPerPoint, no->idx[k]*nc + 1, 2.0*p.x()*p.y()*bary[k]); //2xy * B_k
+            gsl_matrix_set (A, i*nLihasPerPoint, no->idx[k]*nc + 2, 2.0*p.x()      *bary[k]); //2x  * B_k
+            gsl_matrix_set (A, i*nLihasPerPoint, no->idx[k]*nc + 3,     p.y()*p.y()*bary[k]); //y^2 * B_k
+            gsl_matrix_set (A, i*nLihasPerPoint, no->idx[k]*nc + 4, 2.0*p.y()      *bary[k]); //2y  * B_k
+
+            //dx
+            gsl_matrix_set (A, i*nLihasPerPoint +1, no->idx[k]*nc    ,     p.x()*p.x()*W(k,0) + 2.0*p.x()*      bary[k]); //x^2 * W(k,0) + 2x * bary[k]
+            gsl_matrix_set (A, i*nLihasPerPoint +1, no->idx[k]*nc + 1, 2.0*p.x()*p.y()*W(k,0) + 2.0*      p.y()*bary[k]); //2xy * W(k,0) + 2y * bary[k]
+            gsl_matrix_set (A, i*nLihasPerPoint +1, no->idx[k]*nc + 2, 2.0*p.x()      *W(k,0) + 2.0*            bary[k]); //2x  * W(k,0) + 2  * bary[k]
+            gsl_matrix_set (A, i*nLihasPerPoint +1, no->idx[k]*nc + 3,     p.y()*p.y()*W(k,0)                          ); //y^2 * W(k,0)
+            gsl_matrix_set (A, i*nLihasPerPoint +1, no->idx[k]*nc + 4, 2.0*p.y()      *W(k,0)                          ); //2y  * W(k,0)
+
+            //dy
+            gsl_matrix_set (A, i*nLihasPerPoint +2, no->idx[k]*nc    ,     p.x()*p.x()*W(k,1)                          ); //x^2 * W(k,1)
+            gsl_matrix_set (A, i*nLihasPerPoint +2, no->idx[k]*nc + 1, 2.0*p.x()*p.y()*W(k,1) + 2.0*p.x()*      bary[k]); //2xy * W(k,1) + 2x * bary[k]
+            gsl_matrix_set (A, i*nLihasPerPoint +2, no->idx[k]*nc + 2, 2.0*p.x()      *W(k,1)                          ); //2x  * W(k,1)
+            gsl_matrix_set (A, i*nLihasPerPoint +2, no->idx[k]*nc + 3,     p.y()*p.y()*W(k,1) + 2.0*p.y()*      bary[k]); //y^2 * W(k,1) + 2y * bary[k]
+            gsl_matrix_set (A, i*nLihasPerPoint +2, no->idx[k]*nc + 4, 2.0*p.y()      *W(k,1) + 2.0*            bary[k]); //2y  * W(k,1) + 2  * bary[k]
+
+        }
+        gsl_vector_set(B, i*nLihasPerPoint, 1.0);
+        gsl_vector_set(B, i*nLihasPerPoint +1, tang.x());
+        gsl_vector_set(B, i*nLihasPerPoint +2, tang.y());
+        pontos2D.push_back(p.toVector2D());
+    }
+
+    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        quadrics[i] = qs[i];
+    }
+    drawPoints(pontos2D);
+}
+
 QMatrix4x4 TriQuadMesh::buildInv(NO& no)
 {
     QMatrix4x4 m;
