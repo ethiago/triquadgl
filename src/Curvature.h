@@ -130,7 +130,7 @@ inline const int  rint ( const real &x ) { return (int)x ; }
 #pragma warning(disable:4786)
 
 #else  // WIN32
-#define nan() nan("n-char-sequence")
+#define _nan() nan("n-char-sequence")
 #endif // WIN32
 
 #else // INTERVAL_REAL
