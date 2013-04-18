@@ -41,6 +41,10 @@ class TriQuadMesh : public Object3D
     int idxMaisProximo;
     QVector2D maisProximo;
 
+    QVector<QVector2D> dp;
+    QVector<QVector2D> dpL;
+    QVector<QVector2D> dpU;
+
 public:
     explicit TriQuadMesh(const QVector3D& center = QVector3D(),
                     QObject *parent = 0);
@@ -66,9 +70,15 @@ public:
     void cancel();
     void fitting(const QVector<QPoint> &);
     void fittingG(QVector<QVector4D> &in);
+    void fittingG_nozero(QVector<QVector4D> & in);
+    void fittingG2_flivre(QVector<QVector4D> & in);
+    void fittingG3_flivre(QVector<QVector4D> & in);
     void fittingG2(QVector<QVector4D> & in);
+    void fittingG_5Camadas(QVector<QVector4D> & in);
     void fittingGG(QVector<QVector4D> &in);
     void globalFittingWithNormals(QVector<QVector4D> & in);
+
+    void clearDrawPoints();
 
 private:
     void drawOrigin();
