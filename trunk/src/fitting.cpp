@@ -157,6 +157,44 @@ QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     return resp;
 }
 
+QVector<Quadric> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
+{
+
+    gsl_matrix *cov = gsl_matrix_alloc (A->size2, A->size2);
+    gsl_vector * x = gsl_vector_alloc(A->size2);
+
+    gsl_multifit_linear_workspace * work = gsl_multifit_linear_alloc (A->size1,A->size2);
+    real chisq = 0.0;
+    real tol = 0.000001 ;
+    size_t rank = 0 ;
+    gsl_multifit_linear_svd( A,B, tol, &rank, x, cov, &chisq, work);
+    //gsl_multifit_linear(A,B, x, cov, &chisq, work);
+    gsl_multifit_linear_free (work);
+
+    qDebug() << chisq;
+    qDebug() << rank ;
+
+    QVector<Quadric> resp;
+    Quadric q;
+    for(int i = 0; i < A->size2/6; ++i)
+    {
+        float x1 = gsl_vector_get(x, i*6);
+        float x2 = gsl_vector_get(x, i*6 + 1);
+        float x3 = gsl_vector_get(x, i*6 + 2);
+        q.a_b_c = QVector3D(x1,x2,x3);
+        x1 = gsl_vector_get(x, i*6 + 3);
+        x2 = gsl_vector_get(x, i*6 + 4);
+        x3 = gsl_vector_get(x, i*6 + 5);
+        q.d_e_f = QVector3D(x1, x2, x3);
+        resp.push_back(q);
+    }
+
+    gsl_vector_free (x);
+    gsl_matrix_free (cov);
+
+    return resp;
+}
+
 QVector<Quadric> fittingGSL(const QMatrix4x4& inv, const QVector<QVector2D>& inpoints)
 {
     if(inpoints.size() < MINIMUM)

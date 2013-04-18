@@ -34,47 +34,51 @@ void TriQuadMesh::beforeTransformations(void)
     //    drawOrigin();
 }
 
+void TriQuadMesh::clearDrawPoints()
+{
+    dp.clear();
+    dpL.clear();
+    dpU.clear();
+}
+
 void TriQuadMesh::drawPoints(const QVector<QVector2D>& ps)
 {
-    static QVector<QVector2D> p;
     if(ps.size() > 0)
-        p = ps;
+        dp = ps;
 
     glColor3f(1.0, 0.0, 0.0);
     glPointSize(5.0);
     glBegin(GL_POINTS);
-    for(int i = 0; i < p.size(); ++i)
-        glVertex3f(p[i].x(), p[i].y(), 2.0);
+    for(int i = 0; i < dp.size(); ++i)
+        glVertex3f(dp[i].x(), dp[i].y(), 2.0);
     glEnd();
     glPointSize(1.0);
 }
 
 void TriQuadMesh::drawPoints1(const QVector<QVector2D>& ps)
 {
-    static QVector<QVector2D> p;
     if(ps.size() > 0)
-        p = ps;
+        dpU = ps;
 
     glColor3f(1.0, 1.0, .0);
     glPointSize(5.0);
     glBegin(GL_POINTS);
-    for(int i = 0; i < p.size(); ++i)
-        glVertex3f(p[i].x(), p[i].y(), 2.0);
+    for(int i = 0; i < dpU.size(); ++i)
+        glVertex3f(dpU[i].x(), dpU[i].y(), 2.0);
     glEnd();
     glPointSize(1.0);
 }
 
 void TriQuadMesh::drawPoints2(const QVector<QVector2D>& ps)
 {
-    static QVector<QVector2D> p;
     if(ps.size() > 0)
-        p = ps;
+        dpL = ps;
 
     glColor3f(1.0, 0.0, 1.0);
     glPointSize(5.0);
     glBegin(GL_POINTS);
-    for(int i = 0; i < p.size(); ++i)
-        glVertex3f(p[i].x(), p[i].y(), 2.0);
+    for(int i = 0; i < dpL.size(); ++i)
+        glVertex3f(dpL[i].x(), dpL[i].y(), 2.0);
     glEnd();
     glPointSize(1.0);
 }
@@ -394,6 +398,276 @@ QVector3D TriQuadMesh::bary(const QVector4D& p, int *idx)
     return QVector3D();
 }
 
+void TriQuadMesh::fittingG_nozero(QVector<QVector4D> &pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = vertices.size();
+    int nc = 5;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    gsl_matrix * A = gsl_matrix_calloc (np*2, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*2);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[3];
+        float k = 0.2;//0.1/fabs(c.k(i));
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DU.append(p[0].toVector2D());
+        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[2].toVector2D());
+
+        NO* no;
+
+        double s = bar[0] + bar[1] + bar[2];
+        for(int k = 0; k < 3; ++k)
+        {
+            if(k == 1)
+            {
+                continue ;
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                no = &triquads[idx[i]];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                no = &triquads[idx];
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_vector_set( B, i*2 + k/2, 2-k);
+            }
+        }
+    }
+
+    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        quadrics[i] = qs[i];
+    }
+    //drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
+void TriQuadMesh::fittingG2_flivre(QVector<QVector4D> &pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2D;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = vertices.size();
+    int nc = 6;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    gsl_matrix * A = gsl_matrix_calloc (np*2, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*2);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[3];
+        float k = 0.2;//0.1/fabs(c.k(i));
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DU.append(p[0].toVector2D());
+        pontos2D.append(pontos[i].toVector2D());
+        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[2].toVector2D());
+
+        NO* no;
+
+        double s = bar[0] + bar[1] + bar[2];
+        for(int k = 0; k < 3; ++k)
+        {
+            if(k == 1)
+            {
+                continue ;
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                no = &triquads[idx[i]];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                no = &triquads[idx];
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_matrix_set (A, i*2 + k/2, no->idx[j]*nc + 5,      1.0             *bar[j]); //1
+                gsl_vector_set( B, i*2 + k/2, 1-k);
+            }
+        }
+    }
+
+    QVector<Quadric> qs = fittingGLOBAL_flivre(A,B);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        quadrics[i] = qs[i];
+    }
+    drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
+void TriQuadMesh::fittingG3_flivre(QVector<QVector4D> &pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2D;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = vertices.size();
+    int nc = 6;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    gsl_matrix * A = gsl_matrix_calloc (np*3, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*3);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[3];
+        float k = 0.2;//0.1/fabs(c.k(i));
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        p[1] = pontos[i];
+        pontos2DU.append(p[0].toVector2D());
+        pontos2D.append(pontos[i].toVector2D());
+        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[2].toVector2D());
+
+        NO* no;
+
+        double s = bar[0] + bar[1] + bar[2];
+        for(int k = 0; k < 3; ++k)
+        {
+            if(k == 1)
+            {
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                no = &triquads[idx[i]];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                no = &triquads[idx];
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 5,      1.0             *bar[j]); //1
+                gsl_vector_set( B, i*3 + k, 1-k);
+            }
+        }
+    }
+
+    QVector<Quadric> qs = fittingGLOBAL_flivre(A,B);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        quadrics[i] = qs[i];
+    }
+    drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
 void TriQuadMesh::fittingG2(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
@@ -401,6 +675,7 @@ void TriQuadMesh::fittingG2(QVector<QVector4D> &pontos)
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DL;
     QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
 
 
     int np = configPoints(pontos, b, idx);
@@ -466,6 +741,100 @@ void TriQuadMesh::fittingG2(QVector<QVector4D> &pontos)
                 gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
                 gsl_matrix_set (A, i*3 + k, no->idx[j]*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
                 gsl_vector_set( B, i*3 + k, 2-k);
+            }
+        }
+    }
+
+    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        quadrics[i] = qs[i];
+    }
+    drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
+void TriQuadMesh::fittingG_5Camadas(QVector<QVector4D> &pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2D;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+    int np = configPoints(pontos, b, idx);
+    int nq = vertices.size();
+    int nc = 5;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    gsl_matrix * A = gsl_matrix_calloc (np*5, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*5);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[5];
+        float k = 0.05;//0.1/fabs(c.k(i));
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k*2).toVector4D();
+        pontos2DU.append(p[0].toVector2D());
+        p[1] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DU.append(p[1].toVector2D());
+        p[2] = pontos[i];
+        pontos2D.append(p[2].toVector2D());
+        p[3] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[3].toVector2D());
+        p[4] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k*2).toVector4D();
+        pontos2DL.append(p[4].toVector2D());
+
+        NO* no;
+
+        double s = bar[0] + bar[1] + bar[2];
+        for(int k = 0; k < 5; ++k)
+        {
+            if(k == 2)
+            {
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                no = &triquads[idx[i]];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                no = &triquads[idx];
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+
+                gsl_matrix_set (A, i*5 + k, no->idx[j]*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*5 + k, no->idx[j]*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*5 + k, no->idx[j]*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*5 + k, no->idx[j]*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*5 + k, no->idx[j]*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_vector_set( B, i*5 + k, 3-k);
             }
         }
     }

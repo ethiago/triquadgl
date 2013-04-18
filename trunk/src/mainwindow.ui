@@ -22,6 +22,16 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Metodo:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="cmb_Metodo"/>
+    </item>
+    <item>
      <widget class="QWidget" name="renderWidget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout"/>
      </widget>

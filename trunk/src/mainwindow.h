@@ -17,11 +17,14 @@ signals:
     void saveResultAsImage();
     void viewMesh(bool);
     void openMesh();
+    void metodoMudou(int);
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void setGLDisplay(GLDisplay *);
+    int metodoSelecionado();
+    void addMetodo(const QString&);
 
 private:
     Ui::MainWindow *ui;

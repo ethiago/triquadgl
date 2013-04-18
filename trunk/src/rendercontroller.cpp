@@ -17,6 +17,8 @@ RenderController::RenderController(MainWindow *mainWindow,
     skC = new SketchController();
     this->display = new GLDisplay();
     mainWindow->setGLDisplay(display);
+    metodo = 0;
+    configCombo(mainWindow);
     {  // esta ordem deve ser mantida
         display->updateGL();
 
@@ -49,6 +51,8 @@ RenderController::RenderController(MainWindow *mainWindow,
 
     connect(mainWindow, SIGNAL(openMesh()),
             this, SLOT(openMesh()));
+
+    connect(mainWindow, SIGNAL(metodoMudou(int)), this, SLOT(metodoMudou(int)));
 
     mainWindow->showMaximized();
 
@@ -88,9 +92,9 @@ void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
     for(int i = 0; i < pontosIn.size(); ++i)
         pontosOut.append(triquad->unproject(pontosIn[i]));
 
-    triquad->globalFittingWithNormals(pontosOut);
+    ultimaLista = pontosOut;
     skC->cancel();
-    display->updateGL();
+    exec();
 }
 
 void RenderController::mouseLeftMove(QPoint ini, QPoint curr)
@@ -163,6 +167,46 @@ void RenderController::openMesh()
         return;
 
     QVector<QVector4D> pontos = SketchController::loadSketch(filename);
-    triquad->fittingG2(pontos);
+    ultimaLista = pontos;
+    exec();
+}
+
+void RenderController::configCombo(MainWindow *mw)
+{
+    mw->addMetodo("3 Camadas");
+    mw->addMetodo("2 Camadas");
+    mw->addMetodo("5 Camadas");
+    mw->addMetodo("2 Camadas - f livre");
+    mw->addMetodo("3 Camadas - f livre");
+    metodo = mw->metodoSelecionado();
+}
+
+void RenderController::metodoMudou(int m )
+{
+    metodo = m;
+    qDebug() << metodo;
+    exec();
+}
+
+void RenderController::exec()
+{
+    switch (metodo)
+    {
+    case 0:
+        triquad->fittingG2(ultimaLista);
+        break;
+    case 1:
+        triquad->fittingG_nozero(ultimaLista);
+        break;
+    case 2:
+        triquad->fittingG_5Camadas(ultimaLista);
+        break;
+    case 3:
+        triquad->fittingG2_flivre(ultimaLista);
+        break;
+    case 4:
+        triquad->fittingG3_flivre(ultimaLista);
+        break;
+    }
     display->updateGL();
 }

@@ -23,6 +23,7 @@ class RenderController : public QObject
     GLDisplay *display;
     TriQuadMesh *triquad;
     SketchController *skC;
+    int metodo;
 
 public:
     explicit RenderController(MainWindow *mainWindow,
@@ -33,6 +34,9 @@ public:
 
 private:
     QString saveImage();
+    void configCombo(MainWindow *mw);
+    QVector<QVector4D> ultimaLista;
+    void exec();
 
 public slots:
     void drawModel(void);
@@ -44,6 +48,7 @@ public slots:
     void saveResultAsImage();
     void viewMesh(bool);
     void openMesh();
+    void metodoMudou(int);
 };
 
 #endif // RENDERCONTROLLER_H
