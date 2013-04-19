@@ -21,6 +21,7 @@ public:
     QVector<QPoint> getPointsLinearFilter(void);
 
     static QVector<QVector4D> loadSketch(const QString& fileName);
+    static void saveSketch(const QString& fileName, const QVector<QVector4D>& curve );
 
 private:
     void processaCurva();

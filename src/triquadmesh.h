@@ -33,6 +33,7 @@ class TriQuadMesh : public Object3D
     int locationDEF;
 
     bool showMesh;
+    bool showSketch;
     bool origin;
 
     int vwp[4];
@@ -57,6 +58,7 @@ public:
 
     bool isProgramLinked();
     void viewMesh(bool v);
+    void viewSketch(bool v);
 
     static Quadric makeQuadric(float x2, float y2, float xy, float x, float y, float c);
 
@@ -70,11 +72,11 @@ public:
     void cancel();
     void fitting(const QVector<QPoint> &);
     void fittingG(QVector<QVector4D> &in);
-    void fittingG_nozero(QVector<QVector4D> & in);
-    void fittingG2_flivre(QVector<QVector4D> & in);
-    void fittingG3_flivre(QVector<QVector4D> & in);
-    void fittingG2(QVector<QVector4D> & in);
-    void fittingG_5Camadas(QVector<QVector4D> & in);
+    void globalFitting_2layers(QVector<QVector4D> & in);
+    void globalFitting_2layers_freef(QVector<QVector4D> & in);
+    void globalFittingG_3layers_freef(QVector<QVector4D> & in);
+    void globalFitting_3layers(QVector<QVector4D> & in);
+    void globalFitting_5layers(QVector<QVector4D> & in);
     void fittingGG(QVector<QVector4D> &in);
     void globalFittingWithNormals(QVector<QVector4D> & in);
 

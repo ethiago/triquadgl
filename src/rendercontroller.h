@@ -24,6 +24,7 @@ class RenderController : public QObject
     TriQuadMesh *triquad;
     SketchController *skC;
     int metodo;
+    QVector<QVector4D> ultimaLista;
 
 public:
     explicit RenderController(MainWindow *mainWindow,
@@ -35,7 +36,6 @@ public:
 private:
     QString saveImage();
     void configCombo(MainWindow *mw);
-    QVector<QVector4D> ultimaLista;
     void exec();
 
 public slots:
@@ -47,8 +47,12 @@ public slots:
     void mouseCancel();
     void saveResultAsImage();
     void viewMesh(bool);
-    void openMesh();
+    void viewSketch(bool);
+    void loadMesh();
+    void loadSketch();
     void metodoMudou(int);
+    void saveMesh();
+    void saveSketch();
 };
 
 #endif // RENDERCONTROLLER_H

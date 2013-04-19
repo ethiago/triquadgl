@@ -70,3 +70,21 @@ QVector<QVector4D> SketchController::loadSketch(const QString& fn )
     }
     return ret;
 }
+
+void SketchController::saveSketch(const QString& fileName, const QVector<QVector4D>& curve )
+{
+    QFile f(fileName);
+
+    if(!f.open(QIODevice::WriteOnly))
+        return;
+
+    QTextStream s(&f);
+
+    s << curve.size() << "\n";
+    for(int i = 0; i < curve.size(); ++i)
+    {
+        s << curve[i].x() << " " << curve[i].y() << "\n";
+    }
+
+    f.close();
+}
