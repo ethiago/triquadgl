@@ -16,8 +16,12 @@ class MainWindow : public QMainWindow
 signals:
     void saveResultAsImage();
     void viewMesh(bool);
-    void openMesh();
+    void loadMesh();
     void metodoMudou(int);
+    void loadSketch();
+    void viewSketch(bool);
+    void saveMesh();
+    void saveSketch();
 
 public:
     explicit MainWindow(QWidget *parent = 0);

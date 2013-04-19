@@ -48,13 +48,45 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionSaveImageAs"/>
-   <addaction name="actionView_Mesh"/>
-   <addaction name="actionOpen_Mesh"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>567</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMesh">
+    <property name="title">
+     <string>Mesh</string>
+    </property>
+    <addaction name="actionView_Mesh"/>
+    <addaction name="actionOpen_Mesh"/>
+    <addaction name="actionSave_Mesh"/>
+   </widget>
+   <widget class="QMenu" name="menuSketch">
+    <property name="title">
+     <string>Sketch</string>
+    </property>
+    <addaction name="actionView_Sketch"/>
+    <addaction name="actionLoad_Sketch"/>
+    <addaction name="actionSave_Sketch"/>
+   </widget>
+   <widget class="QMenu" name="menuConfigurations">
+    <property name="title">
+     <string>Configurations</string>
+    </property>
+    <addaction name="actionSaveImageAs"/>
+   </widget>
+   <addaction name="menuMesh"/>
+   <addaction name="menuSketch"/>
+   <addaction name="menuConfigurations"/>
   </widget>
   <action name="actionSaveImageAs">
    <property name="text">
-    <string>Save Image As</string>
+    <string>Save Image as ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -73,7 +105,33 @@
   </action>
   <action name="actionOpen_Mesh">
    <property name="text">
-    <string>Open Mesh</string>
+    <string>Load Mesh ...</string>
+   </property>
+  </action>
+  <action name="actionLoad_Sketch">
+   <property name="text">
+    <string>Load Sketch ...</string>
+   </property>
+  </action>
+  <action name="actionSave_Mesh">
+   <property name="text">
+    <string>Save Mesh ...</string>
+   </property>
+  </action>
+  <action name="actionSave_Sketch">
+   <property name="text">
+    <string>Save Sketch ...</string>
+   </property>
+  </action>
+  <action name="actionView_Sketch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>View Sketch</string>
    </property>
   </action>
  </widget>

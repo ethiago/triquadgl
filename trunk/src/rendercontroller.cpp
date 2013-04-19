@@ -49,8 +49,20 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewMesh(bool)),
             this, SLOT(viewMesh(bool)));
 
-    connect(mainWindow, SIGNAL(openMesh()),
-            this, SLOT(openMesh()));
+    connect(mainWindow, SIGNAL(loadMesh()),
+            this, SLOT(loadMesh()));
+
+    connect(mainWindow, SIGNAL(loadSketch()),
+            this, SLOT(loadSketch()));
+
+    connect(mainWindow, SIGNAL(viewSketch(bool)),
+            this, SLOT(viewSketch(bool)) );
+
+    connect(mainWindow, SIGNAL(saveSketch()),
+            this, SLOT(saveSketch()) );
+
+    connect(mainWindow, SIGNAL(saveMesh()),
+            this, SLOT(saveMesh()) );
 
     connect(mainWindow, SIGNAL(metodoMudou(int)), this, SLOT(metodoMudou(int)));
 
@@ -159,15 +171,31 @@ void RenderController::viewMesh(bool v)
     display->updateGL();
 }
 
-void RenderController::openMesh()
+void RenderController::viewSketch(bool v)
+{
+    triquad->viewSketch(v);
+    display->updateGL();
+}
+
+void RenderController::loadMesh()
 {
     QString filename = QFileDialog::getOpenFileName();
 
     if(filename.isEmpty())
         return;
 
-    QVector<QVector4D> pontos = SketchController::loadSketch(filename);
-    ultimaLista = pontos;
+
+    exec();
+}
+
+void RenderController::loadSketch()
+{
+    QString filename = QFileDialog::getOpenFileName();
+
+    if(filename.isEmpty())
+        return;
+
+    ultimaLista = SketchController::loadSketch(filename);
     exec();
 }
 
@@ -193,20 +221,35 @@ void RenderController::exec()
     switch (metodo)
     {
     case 0:
-        triquad->fittingG2(ultimaLista);
+        triquad->globalFitting_3layers(ultimaLista);
         break;
     case 1:
-        triquad->fittingG_nozero(ultimaLista);
+        triquad->globalFitting_2layers(ultimaLista);
         break;
     case 2:
-        triquad->fittingG_5Camadas(ultimaLista);
+        triquad->globalFitting_5layers(ultimaLista);
         break;
     case 3:
-        triquad->fittingG2_flivre(ultimaLista);
+        triquad->globalFitting_2layers_freef(ultimaLista);
         break;
     case 4:
-        triquad->fittingG3_flivre(ultimaLista);
+        triquad->globalFittingG_3layers_freef(ultimaLista);
         break;
     }
     display->updateGL();
+}
+
+void RenderController::saveMesh()
+{
+    qDebug() << "SAVE MESH!";
+}
+
+void RenderController::saveSketch()
+{
+    QString filename = QFileDialog::getSaveFileName();
+
+    if(filename.isEmpty())
+        return;
+
+    SketchController::saveSketch(filename, ultimaLista);
 }

@@ -85,9 +85,12 @@ void TriQuadMesh::drawPoints2(const QVector<QVector2D>& ps)
 
 void TriQuadMesh::drawGeometry(void)
 {
-    drawPoints();
-    drawPoints1();
-    drawPoints2();
+    if(showSketch)
+    {
+        drawPoints();
+        drawPoints1();
+        drawPoints2();
+    }
 
     if(showMesh)
     {
@@ -138,6 +141,7 @@ Quadric TriQuadMesh::makeQuadric(float x2, float y2, float xy, float x, float y,
 void TriQuadMesh::buildObject()
 {
     showMesh = true;
+    showSketch = true;
 
     vertices.append(QVector2D( -1.0, -1.0));
     vertices.append(QVector2D(  1.0, -1.0));
@@ -193,6 +197,11 @@ bool TriQuadMesh::isProgramLinked()
 void TriQuadMesh::viewMesh(bool v)
 {
     showMesh = v;
+}
+
+void TriQuadMesh::viewSketch(bool v)
+{
+    showSketch = v;
 }
 
 void TriQuadMesh::drawOrigin()
@@ -398,7 +407,7 @@ QVector3D TriQuadMesh::bary(const QVector4D& p, int *idx)
     return QVector3D();
 }
 
-void TriQuadMesh::fittingG_nozero(QVector<QVector4D> &pontos)
+void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -486,7 +495,7 @@ void TriQuadMesh::fittingG_nozero(QVector<QVector4D> &pontos)
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::fittingG2_flivre(QVector<QVector4D> &pontos)
+void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -577,7 +586,7 @@ void TriQuadMesh::fittingG2_flivre(QVector<QVector4D> &pontos)
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::fittingG3_flivre(QVector<QVector4D> &pontos)
+void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -668,7 +677,7 @@ void TriQuadMesh::fittingG3_flivre(QVector<QVector4D> &pontos)
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::fittingG2(QVector<QVector4D> &pontos)
+void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -759,7 +768,7 @@ void TriQuadMesh::fittingG2(QVector<QVector4D> &pontos)
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::fittingG_5Camadas(QVector<QVector4D> &pontos)
+void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> &pontos)
 {
     QVector<QVector3D> b;
     QVector<int> idx;

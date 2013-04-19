@@ -10,8 +10,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->actionSaveImageAs, SIGNAL(triggered()), this, SIGNAL(saveResultAsImage()));
     connect(ui->actionView_Mesh, SIGNAL(toggled(bool)), this, SIGNAL(viewMesh(bool)));
-    connect(ui->actionOpen_Mesh, SIGNAL(triggered()), this, SIGNAL(openMesh()));
+    connect(ui->actionOpen_Mesh, SIGNAL(triggered()), this, SIGNAL(loadMesh()));
     connect(ui->cmb_Metodo, SIGNAL(currentIndexChanged(int)), SIGNAL(metodoMudou(int)));
+    connect(ui->actionLoad_Sketch, SIGNAL(triggered()), this, SIGNAL(loadSketch()) );
+    connect(ui->actionView_Sketch, SIGNAL(toggled(bool)), this, SIGNAL(viewSketch(bool)));
+    connect(ui->actionSave_Mesh, SIGNAL(triggered()), this, SIGNAL(saveMesh()));
+    connect(ui->actionSave_Sketch, SIGNAL(triggered()), this, SIGNAL(saveSketch()));
 }
 
 MainWindow::~MainWindow()
