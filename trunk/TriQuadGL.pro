@@ -22,7 +22,8 @@ SOURCES += src/main.cpp\
     src/sketchcontroller.cpp \
     src/triquadmesh.cpp \
     src/fitting.cpp \
-    src/Curve.cpp
+    src/Curve.cpp \
+    src/quadric2d.cpp
 
 
 HEADERS  += src/mainwindow.h\
@@ -33,7 +34,8 @@ HEADERS  += src/mainwindow.h\
     src/triquadmesh.h \
     src/fitting.h \
     src/Curve.h \
-    src/Curvature.h
+    src/Curvature.h \
+    src/quadric2d.h
 
 FORMS    += src/mainwindow.ui
 
