@@ -11,7 +11,7 @@ win32 {
 }
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
+    LIBS += -L/opt/local/lib/ -lgslcblas -lgsl -lGLU
 }
 
 SOURCES += src/main.cpp\

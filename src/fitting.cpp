@@ -12,7 +12,7 @@ real *points[2]; // coordinate x point
 real b[3];
 int n;
 
-QVector<Quadric> processa(const QMatrix4x4& vInverse)
+QVector<Quadric2D> processa(const QMatrix4x4& vInverse)
 {
     gsl_matrix * A = gsl_matrix_calloc (n, 3*5);
     real bary[3];
@@ -51,18 +51,16 @@ QVector<Quadric> processa(const QMatrix4x4& vInverse)
     qDebug() << chisq;
     qDebug() << rank ;
 
-    QVector<Quadric> resp;
-    Quadric q;
+    QVector<Quadric2D> resp;
     for(int i = 0; i < 3; ++i)
     {
         float x1 = gsl_vector_get(x, i*5);
         float x2 = gsl_vector_get(x, i*5 + 1);
         float x3 = gsl_vector_get(x, i*5 + 2);
-        q.a_b_c = QVector3D(x1,x2,x3);
-        x1 = gsl_vector_get(x, i*5 + 3);
-        x2 = gsl_vector_get(x, i*5 + 4);
-        q.d_e_f = QVector3D(x1, x2, -1.0);
-        resp.push_back(q);
+        float x4 = gsl_vector_get(x, i*5 + 3);
+        float x5 = gsl_vector_get(x, i*5 + 4);
+
+        resp.push_back(Quadric2D(x1,x2,x3,x4,x5,-1.0));
     }
 
     gsl_matrix_free (A);
@@ -73,7 +71,7 @@ QVector<Quadric> processa(const QMatrix4x4& vInverse)
     return resp;
 }
 
-QVector<Quadric> processaQUAD()
+QVector<Quadric2D> processaQUAD()
 {
     gsl_matrix * A = gsl_matrix_alloc (n, 5);
 
@@ -98,19 +96,17 @@ QVector<Quadric> processaQUAD()
 
     qDebug() << chisq;
 
-    QVector<Quadric> resp;
-    Quadric q;
+    QVector<Quadric2D> resp;
 
     float x1 = gsl_vector_get(x, 0);
     float x2 = gsl_vector_get(x, 1);
     float x3 = gsl_vector_get(x, 2);
-    q.a_b_c = QVector3D(x1,x2,x3);
-    x1 = gsl_vector_get(x, 3);
-    x2 = gsl_vector_get(x, 4);
-    q.d_e_f = QVector3D(x1, x2, -1.0);
-    resp.push_back(q);
-    resp.push_back(q);
-    resp.push_back(q);
+    float x4 = gsl_vector_get(x, 3);
+    float x5 = gsl_vector_get(x, 4);
+
+    resp.push_back(Quadric2D(x1,x2,x3,x4,x5,-1.0));
+    resp.push_back(Quadric2D(x1,x2,x3,x4,x5,-1.0));
+    resp.push_back(Quadric2D(x1,x2,x3,x4,x5,-1.0));
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -120,7 +116,7 @@ QVector<Quadric> processaQUAD()
     return resp;
 }
 
-QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
+QVector<Quadric2D> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
 {
 
     gsl_matrix *cov = gsl_matrix_alloc (A->size2, A->size2);
@@ -137,18 +133,17 @@ QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     qDebug() << chisq;
     qDebug() << rank ;
 
-    QVector<Quadric> resp;
-    Quadric q;
+    QVector<Quadric2D> resp;
+
     for(int i = 0; i < A->size2/5; ++i)
     {
         float x1 = gsl_vector_get(x, i*5);
         float x2 = gsl_vector_get(x, i*5 + 1);
         float x3 = gsl_vector_get(x, i*5 + 2);
-        q.a_b_c = QVector3D(x1,x2,x3);
-        x1 = gsl_vector_get(x, i*5 + 3);
-        x2 = gsl_vector_get(x, i*5 + 4);
-        q.d_e_f = QVector3D(x1, x2, f);
-        resp.push_back(q);
+        float x4 = gsl_vector_get(x, i*5 + 3);
+        float x5 = gsl_vector_get(x, i*5 + 4);
+
+        resp.push_back(Quadric2D(x1,x2,x3,x4,x5,f));
     }
 
     gsl_vector_free (x);
@@ -157,7 +152,7 @@ QVector<Quadric> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     return resp;
 }
 
-QVector<Quadric> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
+QVector<Quadric2D> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
 {
 
     gsl_matrix *cov = gsl_matrix_alloc (A->size2, A->size2);
@@ -174,19 +169,17 @@ QVector<Quadric> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
     qDebug() << chisq;
     qDebug() << rank ;
 
-    QVector<Quadric> resp;
-    Quadric q;
+    QVector<Quadric2D> resp;
     for(int i = 0; i < A->size2/6; ++i)
     {
         float x1 = gsl_vector_get(x, i*6);
         float x2 = gsl_vector_get(x, i*6 + 1);
         float x3 = gsl_vector_get(x, i*6 + 2);
-        q.a_b_c = QVector3D(x1,x2,x3);
-        x1 = gsl_vector_get(x, i*6 + 3);
-        x2 = gsl_vector_get(x, i*6 + 4);
-        x3 = gsl_vector_get(x, i*6 + 5);
-        q.d_e_f = QVector3D(x1, x2, x3);
-        resp.push_back(q);
+        float x4 = gsl_vector_get(x, i*6 + 3);
+        float x5 = gsl_vector_get(x, i*6 + 4);
+        float x6 = gsl_vector_get(x, i*6 + 5);
+
+        resp.push_back(Quadric2D(x1,x2,x3,x4,x5,x6));
     }
 
     gsl_vector_free (x);
@@ -195,11 +188,11 @@ QVector<Quadric> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
     return resp;
 }
 
-QVector<Quadric> fittingGSL(const QMatrix4x4& inv, const QVector<QVector2D>& inpoints)
+QVector<Quadric2D> fittingGSL(const QMatrix4x4& inv, const QVector<QVector2D>& inpoints)
 {
     if(inpoints.size() < MINIMUM)
     {
-        QVector<Quadric> qs ;
+        QVector<Quadric2D> qs ;
         qs.push_back( CIRCLE ) ;
         qs.push_back( CIRCLE ) ;
         qs.push_back( CIRCLE ) ;
