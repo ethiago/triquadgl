@@ -4,17 +4,14 @@
 #include "QGLShaderProgram"
 #include "Object3D.h"
 #include "QVector"
+#include "quadric2d.h"
 
-#define CIRCLE   TriQuadMesh::makeQuadric(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
-#define CIRCLE2  TriQuadMesh::makeQuadric(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
-#define PARABOLA TriQuadMesh::makeQuadric(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-#define ZERO     TriQuadMesh::makeQuadric(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+#define CIRCLE   Quadric2D(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
+#define CIRCLE2  Quadric2D(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
+#define PARABOLA Quadric2D(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+#define ZERO     Quadric2D(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
 
-typedef struct
-{
-    QVector3D a_b_c;
-    QVector3D d_e_f;
-}Quadric;
+
 
 typedef struct
 {
@@ -25,7 +22,7 @@ class TriQuadMesh : public Object3D
 {
     //QVector<QVector4D> inPoints;
     QVector<QVector2D> vertices;
-    QVector<Quadric> quadrics;
+    QVector<Quadric2D> quadrics;
     QVector<NO> triquads;
 
     QGLShaderProgram program;
@@ -54,13 +51,11 @@ public:
 
     virtual Object3D* copy() const;
 
-    void setQuadric(int idx, const Quadric& c);
+    void setQuadric(int idx, const Quadric2D& c);
 
     bool isProgramLinked();
     void viewMesh(bool v);
     void viewSketch(bool v);
-
-    static Quadric makeQuadric(float x2, float y2, float xy, float x, float y, float c);
 
     void changeOrigin(bool v);
 
@@ -98,7 +93,7 @@ private:
     QVector3D bary(const QVector4D& p, int *idx);
 };
 
-QDebug operator<< (QDebug d, const Quadric &model);
+QDebug operator<< (QDebug d, const Quadric2D &model);
 
 
 #endif // TRIQUADMESH_H

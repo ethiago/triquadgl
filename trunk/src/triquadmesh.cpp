@@ -117,8 +117,8 @@ void TriQuadMesh::drawGeometry(void)
             for(int j = 0; j < 3; ++j)
             {
                 int k = triquads[i].idx[j];
-                program.setAttributeValue(locationABC, quadrics[k].a_b_c);
-                program.setAttributeValue(locationDEF, quadrics[k].d_e_f);
+                program.setAttributeValue(locationABC, quadrics[k].abc());
+                program.setAttributeValue(locationDEF, quadrics[k].def());
                 glVertex2fv(reinterpret_cast<const GLfloat *>(&(vertices[k])));
 
             }
@@ -128,14 +128,6 @@ void TriQuadMesh::drawGeometry(void)
 
     program.release();
 
-}
-
-Quadric TriQuadMesh::makeQuadric(float x2, float y2, float xy, float x, float y, float c)
-{
-    Quadric q;
-    q.a_b_c = QVector3D(x2,xy/2.0,x/2.0);
-    q.d_e_f = QVector3D(y2, y/2.0,c);
-    return q;
 }
 
 void TriQuadMesh::buildObject()
@@ -184,7 +176,7 @@ void TriQuadMesh::buildObject()
     locationDEF = program.attributeLocation("def");
 }
 
-void TriQuadMesh::setQuadric(int idx,  const Quadric& q)
+void TriQuadMesh::setQuadric(int idx,  const Quadric2D &q)
 {
     quadrics[idx] = q;
 }
@@ -367,7 +359,6 @@ void TriQuadMesh::fittingG(QVector<QVector4D> & pontos)
         bary[0] = b[i].x();
         bary[1] = b[i].y();
         bary[2] = b[i].z();
-        double s = bary[0] + bary[1] + bary[2];
         for (int j = 0; j < 3; ++j)
         {
             gsl_matrix_set (A, i, no->idx[j]*nc    ,     p.x()*p.x()*bary[j]); //x^2
@@ -380,7 +371,7 @@ void TriQuadMesh::fittingG(QVector<QVector4D> & pontos)
         pontos2D.push_back(p.toVector2D());
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -481,7 +472,7 @@ void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> &pontos)
         }
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -572,7 +563,7 @@ void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> &pontos)
         }
     }
 
-    QVector<Quadric> qs = fittingGLOBAL_flivre(A,B);
+    QVector<Quadric2D> qs = fittingGLOBAL_flivre(A,B);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -663,7 +654,7 @@ void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> &pontos)
         }
     }
 
-    QVector<Quadric> qs = fittingGLOBAL_flivre(A,B);
+    QVector<Quadric2D> qs = fittingGLOBAL_flivre(A,B);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -754,7 +745,7 @@ void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> &pontos)
         }
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -848,7 +839,7 @@ void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> &pontos)
         }
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -905,7 +896,7 @@ void TriQuadMesh::fittingGG(QVector<QVector4D> & pontos)
         pontos2D.push_back(p.toVector2D());
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -981,7 +972,7 @@ void TriQuadMesh::globalFittingWithNormals(QVector<QVector4D> & pontos)
         pontos2D.push_back(p.toVector2D());
     }
 
-    QVector<Quadric> qs = fittingGLOBAL(A,B, -1.0);
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
 
     gsl_matrix_free (A);
     gsl_vector_free (B);
@@ -1007,11 +998,11 @@ QMatrix4x4 TriQuadMesh::buildInv(NO& no)
     return m.inverted();
 }
 
-QDebug operator<< (QDebug d, const Quadric &model)
+QDebug operator<< (QDebug d, const Quadric2D &model)
 {
     d.nospace() << "Quadric[ ";
-    d.nospace() << "A="<< model.a_b_c.x() << ", B=" << model.a_b_c.y() << ", C=" << model.a_b_c.z();
-    d.nospace() << ", D="<< model.d_e_f.x() << ", E=" << model.d_e_f.y() << ", F=" << model.d_e_f.z() << " ]";
+    d.nospace() << "A="<< model.a() << ", B=" << model.b() << ", C=" << model.c();
+    d.nospace() << ", D="<< model.d() << ", E=" << model.e() << ", F=" << model.f() << " ]";
     d.space() <<"";
     return d;
 }
