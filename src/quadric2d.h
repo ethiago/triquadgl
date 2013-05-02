@@ -10,7 +10,9 @@ class Quadric2D
 
 public:
     Quadric2D();
-    Quadric2D(float x2, float xy, float x, float y2, float y, float k);
+    Quadric2D(float , float , float, float , float,  float);
+    Quadric2D(const Quadric2D&);
+
 
     QMatrix3x3 toMatrixForm()const;
 
@@ -19,11 +21,20 @@ public:
     float c()const;
     float d()const;
     float e()const;
-    float f() const;
+    float f()const;
+
+    float& a();
+    float& b();
+    float& c();
+    float& d();
+    float& e();
+    float& f();
 
     QVector3D abc()const;
     QVector3D def() const;
 
+
+    const Quadric2D& operator=(const Quadric2D& q);
 
 };
 

@@ -6,12 +6,7 @@
 #include "QVector"
 #include "quadric2d.h"
 
-#define CIRCLE   Quadric2D(1.0, 1.0, 0.0, 0.0, 0.0,-0.3)
-#define CIRCLE2  Quadric2D(1.0, 1.0, 0.0,-2.0,-4.0, 4.0)
-#define PARABOLA Quadric2D(2.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 #define ZERO     Quadric2D(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
-
-
 
 typedef struct
 {
