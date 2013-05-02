@@ -23,7 +23,10 @@ SOURCES += src/main.cpp\
     src/triquadmesh.cpp \
     src/fitting.cpp \
     src/Curve.cpp \
-    src/quadric2d.cpp
+    src/quadric2d.cpp \
+    src/vertex.cpp \
+    src/halfedge.cpp \
+    src/compacthalfedge.cpp
 
 
 HEADERS  += src/mainwindow.h\
@@ -35,7 +38,10 @@ HEADERS  += src/mainwindow.h\
     src/fitting.h \
     src/Curve.h \
     src/Curvature.h \
-    src/quadric2d.h
+    src/quadric2d.h \
+    src/vertex.h \
+    src/halfedge.h \
+    src/compacthalfedge.h
 
 FORMS    += src/mainwindow.ui
 
