@@ -138,10 +138,10 @@ QVector<Quadric2D> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     for(int i = 0; i < A->size2/5; ++i)
     {
         float x1 = gsl_vector_get(x, i*5);
-        float x2 = gsl_vector_get(x, i*5 + 1);
-        float x3 = gsl_vector_get(x, i*5 + 2);
+        float x2 = gsl_vector_get(x, i*5 + 1); // b/2
+        float x3 = gsl_vector_get(x, i*5 + 2); // c/2
         float x4 = gsl_vector_get(x, i*5 + 3);
-        float x5 = gsl_vector_get(x, i*5 + 4);
+        float x5 = gsl_vector_get(x, i*5 + 4); // e/2
 
         resp.push_back(Quadric2D(x1,x2,x3,x4,x5,f));
     }
@@ -173,10 +173,10 @@ QVector<Quadric2D> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
     for(int i = 0; i < A->size2/6; ++i)
     {
         float x1 = gsl_vector_get(x, i*6);
-        float x2 = gsl_vector_get(x, i*6 + 1);
-        float x3 = gsl_vector_get(x, i*6 + 2);
+        float x2 = gsl_vector_get(x, i*6 + 1);// b/2
+        float x3 = gsl_vector_get(x, i*6 + 2);// c/2
         float x4 = gsl_vector_get(x, i*6 + 3);
-        float x5 = gsl_vector_get(x, i*6 + 4);
+        float x5 = gsl_vector_get(x, i*6 + 4);// e/2
         float x6 = gsl_vector_get(x, i*6 + 5);
 
         resp.push_back(Quadric2D(x1,x2,x3,x4,x5,x6));
@@ -193,9 +193,9 @@ QVector<Quadric2D> fittingGSL(const QMatrix4x4& inv, const QVector<QVector2D>& i
     if(inpoints.size() < MINIMUM)
     {
         QVector<Quadric2D> qs ;
-        qs.push_back( CIRCLE ) ;
-        qs.push_back( CIRCLE ) ;
-        qs.push_back( CIRCLE ) ;
+        qs.push_back( ZERO ) ;
+        qs.push_back( ZERO ) ;
+        qs.push_back( ZERO ) ;
         return qs;
     }
 
