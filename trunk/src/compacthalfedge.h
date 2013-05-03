@@ -33,11 +33,15 @@ public:
     Vertex& vertex(int i);
 
     void addVertex(const Vertex& v);
+    void joinVerticesAt(const Vertex& v);
+
+    int nextExternHalfEdgeOf    (int vertexIdx);
+
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
 
-//    int nextExternHalfEdgeOf    (int vertexIdx);
+
 //    int previousExternHalfEdgeOf(int vertexIdx);
 
 };

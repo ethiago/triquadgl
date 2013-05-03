@@ -110,6 +110,7 @@ void TriQuadMesh::drawGeometry(void)
     }
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     program.bind();
+    program.setUniformValue(locationScalar,showScalarField);
     glBegin(GL_TRIANGLES);
     {
         for(int i = 0; i < triquads.sizeOfTriangles(); ++i)
@@ -119,6 +120,7 @@ void TriQuadMesh::drawGeometry(void)
                 int k = triquads.vertexId(i,j);
                 program.setAttributeValue(locationABC, triquads.vertex(k).quadric().abc());
                 program.setAttributeValue(locationDEF, triquads.vertex(k).quadric().def());
+
                 glVertex2f(triquads.vertex(k).x(),triquads.vertex(k).y());
 
             }
@@ -134,6 +136,7 @@ void TriQuadMesh::buildObject()
 {
     showMesh = true;
     showSketch = true;
+    showScalarField = true;
 
     QVector<Vertex> hev;
     hev.append(Vertex( -1.0, -1.0));
@@ -165,6 +168,7 @@ void TriQuadMesh::buildObject()
 
     locationABC = program.attributeLocation("abc");
     locationDEF = program.attributeLocation("def");
+    locationScalar = program.uniformLocation("showScalar");
 }
 
 bool TriQuadMesh::isProgramLinked()
@@ -974,10 +978,8 @@ void TriQuadMesh::addVertex(const QVector4D& newVertex)
 void TriQuadMesh::joinVerticesAt(const QVector4D& controlPoint)
 {
     Vertex p = controlPoint.toVector2D();
-    int vId = triquads.mostClosedVertex(p);
 
-    int hId = triquads.vertex(vId).halfedgeIndex();
-    qDebug() << "Chegou!";
+    triquads.joinVerticesAt(p);
 }
 
 QDebug operator<< (QDebug d, const Quadric2D &model)
@@ -987,4 +989,9 @@ QDebug operator<< (QDebug d, const Quadric2D &model)
     d.nospace() << ", D="<< model.d() << ", E=" << model.e() << ", F=" << model.f() << " ]";
     d.space() <<"";
     return d;
+}
+
+void TriQuadMesh::viewScalarField(bool v)
+{
+    showScalarField = v;
 }

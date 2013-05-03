@@ -133,17 +133,12 @@ void CompactHalfEdge::addVertex(const Vertex& p)
     for(int i = 0; i < mesh.size(); ++i)
     {
         Vertex v;
-        bool ex1 = !mesh[i].hasTwin();
-        if(ex1)
+        if(!mesh[i].hasTwin() && Vertex::projectVertexIntoSegment(p, vertices[mesh[i].vertexIndex()],
+                                                                  vertices[mesh[halfEdgeNext(i)].vertexIndex()], &v))
         {
-            bool ex2 = Vertex::projectVertexIntoSegment(p, vertices[mesh[i].vertexIndex()],
-                                                        vertices[mesh[halfEdgeNext(i)].vertexIndex()], &v);
-            if(ex2)
-            {
-                heIdx = i;
-                dist = p.distanceTo(v);
-                break;
-            }
+            heIdx = i;
+            dist = p.distanceTo(v);
+            break;
         }
     }
 
@@ -171,6 +166,35 @@ void CompactHalfEdge::addVertex(const Vertex& p)
 
 }
 
+void CompactHalfEdge::joinVerticesAt(const Vertex& p)
+{
+    int vId = mostClosedVertex(p);
+    int hId = nextExternHalfEdgeOf(vId);
+    if (hId < 0)
+        return;
+
+    int hId1 = halfEdgeExternNext(halfEdgeExternNext(hId));
+    int vId1 = mesh[hId1].vertexIndex();
+    int hId2 = halfEdgeExternPrevious(halfEdgeExternPrevious(hId));
+    int vId2 = mesh[hId2].vertexIndex();
+
+    int vIdOther = vId2;
+    float dist = p.distanceTo(vertices[vIdOther]);
+
+    if(p.distanceTo(vertices[vId1]) < dist)
+    {
+        // change de values to mantain vId internaly before vIdOther
+        vIdOther = vId;
+        vId = vId1;
+        hId = hId1;
+    }
+
+    int vIdMidle = mesh[halfEdgeExternPrevious(hId)].vertexIndex();
+
+    addTriangle(vIdOther, vIdMidle, vId);
+
+}
+
 int CompactHalfEdge::mostClosedVertex(const Vertex& v)
 {
     int vId = 0;
@@ -186,19 +210,19 @@ int CompactHalfEdge::mostClosedVertex(const Vertex& v)
     return vId;
 }
 
-//int CompactHalfEdge::nextExternHalfEdgeOf(int vertexIdx)
-//{
-//    int he = vertices[vertexIdx].halfedgeIndex();
-//    int aux = he;
-//    while(mesh[aux].hasTwin() && halfEdgeStarNext(aux) != he)
-//    {
-//        aux = halfEdgeStarNext(aux);
-//    }
+int CompactHalfEdge::nextExternHalfEdgeOf(int vertexIdx)
+{
+    int he = vertices[vertexIdx].halfedgeIndex();
+    int aux = he;
+    while(mesh[aux].hasTwin() && halfEdgeStarNext(aux) != he)
+    {
+        aux = halfEdgeStarNext(aux);
+    }
 
-//    if(mesh[aux].hasTwin())
-//        return -1;
-//    return aux;
-//}
+    if(mesh[aux].hasTwin())
+        return -1;
+    return aux;
+}
 
 //int CompactHalfEdge::previousExternHalfEdgeOf(int vertexIdx)
 //{
