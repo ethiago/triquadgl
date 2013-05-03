@@ -16,7 +16,7 @@ class TriQuadMesh : public Object3D
 {
     //QVector<QVector4D> inPoints;
     //QVector<QVector2D> vertices;
-    QVector<Quadric2D> quadrics;
+    //QVector<Quadric2D> quadrics;
     CompactHalfEdge triquads;
 
     QGLShaderProgram program;
@@ -44,8 +44,6 @@ public:
     ~TriQuadMesh();
 
     virtual Object3D* copy() const;
-
-    void setQuadric(int idx, const Quadric2D& c);
 
     bool isProgramLinked();
     void viewMesh(bool v);
