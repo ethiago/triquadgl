@@ -16,15 +16,15 @@ bool CompactHalfEdge::addTriangle(int idxV1, int idxV2, int idxV3)
             idxV3 < 0 || idxV3 > vertices.size())
         return false;
 
-    int e0 = mesh.size();
+    int e = mesh.size();
 
     mesh.append(HalfEdge(idxV1)); //from idxV1 to idxV2
     mesh.append(HalfEdge(idxV2)); //from idxV2 to idxV3
     mesh.append(HalfEdge(idxV3)); //from idxV3 to idxV1
 
-    configTwin(e0+0, idxV2);
-    configTwin(e0+1, idxV3);
-    configTwin(e0+2, idxV1);
+    configTwin(e+0, idxV2);
+    configTwin(e+1, idxV3);
+    configTwin(e+2, idxV1);
 
     return true;
 
@@ -50,7 +50,17 @@ void CompactHalfEdge::configTwin(int halfEdgeIdx, int destinyVertexIdx)
 
             mesh[   i       ].twinIndex() = halfEdgeIdx;
             mesh[halfEdgeIdx].twinIndex() = i;
+            return;
 
         }
     }
+}
+
+int CompactHalfEdge::vertexId(int triangleId, int halfEdgeOffset)
+{
+    return mesh[triangleId*3+halfEdgeOffset].vertexIndex();
+}
+int CompactHalfEdge::sizeOfTriangles()
+{
+    return mesh.size()/3;
 }
