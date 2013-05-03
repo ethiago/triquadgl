@@ -26,6 +26,8 @@ public:
     const Vertex& operator=(const Vertex&);
     QVector2D toVector2D();
 
+    static bool projectVertexIntoSegment(const Vertex& _p, const Vertex& segmentV0, const Vertex& segmentV1, Vertex *ret);
+
 };
 
 #endif // VERTEX_H

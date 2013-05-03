@@ -44,6 +44,31 @@ int CompactHalfEdge::halfEdgePrevious(int heIdx)
     return 3*(heIdx/3) + (heIdx + 2)%3;
 }
 
+int CompactHalfEdge::halfEdgeExternNext(int heIdx)
+{
+    if(mesh[heIdx].hasTwin())
+        return -1;
+
+    heIdx = halfEdgePrevious(heIdx);
+    while(mesh[heIdx].hasTwin())
+        heIdx = halfEdgePrevious(mesh[heIdx].twinIndex());
+
+    return heIdx;
+}
+
+int CompactHalfEdge::halfEdgeExternPrevious(int heIdx)
+{
+    if(mesh[heIdx].hasTwin())
+        return -1;
+
+    heIdx = halfEdgeNext(heIdx);
+    while(mesh[heIdx].hasTwin())
+        heIdx = halfEdgeNext(mesh[heIdx].twinIndex());
+
+    return heIdx;
+
+}
+
 int CompactHalfEdge::halfEdgeStarNext(int heIdx)
 {
     return halfEdgeNext(mesh[heIdx].twinIndex());
@@ -79,29 +104,48 @@ int CompactHalfEdge::sizeOfTriangles()
     return mesh.size()/3;
 }
 
-void CompactHalfEdge::addVertex(const Vertex& v)
+void CompactHalfEdge::addVertex(const Vertex& p)
 {
-    float mDist = v.distanceTo(vertices[0]);
-    int mDistIdx = 0;
-    for(int i = 1; i < vertices.size(); ++i)
+    int heIdx = -1;
+    float dist = 0.0;
+    for(int i = 0; i < mesh.size(); ++i)
     {
-        if( v.distanceTo(vertices[i]) < mDist)
+        Vertex v;
+        bool ex1 = !mesh[i].hasTwin();
+        if(ex1)
         {
-            mDist = v.distanceTo(vertices[i]);
-            mDistIdx = i;
+            bool ex2 = Vertex::projectVertexIntoSegment(p, vertices[mesh[i].vertexIndex()],
+                                                        vertices[mesh[halfEdgeNext(i)].vertexIndex()], &v);
+            if(ex2)
+            {
+                heIdx = i;
+                dist = p.distanceTo(v);
+                break;
+            }
         }
     }
 
-    int nehe = nextExternHalfEdgeOf(mDistIdx);
-    int pehe = previousExternHalfEdgeOf(mDistIdx);
+    if(heIdx == -1)
+        return;
 
+    for(int i = heIdx+1; i < mesh.size(); ++i)
+    {
+        Vertex v;
+        if(!mesh[i].hasTwin() && Vertex::projectVertexIntoSegment(p, vertices[mesh[i].vertexIndex()],
+                                                                  vertices[mesh[halfEdgeNext(i)].vertexIndex()], &v))
+        {
+            if(dist > p.distanceTo(v))
+            {
+                heIdx = i;
+                dist = p.distanceTo(v);
+            }
+        }
+    }
 
-    int newVertexId = vertices.size();
-    vertices.append(v);
-    if(v.distanceTo(mesh[halfEdgeNext(nehe)].vertexIndex()) < v.distanceTo(mesh[pehe].vertexIndex()) )
-        addTriangle(mesh[halfEdgeNext(nehe)].vertexIndex(), mesh[nehe].vertexIndex(), newVertexId);
-    else
-        addTriangle(mesh[halfEdgeNext(pehe)].vertexIndex(), mesh[pehe].vertexIndex(), newVertexId);
+    int vId = vertices.size();
+    vertices.append(p);
+
+    addTriangle(mesh[halfEdgeNext(heIdx)].vertexIndex(), mesh[heIdx].vertexIndex(), vId);
 
 }
 
