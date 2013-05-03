@@ -1,12 +1,12 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-
+#include <QVector2D>
 class Vertex
 {
     float m_x,m_y;
 
-    int m_halfedgeIndex;
+    //int m_halfedgeIndex;
 
 public:
 
@@ -15,13 +15,14 @@ public:
 
     float x()const;
     float y()const;
-    int  halfedgeIndex()const;
+    //int  halfedgeIndex()const;
 
     float& x();
     float& y();
-    int& halfedgeIndex();
+    //int& halfedgeIndex();
 
     const Vertex& operator=(const Vertex&);
+    QVector2D toVector2D();
 
 };
 

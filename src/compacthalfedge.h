@@ -18,6 +18,8 @@ public:
 
     int halfEdgeNext(int heIdx);
     int halfEdgePrevious(int heIdx);
+    int vertexId(int triangleId, int halfEdgeOffset);
+    int sizeOfTriangles();
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);

@@ -5,6 +5,8 @@
 #include "Object3D.h"
 #include "QVector"
 #include "quadric2d.h"
+#include "compacthalfedge.h"
+
 
 #define ZERO     Quadric2D(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
 
@@ -18,7 +20,7 @@ class TriQuadMesh : public Object3D
     //QVector<QVector4D> inPoints;
     QVector<QVector2D> vertices;
     QVector<Quadric2D> quadrics;
-    QVector<NO> triquads;
+    CompactHalfEdge triquads;
 
     QGLShaderProgram program;
     int locationABC;
@@ -82,7 +84,7 @@ private:
     virtual void afterTransformations(void);
     QMatrix4x4 glGetMatrix(GLenum fetchType);
     void buildObject();
-    QMatrix4x4 buildInv(NO&);
+    QMatrix4x4 buildInv(int triangleId);
     QVector4D buscaNo(const QVector4D& p, int *idx);
     int configPoints(QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
     QVector3D bary(const QVector4D& p, int *idx);
