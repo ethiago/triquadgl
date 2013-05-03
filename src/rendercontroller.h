@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QList>
 #include <QPair>
+#include <QTimer>
 
 class MainWindow;
 class Object3D;
@@ -20,11 +21,14 @@ class RenderController : public QObject
 {
     Q_OBJECT
 
+    QTimer timer;
     GLDisplay *display;
     TriQuadMesh *triquad;
     SketchController *skC;
     int metodo;
     QVector<QVector4D> ultimaLista;
+
+    QPoint temp;
 
 public:
     explicit RenderController(MainWindow *mainWindow,
@@ -44,6 +48,7 @@ public slots:
     void mouseRigthFinish(QPoint ini, QPoint curr);
     void mouseLeftMove(QPoint ini, QPoint curr);
     void mouseLefthFinish(QPoint ini, QPoint curr);
+    void mouseDoubleClickLeft(QPoint p);
     void mouseCancel();
     void saveResultAsImage();
     void viewMesh(bool);
@@ -53,6 +58,7 @@ public slots:
     void metodoMudou(int);
     void saveMesh();
     void saveSketch();
+    void timeout();
 };
 
 #endif // RENDERCONTROLLER_H

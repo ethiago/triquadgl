@@ -9,6 +9,14 @@ Vertex::Vertex(float x , float y )
     q = ZERO;
 }
 
+Vertex::Vertex(const QVector2D& v)
+{
+    m_x = v.x();
+    m_y = v.y();
+    m_halfedgeIndex = -1;
+    q = ZERO;
+}
+
 Vertex::Vertex(const Vertex& v)
 {
     m_x = v.x();

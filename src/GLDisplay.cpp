@@ -178,3 +178,15 @@ void GLDisplay::wheelEvent(QWheelEvent * event)
         updateGL();
     }else event->ignore();
  }
+
+void GLDisplay::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton)
+    {
+        emit mouseDoubleClickLeft(event->pos());
+        event->accept();
+        return;
+    }
+
+    event->ignore();
+}
