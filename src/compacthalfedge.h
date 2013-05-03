@@ -26,14 +26,19 @@ public:
     int halfEdgeStarPrevious(int heIdx);
     int vertexId(int triangleId, int halfEdgeOffset);
     int sizeOfTriangles();
+    int sizeOfVertices();
+    int mostClosedVertex(const Vertex& v);
+
+    const Vertex& vertex(int i)const;
+    Vertex& vertex(int i);
 
     void addVertex(const Vertex& v);
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
 
-    int nextExternHalfEdgeOf    (int vertexIdx);
-    int previousExternHalfEdgeOf(int vertexIdx);
+//    int nextExternHalfEdgeOf    (int vertexIdx);
+//    int previousExternHalfEdgeOf(int vertexIdx);
 
 };
 
