@@ -18,6 +18,10 @@ public:
 
     int halfEdgeNext(int heIdx);
     int halfEdgePrevious(int heIdx);
+
+    int halfEdgeExternNext(int heIdx);
+    int halfEdgeExternPrevious(int heIdx);
+
     int halfEdgeStarNext(int heIdx);
     int halfEdgeStarPrevious(int heIdx);
     int vertexId(int triangleId, int halfEdgeOffset);
