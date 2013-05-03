@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionView_Sketch, SIGNAL(toggled(bool)), this, SIGNAL(viewSketch(bool)));
     connect(ui->actionSave_Mesh, SIGNAL(triggered()), this, SIGNAL(saveMesh()));
     connect(ui->actionSave_Sketch, SIGNAL(triggered()), this, SIGNAL(saveSketch()));
+    connect(ui->actionView_Scalar_Field, SIGNAL(toggled(bool)),this, SIGNAL(viewScalarField(bool)));
 }
 
 MainWindow::~MainWindow()

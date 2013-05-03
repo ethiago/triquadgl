@@ -70,6 +70,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(metodoMudou(int)),
             this, SLOT(metodoMudou(int)));
 
+    connect(mainWindow, SIGNAL(viewScalarField(bool)),
+            this, SLOT(viewScalarField(bool)));
+
     mainWindow->showMaximized();
 
 }
@@ -139,6 +142,7 @@ void RenderController::mouseDoubleClickLeft(QPoint p)
         triquad->joinVerticesAt(triquad->unproject(p));
         temp = QPoint(-1,-1);
         timer.stop();
+        display->updateGL();
     }
 }
 
@@ -284,4 +288,10 @@ void RenderController::saveSketch()
         return;
 
     SketchController::saveSketch(filename, ultimaLista);
+}
+
+void RenderController::viewScalarField(bool v)
+{
+    triquad->viewScalarField(v);
+    display->updateGL();
 }

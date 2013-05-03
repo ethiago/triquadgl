@@ -22,10 +22,12 @@ class TriQuadMesh : public Object3D
     QGLShaderProgram program;
     int locationABC;
     int locationDEF;
+    int locationScalar;
 
     bool showMesh;
     bool showSketch;
     bool origin;
+    bool showScalarField;
 
     int vwp[4];
     QMatrix4x4 mvpi;
@@ -67,6 +69,7 @@ public:
     void globalFittingWithNormals(QVector<QVector4D> & in);
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
+    void viewScalarField(bool v);
 
     void clearDrawPoints();
 

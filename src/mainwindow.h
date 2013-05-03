@@ -22,6 +22,7 @@ signals:
     void viewSketch(bool);
     void saveMesh();
     void saveSketch();
+    void viewScalarField(bool);
 
 public:
     explicit MainWindow(QWidget *parent = 0);
