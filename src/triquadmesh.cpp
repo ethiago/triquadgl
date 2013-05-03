@@ -1007,6 +1007,15 @@ QMatrix4x4 TriQuadMesh::buildInv(int triangleId)
     return m.inverted();
 }
 
+void TriQuadMesh::addVertex(const QVector4D& newVertex)
+{
+    vertices.append(newVertex.toVector2D());
+    quadrics.append(ZERO);
+
+    Vertex v(newVertex.x(),newVertex.y());
+    triquads.addVertex(v);
+}
+
 QDebug operator<< (QDebug d, const Quadric2D &model)
 {
     d.nospace() << "Quadric[ ";
