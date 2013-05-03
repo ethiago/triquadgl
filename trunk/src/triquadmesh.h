@@ -7,9 +7,6 @@
 #include "quadric2d.h"
 #include "compacthalfedge.h"
 
-
-#define ZERO     Quadric2D(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
-
 typedef struct
 {
     int idx[3];
@@ -18,7 +15,7 @@ typedef struct
 class TriQuadMesh : public Object3D
 {
     //QVector<QVector4D> inPoints;
-    QVector<QVector2D> vertices;
+    //QVector<QVector2D> vertices;
     QVector<Quadric2D> quadrics;
     CompactHalfEdge triquads;
 
@@ -57,7 +54,6 @@ public:
     void changeOrigin(bool v);
 
     QVector4D unproject(const QPoint&);
-    int busca(const QVector4D&);
 
     void move(const QPoint& ini, const QPoint& curr);
     void finish();

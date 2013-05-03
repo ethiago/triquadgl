@@ -4,6 +4,8 @@
 #include <QMatrix3x3>
 #include <QVector3D>
 
+#define ZERO     Quadric2D(0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+
 class Quadric2D
 {
     float m_a,m_b,m_c,m_d,m_e,m_f;
