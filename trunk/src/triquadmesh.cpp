@@ -971,6 +971,15 @@ void TriQuadMesh::addVertex(const QVector4D& newVertex)
     triquads.addVertex(v);
 }
 
+void TriQuadMesh::joinVerticesAt(const QVector4D& controlPoint)
+{
+    Vertex p = controlPoint.toVector2D();
+    int vId = triquads.mostClosedVertex(p);
+
+    int hId = triquads.vertex(vId).halfedgeIndex();
+    qDebug() << "Chegou!";
+}
+
 QDebug operator<< (QDebug d, const Quadric2D &model)
 {
     d.nospace() << "Quadric[ ";

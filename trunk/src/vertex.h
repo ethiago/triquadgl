@@ -15,6 +15,7 @@ public:
 
     Vertex(float x = 0, float y = 0);
     Vertex(const Vertex& v);
+    Vertex(const QVector2D& v);
 
     float x()const;
     float y()const;

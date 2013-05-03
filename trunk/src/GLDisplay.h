@@ -26,6 +26,7 @@ signals:
     void mouseLeftMove(QPoint ini, QPoint curr);
     void mouseLefthFinish(QPoint ini, QPoint curr);
     void mouseCancel();
+    void mouseDoubleClickLeft(QPoint);
 
 public:
     GLDisplay(QWidget *parent = 0);
@@ -40,6 +41,7 @@ private:
     void mouseReleaseEvent ( QMouseEvent * event );
     void mouseMoveEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent * event);
+    void mouseDoubleClickEvent(QMouseEvent *);
     float xDist(float aspect);
     float yDist(float aspect);
 

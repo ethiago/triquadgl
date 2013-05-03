@@ -66,6 +66,7 @@ public:
     void fittingGG(QVector<QVector4D> &in);
     void globalFittingWithNormals(QVector<QVector4D> & in);
     void addVertex(const QVector4D& newVertex);
+    void joinVerticesAt(const QVector4D& controlPoint);
 
     void clearDrawPoints();
 

@@ -43,6 +43,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(display, SIGNAL(mouseCancel()),
             this, SLOT(mouseCancel()));
 
+    connect(display, SIGNAL(mouseDoubleClickLeft(QPoint)),
+            this, SLOT(mouseDoubleClickLeft(QPoint)));
+
     connect(mainWindow, SIGNAL(saveResultAsImage()),
             this, SLOT(saveResultAsImage()));
 
@@ -64,7 +67,8 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(saveMesh()),
             this, SLOT(saveMesh()) );
 
-    connect(mainWindow, SIGNAL(metodoMudou(int)), this, SLOT(metodoMudou(int)));
+    connect(mainWindow, SIGNAL(metodoMudou(int)),
+            this, SLOT(metodoMudou(int)));
 
     mainWindow->showMaximized();
 
@@ -120,9 +124,33 @@ void RenderController::mouseLefthFinish(QPoint ini, QPoint curr)
     triquad->finish();
 
     if(ini == curr)
-        triquad->addVertex(triquad->unproject(curr));
+    {
+        temp = curr;
+        timer.singleShot(1000, this, SLOT(timeout()) );
+    }
 
     display->updateGL();
+}
+
+void RenderController::mouseDoubleClickLeft(QPoint p)
+{
+    if(temp != QPoint(-1,-1))
+    {
+        triquad->joinVerticesAt(triquad->unproject(p));
+        temp = QPoint(-1,-1);
+        timer.stop();
+    }
+}
+
+void RenderController::timeout()
+{
+
+    if(temp != QPoint(-1,-1))
+    {
+        triquad->addVertex(triquad->unproject(temp));
+        temp = QPoint(-1,-1);
+        display->updateGL();
+    }
 }
 
 void RenderController::mouseCancel()
