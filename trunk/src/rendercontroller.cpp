@@ -118,6 +118,10 @@ void RenderController::mouseLeftMove(QPoint ini, QPoint curr)
 void RenderController::mouseLefthFinish(QPoint ini, QPoint curr)
 {
     triquad->finish();
+
+    if(ini == curr)
+        triquad->addVertex(triquad->unproject(curr));
+
     display->updateGL();
 }
 

@@ -18,11 +18,18 @@ public:
 
     int halfEdgeNext(int heIdx);
     int halfEdgePrevious(int heIdx);
+    int halfEdgeStarNext(int heIdx);
+    int halfEdgeStarPrevious(int heIdx);
     int vertexId(int triangleId, int halfEdgeOffset);
     int sizeOfTriangles();
 
+    void addVertex(const Vertex& v);
+
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
+
+    int nextExternHalfEdgeOf    (int vertexIdx);
+    int previousExternHalfEdgeOf(int vertexIdx);
 
 };
 
