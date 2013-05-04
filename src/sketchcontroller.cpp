@@ -9,82 +9,81 @@ SketchController::SketchController(QObject *parent) :
 
 void SketchController::mouseRigthMove(const QPoint &curr, const QVector4D &proj)
 {
-    curve2.append(curr);
-    curve.append(proj);
+    curve.append(curr);
+    feedBackPoints.append(proj);
 }
 
 void SketchController::mouseRigthFinish()
 {
-    processaCurva();
+    last = curve;
+    curve.clear();
+    feedBackPoints.clear();
 }
 
 void SketchController::cancel()
 {
-    curve2.clear();
     curve.clear();
-}
-
-void SketchController::processaCurva()
-{
-
+    feedBackPoints.clear();
 }
 
 void SketchController::draw()
 {
-    if(curve.size() == 0)
+    if(feedBackPoints.size() == 0)
         return;
 
     glBegin(GL_POINTS);
     {
-        for(int i = 0; i < curve.size(); ++i)
+        for(int i = 0; i < feedBackPoints.size(); ++i)
         {
-            glVertex4fv(reinterpret_cast<const GLfloat *>(&curve[i]));
+            glVertex4fv(reinterpret_cast<const GLfloat *>(&feedBackPoints[i]));
         }
     }glEnd();
 }
 
-QVector<QPoint> SketchController::getPointsLinearFilter(void)
+QVector<QPoint> SketchController::getPoints(void)
 {
-    return curve2;
+    return last;
 }
 
-QVector<QVector4D> SketchController::loadSketch(const QString& fn )
+bool SketchController::loadSketch(const QString& fn )
 {
-    QVector<QVector4D> ret;
     QFile f(fn);
 
     if(!f.open(QIODevice::ReadOnly))
-        return ret;
+        return false;
 
     QTextStream s(f.readAll());
     f.close();
+
+    last.clear();
 
     int qtd;
     s >> qtd;
 
     for(int i = 0; i < qtd; ++i)
     {
-        float x,y;
+        int x,y;
         s >> x >> y;
-        ret.append(QVector4D(x,y, 1.0, 1.0));
+        last.append(QPoint(x,y));
     }
-    return ret;
+    return true;
 }
 
-void SketchController::saveSketch(const QString& fileName, const QVector<QVector4D>& curve )
+bool SketchController::saveSketch(const QString& fileName )
 {
     QFile f(fileName);
 
     if(!f.open(QIODevice::WriteOnly))
-        return;
+        return false;
 
     QTextStream s(&f);
 
-    s << curve.size() << "\n";
-    for(int i = 0; i < curve.size(); ++i)
+    s << last.size() << "\n";
+    for(int i = 0; i < last.size(); ++i)
     {
-        s << curve[i].x() << " " << curve[i].y() << "\n";
+        s << last[i].x() << " " << last[i].y() << "\n";
     }
 
     f.close();
+    return true;
 }

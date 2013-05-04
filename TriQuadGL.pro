@@ -26,7 +26,11 @@ SOURCES += src/main.cpp\
     src/quadric2d.cpp \
     src/vertex.cpp \
     src/halfedge.cpp \
-    src/compacthalfedge.cpp
+    src/compacthalfedge.cpp \
+    src/chebuilder.cpp \
+    src/chebuilderregulargrid.cpp \
+    src/chebuilderdefault.cpp \
+    src/chebuilderoctreefrompointcloud.cpp
 
 
 HEADERS  += src/mainwindow.h\
@@ -41,7 +45,11 @@ HEADERS  += src/mainwindow.h\
     src/quadric2d.h \
     src/vertex.h \
     src/halfedge.h \
-    src/compacthalfedge.h
+    src/compacthalfedge.h \
+    src/chebuilder.h \
+    src/chebuilderregulargrid.h \
+    src/chebuilderdefault.h \
+    src/chebuilderoctreefrompointcloud.h
 
 FORMS    += src/mainwindow.ui
 

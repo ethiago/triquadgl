@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>567</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMesh">
@@ -67,6 +67,7 @@
     <addaction name="actionSave_Mesh"/>
     <addaction name="separator"/>
     <addaction name="actionView_Scalar_Field"/>
+    <addaction name="actionClear_Mesh"/>
    </widget>
    <widget class="QMenu" name="menuSketch">
     <property name="title">
@@ -145,6 +146,11 @@
    </property>
    <property name="text">
     <string>View Scalar Field</string>
+   </property>
+  </action>
+  <action name="actionClear_Mesh">
+   <property name="text">
+    <string>Clear Mesh</string>
    </property>
   </action>
  </widget>
