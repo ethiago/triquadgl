@@ -7,11 +7,21 @@
 
 class CompactHalfEdge
 {
-    QVector<Vertex> vertices;
-    QVector<HalfEdge> mesh;
+    QVector<Vertex> m_vertices;
+    QVector<HalfEdge> m_mesh;
 
 public:
     CompactHalfEdge();
+    CompactHalfEdge(const CompactHalfEdge& che);
+
+    CompactHalfEdge& operator=(const CompactHalfEdge& che);
+
+
+    const QVector<Vertex>&   vertices()const;
+    const QVector<HalfEdge>& mesh()const;
+
+    void clear();
+
 
     void addVertices(const QVector<Vertex>&);
     bool addTriangle(int idxV1, int idxV2, int idxV3);
@@ -40,9 +50,6 @@ public:
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
-
-
-//    int previousExternHalfEdgeOf(int vertexIdx);
 
 };
 

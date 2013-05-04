@@ -60,6 +60,7 @@ public slots:
     void saveSketch();
     void timeout();
     void viewScalarField(bool);
+    void clearMesh();
 };
 
 #endif // RENDERCONTROLLER_H

@@ -14,10 +14,7 @@ typedef struct
 
 class TriQuadMesh : public Object3D
 {
-    //QVector<QVector4D> inPoints;
-    //QVector<QVector2D> vertices;
-    //QVector<Quadric2D> quadrics;
-    CompactHalfEdge triquads;
+    CompactHalfEdge che;
 
     QGLShaderProgram program;
     int locationABC;
@@ -47,6 +44,8 @@ public:
 
     virtual Object3D* copy() const;
 
+    void clear();
+    bool isEmpty();
     bool isProgramLinked();
     void viewMesh(bool v);
     void viewSketch(bool v);
@@ -54,6 +53,7 @@ public:
     void changeOrigin(bool v);
 
     QVector4D unproject(const QPoint&);
+    QVector<QVector4D> unproject(const QVector<QPoint>&);
 
     void move(const QPoint& ini, const QPoint& curr);
     void finish();
@@ -70,6 +70,7 @@ public:
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
     void viewScalarField(bool v);
+    void buildMesh(const QVector<QVector4D>& ps);
 
     void clearDrawPoints();
 

@@ -73,6 +73,8 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewScalarField(bool)),
             this, SLOT(viewScalarField(bool)));
 
+    connect(mainWindow, SIGNAL(clearMesh()), this, SLOT(clearMesh()));
+
     mainWindow->showMaximized();
 
 }
@@ -104,15 +106,7 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
     skC->mouseRigthFinish();
-
-    QVector<QVector4D> pontosOut;
-    QVector<QPoint> pontosIn = skC->getPointsLinearFilter();
-
-    for(int i = 0; i < pontosIn.size(); ++i)
-        pontosOut.append(triquad->unproject(pontosIn[i]));
-
-    ultimaLista = pontosOut;
-    skC->cancel();
+    ultimaLista = triquad->unproject(skC->getPoints());
     exec();
 }
 
@@ -231,7 +225,9 @@ void RenderController::loadSketch()
     if(filename.isEmpty())
         return;
 
-    ultimaLista = SketchController::loadSketch(filename);
+    skC->loadSketch(filename);
+
+    ultimaLista = triquad->unproject(skC->getPoints());
     exec();
 }
 
@@ -252,8 +248,17 @@ void RenderController::metodoMudou(int m )
     exec();
 }
 
+void RenderController::clearMesh()
+{
+    triquad->clear();
+    display->updateGL();
+}
+
 void RenderController::exec()
 {
+    if(triquad->isEmpty())
+        triquad->buildMesh(ultimaLista);
+
     switch (metodo)
     {
     case 0:
@@ -287,7 +292,7 @@ void RenderController::saveSketch()
     if(filename.isEmpty())
         return;
 
-    SketchController::saveSketch(filename, ultimaLista);
+    skC->saveSketch(filename);
 }
 
 void RenderController::viewScalarField(bool v)

@@ -9,8 +9,9 @@ class SketchController : public QObject
 {
     Q_OBJECT
 
-    QVector<QPoint> curve2;
-    QVector<QVector4D> curve;
+    QVector<QPoint> last;
+    QVector<QPoint> curve;
+    QVector<QVector4D> feedBackPoints;
 
 public:
     explicit SketchController(QObject *parent = 0);
@@ -18,13 +19,12 @@ public:
     void mouseRigthMove(const QPoint& curr, const QVector4D& proj);
     void mouseRigthFinish();
     void cancel();
-    QVector<QPoint> getPointsLinearFilter(void);
 
-    static QVector<QVector4D> loadSketch(const QString& fileName);
-    static void saveSketch(const QString& fileName, const QVector<QVector4D>& curve );
+    QVector<QPoint> getPoints(void);
 
-private:
-    void processaCurva();
+    bool loadSketch(const QString& fileName);
+    bool saveSketch(const QString& fileName);
+
 
 };
 
