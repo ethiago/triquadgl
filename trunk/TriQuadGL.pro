@@ -30,7 +30,8 @@ SOURCES += src/main.cpp\
     src/chebuilder.cpp \
     src/chebuilderregulargrid.cpp \
     src/chebuilderdefault.cpp \
-    src/chebuilderoctreefrompointcloud.cpp
+    src/chebuilderoctreefrompointcloud.cpp \
+    src/chebuilderregulargridfrompointcloud.cpp
 
 
 HEADERS  += src/mainwindow.h\
@@ -49,7 +50,8 @@ HEADERS  += src/mainwindow.h\
     src/chebuilder.h \
     src/chebuilderregulargrid.h \
     src/chebuilderdefault.h \
-    src/chebuilderoctreefrompointcloud.h
+    src/chebuilderoctreefrompointcloud.h \
+    src/chebuilderregulargridfrompointcloud.h
 
 FORMS    += src/mainwindow.ui
 
