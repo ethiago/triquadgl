@@ -9,6 +9,7 @@
 #include "chebuilderdefault.h"
 #include "chebuilderregulargrid.h"
 #include "chebuilderoctreefrompointcloud.h"
+#include "chebuilderregulargridfrompointcloud.h"
 
 TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1)
@@ -36,7 +37,8 @@ void TriQuadMesh::buildMesh(const QVector<QVector4D>& ps)
 {
     //CHEBuilderRegularGrid builder(-2,2,-1,1,10,5);
     //CHEBuilderDefault builder;
-    CHEBuilderOctreeFromPointCloud builder(ps);
+    //CHEBuilderOctreeFromPointCloud builder(ps);
+    CHEBuilderRegularGridFromPointCloud builder(ps,7,7);
     builder.build();
     che = builder.che();
 }

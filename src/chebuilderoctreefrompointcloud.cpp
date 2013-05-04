@@ -197,7 +197,7 @@ CHEBuilderOctreeFromPointCloud::CHEBuilderOctreeFromPointCloud(const QVector<QVe
             yM = pointCloud[i].y();
     }
 
-    tree = new OcTree(xm, xM, ym, yM);
+    tree = new OcTree(xm - (xM-xm)*0.07, xM + (xM-xm)*0.07, ym - (yM-ym)*0.07, yM + (yM-ym)*0.07);
 }
 
 CHEBuilderOctreeFromPointCloud::~CHEBuilderOctreeFromPointCloud()
