@@ -7,6 +7,8 @@
 #include "quadric2d.h"
 #include "compacthalfedge.h"
 
+#define MESHFILEEXTENSION "msh"
+
 typedef struct
 {
     int idx[3];
@@ -73,6 +75,8 @@ public:
     void buildMesh(const QVector<QVector4D>& ps);
 
     void clearDrawPoints();
+    bool loadMesh(const QString &filename);
+    bool saveMesh(const QString &filename)const;
 
 private:
     void drawOrigin();

@@ -8,7 +8,7 @@
 #include "Curve.h"
 #include "chebuilderdefault.h"
 #include "chebuilderregulargrid.h"
-#include "chebuilderoctreefrompointcloud.h"
+#include "chebuilderquadtreefrompointcloud.h"
 #include "chebuilderregulargridfrompointcloud.h"
 
 TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
@@ -1020,4 +1020,58 @@ QDebug operator<< (QDebug d, const Quadric2D &model)
 void TriQuadMesh::viewScalarField(bool v)
 {
     showScalarField = v;
+}
+
+bool TriQuadMesh::loadMesh(const QString &filename)
+{
+    QFile f(filename);
+
+    if(!f.open(QIODevice::ReadOnly))
+        return false;
+
+    QTextStream s(f.readAll());
+    f.close();
+
+    che.clear();
+    QVector<Vertex> vertices;
+
+    int qtd;
+    s >> qtd;
+    for(int i = 0; i < qtd; ++i)
+    {
+        float x,y;
+        s >> x >> y;
+        vertices.append(Vertex(x,y));
+    }
+    che.addVertices(vertices);
+    s >> qtd;
+    for(int i = 0; i < qtd; ++i)
+    {
+        int v1, v2, v3;
+        s >> v1 >> v2 >> v3;
+        che.addTriangle(v1,v2,v3);
+    }
+
+    return true;
+}
+
+bool TriQuadMesh::saveMesh(const QString &filename) const
+{
+    QFile f(filename);
+
+    if(!f.open(QIODevice::WriteOnly))
+        return false;
+
+    QTextStream s(&f);
+
+    s << che.sizeOfVertices() << "\n";
+    for(int i = 0; i < che.sizeOfVertices(); ++i)
+        s << che.vertex(i).x() << " " << che.vertex(i).y() << "\n";
+
+    s << che.sizeOfTriangles() << "\n";
+    for(int i = 0; i < che.sizeOfTriangles(); ++i)
+        s << che.vertexId(i,0) << " " << che.vertexId(i,1) << " " << che.vertexId(i,2) << "\n";
+
+    f.close();
+    return true;
 }

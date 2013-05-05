@@ -6,23 +6,23 @@
 #include <QPoint>
 #include <QVector4D>
 
-class OcTree
+class QuadTree
 {
-    class OcTreeNode
+    class QuadTreeNode
     {
     public:
         int xMin, xMax;
         int yMin, yMax;
         bool hasPoint;
 
-        OcTreeNode *child00,*child01,*child11,*child10;
+        QuadTreeNode *child00,*child01,*child11,*child10;
 
-        OcTreeNode(int xm, int ym, int xM, int yM){
+        QuadTreeNode(int xm, int ym, int xM, int yM){
             xMin = xm; xMax = xM; yMin = ym; yMax = yM;
-            child00 = child01 = child11 = child10 = (OcTreeNode*)NULL;
+            child00 = child01 = child11 = child10 = (QuadTreeNode*)NULL;
             hasPoint = false;
         }
-        ~OcTreeNode(){
+        ~QuadTreeNode(){
             if(child00)
                 delete child00;
             if(child01)
@@ -46,7 +46,7 @@ class OcTree
     };
 
 
-    OcTreeNode *root;
+    QuadTreeNode *root;
 
     float xMin, xMax;
     float yMin, yMax;
@@ -62,16 +62,16 @@ public:
         int v[3];
     }TRI;
 
-    OcTree(float _xMin, float _xMax, float _yMin, float _yMax);
-    ~OcTree();
+    QuadTree(float _xMin, float _xMax, float _yMin, float _yMax);
+    ~QuadTree();
 
     void build(const QVector<QVector4D>& points);
 
     void getTriangles(QVector<Vertex>& vertices, QVector<TRI>& triangles);
-    void recursivilyGetTriangles(OcTreeNode *node,QVector<Vertex>& vertices, QVector<TRI>& triangles, int **map);
+    void recursivilyGetTriangles(QuadTreeNode *node,QVector<Vertex>& vertices, QVector<TRI>& triangles, int **map);
 
 private:
-    void recursivilyBuild(OcTreeNode *node, QVector<QPoint> &points);
+    void recursivilyBuild(QuadTreeNode *node, QVector<QPoint> &points);
 
 
 };
@@ -80,7 +80,7 @@ class CHEBuilderOctreeFromPointCloud : public CHEBuilder
 {
     QVector<QVector4D> pointCloud;
 
-    OcTree *tree;
+    QuadTree *tree;
 
 public:
     CHEBuilderOctreeFromPointCloud(const QVector<QVector4D>& pointCloud);
