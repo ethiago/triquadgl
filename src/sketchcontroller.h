@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QVector4D>
 
+#define SKETCHFILEEXTENSION "skc"
+
 class SketchController : public QObject
 {
     Q_OBJECT

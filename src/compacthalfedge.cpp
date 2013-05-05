@@ -79,17 +79,17 @@ bool CompactHalfEdge::addTriangle(int idxV1, int idxV2, int idxV3)
 
 }
 
-int CompactHalfEdge::halfEdgeNext(int heIdx)
+int CompactHalfEdge::halfEdgeNext(int heIdx) const
 {
     return 3*(heIdx/3) + (heIdx + 1)%3;
 }
 
-int CompactHalfEdge::halfEdgePrevious(int heIdx)
+int CompactHalfEdge::halfEdgePrevious(int heIdx)const
 {
     return 3*(heIdx/3) + (heIdx + 2)%3;
 }
 
-int CompactHalfEdge::halfEdgeExternNext(int heIdx)
+int CompactHalfEdge::halfEdgeExternNext(int heIdx) const
 {
     if(m_mesh[heIdx].hasTwin())
         return -1;
@@ -101,7 +101,7 @@ int CompactHalfEdge::halfEdgeExternNext(int heIdx)
     return heIdx;
 }
 
-int CompactHalfEdge::halfEdgeExternPrevious(int heIdx)
+int CompactHalfEdge::halfEdgeExternPrevious(int heIdx)const
 {
     if(m_mesh[heIdx].hasTwin())
         return -1;
@@ -114,12 +114,12 @@ int CompactHalfEdge::halfEdgeExternPrevious(int heIdx)
 
 }
 
-int CompactHalfEdge::halfEdgeStarNext(int heIdx)
+int CompactHalfEdge::halfEdgeStarNext(int heIdx) const
 {
     return halfEdgeNext(m_mesh[heIdx].twinIndex());
 }
 
-int CompactHalfEdge::halfEdgeStarPrevious(int heIdx)
+int CompactHalfEdge::halfEdgeStarPrevious(int heIdx)const
 {
     return m_mesh[halfEdgePrevious(heIdx)].twinIndex();
 }
@@ -140,16 +140,16 @@ void CompactHalfEdge::configTwin(int halfEdgeIdx, int destinyVertexIdx)
     }
 }
 
-int CompactHalfEdge::vertexId(int triangleId, int halfEdgeOffset)
+int CompactHalfEdge::vertexId(int triangleId, int halfEdgeOffset) const
 {
     return m_mesh[triangleId*3+halfEdgeOffset].vertexIndex();
 }
-int CompactHalfEdge::sizeOfTriangles()
+int CompactHalfEdge::sizeOfTriangles()const
 {
     return m_mesh.size()/3;
 }
 
-int CompactHalfEdge::sizeOfVertices()
+int CompactHalfEdge::sizeOfVertices() const
 {
     return m_vertices.size();
 }
@@ -225,7 +225,7 @@ void CompactHalfEdge::joinVerticesAt(const Vertex& p)
 
 }
 
-int CompactHalfEdge::mostClosedVertex(const Vertex& v)
+int CompactHalfEdge::mostClosedVertex(const Vertex& v) const
 {
     if(m_vertices.isEmpty())
         return -1;
@@ -243,7 +243,7 @@ int CompactHalfEdge::mostClosedVertex(const Vertex& v)
     return vId;
 }
 
-int CompactHalfEdge::nextExternHalfEdgeOf(int vertexIdx)
+int CompactHalfEdge::nextExternHalfEdgeOf(int vertexIdx)const
 {
     int he = m_vertices[vertexIdx].halfedgeIndex();
     int aux = he;

@@ -209,18 +209,19 @@ void RenderController::viewSketch(bool v)
 
 void RenderController::loadMesh()
 {
-    QString filename = QFileDialog::getOpenFileName();
+    QString filename = QFileDialog::getOpenFileName(0, "Mesh File Loader", QString(), QString("*.")+MESHFILEEXTENSION );
 
     if(filename.isEmpty())
         return;
 
+    triquad->loadMesh(filename);
 
     exec();
 }
 
 void RenderController::loadSketch()
 {
-    QString filename = QFileDialog::getOpenFileName();
+    QString filename = QFileDialog::getOpenFileName(0, "Sketch File Loader", QString(), QString("*.")+SKETCHFILEEXTENSION );
 
     if(filename.isEmpty())
         return;
@@ -282,12 +283,17 @@ void RenderController::exec()
 
 void RenderController::saveMesh()
 {
-    qDebug() << "SAVE MESH!";
+    QString filename = QFileDialog::getSaveFileName(0, "Save Mesh", QString(), QString(".")+MESHFILEEXTENSION );
+
+    if(filename.isEmpty())
+        return;
+
+    triquad->saveMesh(filename);
 }
 
 void RenderController::saveSketch()
 {
-    QString filename = QFileDialog::getSaveFileName();
+    QString filename = QFileDialog::getSaveFileName(0, "Save Sketch", QString(), QString(".")+SKETCHFILEEXTENSION );
 
     if(filename.isEmpty())
         return;

@@ -26,18 +26,18 @@ public:
     void addVertices(const QVector<Vertex>&);
     bool addTriangle(int idxV1, int idxV2, int idxV3);
 
-    int halfEdgeNext(int heIdx);
-    int halfEdgePrevious(int heIdx);
+    int halfEdgeNext(int heIdx)const;
+    int halfEdgePrevious(int heIdx) const;
 
-    int halfEdgeExternNext(int heIdx);
-    int halfEdgeExternPrevious(int heIdx);
+    int halfEdgeExternNext(int heIdx)const;
+    int halfEdgeExternPrevious(int heIdx) const;
 
-    int halfEdgeStarNext(int heIdx);
-    int halfEdgeStarPrevious(int heIdx);
-    int vertexId(int triangleId, int halfEdgeOffset);
-    int sizeOfTriangles();
-    int sizeOfVertices();
-    int mostClosedVertex(const Vertex& v);
+    int halfEdgeStarNext(int heIdx)const;
+    int halfEdgeStarPrevious(int heIdx) const;
+    int vertexId(int triangleId, int halfEdgeOffset)const;
+    int sizeOfTriangles() const;
+    int sizeOfVertices()const;
+    int mostClosedVertex(const Vertex& v)const;
 
     const Vertex& vertex(int i)const;
     Vertex& vertex(int i);
@@ -45,7 +45,7 @@ public:
     void addVertex(const Vertex& v);
     void joinVerticesAt(const Vertex& v);
 
-    int nextExternHalfEdgeOf    (int vertexIdx);
+    int nextExternHalfEdgeOf    (int vertexIdx) const;
 
 
 private:

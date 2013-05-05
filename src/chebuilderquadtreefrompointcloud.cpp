@@ -1,8 +1,8 @@
-#include "chebuilderoctreefrompointcloud.h"
+#include "chebuilderquadtreefrompointcloud.h"
 #include <QDebug>
 
 
-OcTree::OcTree(float _xMin, float _xMax, float _yMin, float _yMax)
+QuadTree::QuadTree(float _xMin, float _xMax, float _yMin, float _yMax)
 {
     xMin = _xMin;
     xMax = _xMax;
@@ -17,15 +17,15 @@ OcTree::OcTree(float _xMin, float _xMax, float _yMin, float _yMax)
     subdivisionQuantityThreshold = 40;
 }
 
-OcTree::~OcTree()
+QuadTree::~QuadTree()
 {
     if(root)
         delete root;
 }
 
-void OcTree::build(const QVector<QVector4D>& points)
+void QuadTree::build(const QVector<QVector4D>& points)
 {
-    root = new OcTree::OcTreeNode(0, 0, xMaxRes, yMaxRes);
+    root = new QuadTree::QuadTreeNode(0, 0, xMaxRes, yMaxRes);
     QVector<QPoint> in;
 
     for(int i = 0; i < points.size(); ++i)
@@ -42,7 +42,7 @@ void OcTree::build(const QVector<QVector4D>& points)
 
 }
 
-void OcTree::recursivilyBuild(OcTreeNode *node, QVector<QPoint>& points)
+void QuadTree::recursivilyBuild(QuadTreeNode *node, QVector<QPoint>& points)
 {
     qDebug() << points;
 
@@ -61,16 +61,16 @@ void OcTree::recursivilyBuild(OcTreeNode *node, QVector<QPoint>& points)
     int xMidle = (node->xMin+node->xMax)/2;
     int yMidle = (node->yMin+node->yMax)/2;
 
-    node->child00 = new OcTreeNode(node->xMin, node->yMin, xMidle, yMidle );
+    node->child00 = new QuadTreeNode(node->xMin, node->yMin, xMidle, yMidle );
     QVector<QPoint> p00 = node->child00->getPoints(points);
 
-    node->child01 = new OcTreeNode(xMidle, node->yMin, node->xMax, yMidle );
+    node->child01 = new QuadTreeNode(xMidle, node->yMin, node->xMax, yMidle );
     QVector<QPoint> p01 = node->child01->getPoints(points);
 
-    node->child10 = new OcTreeNode(node->xMin, yMidle, xMidle, node->yMax );
+    node->child10 = new QuadTreeNode(node->xMin, yMidle, xMidle, node->yMax );
     QVector<QPoint> p10 = node->child10->getPoints(points);
 
-    node->child11 = new OcTreeNode(xMidle, yMidle, node->xMax, node->yMax );
+    node->child11 = new QuadTreeNode(xMidle, yMidle, node->xMax, node->yMax );
     QVector<QPoint> p11 = node->child11->getPoints(points);
 
     if(p00.size()+p01.size()+p10.size()+p11.size() != points.size())
@@ -84,7 +84,7 @@ void OcTree::recursivilyBuild(OcTreeNode *node, QVector<QPoint>& points)
     recursivilyBuild(node->child11, p11);
 }
 
-void OcTree::getTriangles(QVector<Vertex>& vertices, QVector<TRI>& triangles)
+void QuadTree::getTriangles(QVector<Vertex>& vertices, QVector<TRI>& triangles)
 {
     int **map = new int*[xMaxRes+1];
     for(int i = 0; i <= xMaxRes; ++i)
@@ -105,7 +105,7 @@ void OcTree::getTriangles(QVector<Vertex>& vertices, QVector<TRI>& triangles)
     delete[] map;
 }
 
-void OcTree::recursivilyGetTriangles(OcTreeNode *node,QVector<Vertex>& vertices, QVector<TRI>& triangles, int **map)
+void QuadTree::recursivilyGetTriangles(QuadTreeNode *node,QVector<Vertex>& vertices, QVector<TRI>& triangles, int **map)
 {
     if(!node->child00)
     {
@@ -176,7 +176,7 @@ CHEBuilderOctreeFromPointCloud::CHEBuilderOctreeFromPointCloud(const QVector<QVe
 {
     float xm, xM;
     float ym, yM;
-    tree = (OcTree*)NULL;
+    tree = (QuadTree*)NULL;
 
     if(pointCloud.isEmpty())
         return;
@@ -197,7 +197,7 @@ CHEBuilderOctreeFromPointCloud::CHEBuilderOctreeFromPointCloud(const QVector<QVe
             yM = pointCloud[i].y();
     }
 
-    tree = new OcTree(xm - (xM-xm)*0.07, xM + (xM-xm)*0.07, ym - (yM-ym)*0.07, yM + (yM-ym)*0.07);
+    tree = new QuadTree(xm - (xM-xm)*0.07, xM + (xM-xm)*0.07, ym - (yM-ym)*0.07, yM + (yM-ym)*0.07);
 }
 
 CHEBuilderOctreeFromPointCloud::~CHEBuilderOctreeFromPointCloud()
@@ -211,7 +211,7 @@ void CHEBuilderOctreeFromPointCloud::build()
     tree->build(pointCloud);
 
     QVector<Vertex> v;
-    QVector<OcTree::TRI> t;
+    QVector<QuadTree::TRI> t;
 
     tree->getTriangles(v,t);
 
