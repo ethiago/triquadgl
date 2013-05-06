@@ -45,6 +45,8 @@ public:
 
     void addVertex(const Vertex& v);
     void joinVerticesAt(const Vertex& v);
+    int findTriangleWith(const Vertex& v);
+    void deleteTriangle(int tId);
 
     int nextExternHalfEdgeOf    (int vertexIdx) const;
 

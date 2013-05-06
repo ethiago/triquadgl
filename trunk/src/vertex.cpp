@@ -80,7 +80,7 @@ Vertex& Vertex::operator=(const QVector2D& v)
     return *this;
 }
 
-QVector2D Vertex::toVector2D()
+QVector2D Vertex::toVector2D()const
 {
     return QVector2D(m_x,m_y);
 }
@@ -107,4 +107,14 @@ bool Vertex::projectVertexIntoSegment(const Vertex& _p, const Vertex& segmentV0,
         return true;
     else
         return false;
+}
+
+float Vertex::cross2D(const Vertex& p, const Vertex& p1, const Vertex& p2)
+{
+    float v1X = p1.x()-p.x();
+    float v1Y = p1.y()-p.y();
+    float v2X = p2.x()-p.x();
+    float v2Y = p2.y()-p.y();
+
+    return v1X*v2Y - v2X*v1Y;
 }

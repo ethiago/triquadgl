@@ -32,11 +32,10 @@ public:
     Vertex& operator=(const Vertex&);
     Vertex& operator=(const QVector2D&);
 
-    QVector2D toVector2D();
+    QVector2D toVector2D()const;
 
     static bool projectVertexIntoSegment(const Vertex& _p, const Vertex& segmentV0, const Vertex& segmentV1, Vertex *ret);
-    static QVector2D toVector2D(const Vertex& v);
-    static Vertex toVertex2D(const QVector2D& v);
+    static float cross2D(const Vertex& p, const Vertex& p1, const Vertex&p2);
 };
 
 

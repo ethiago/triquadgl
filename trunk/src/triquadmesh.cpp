@@ -1001,6 +1001,13 @@ void TriQuadMesh::joinVerticesAt(const QVector4D& controlPoint)
     che.joinVerticesAt(p);
 }
 
+void TriQuadMesh::deleteTriangleWith(const Vertex& v)
+{
+    int tId = che.findTriangleWith(v);
+    if(tId >= 0)
+        che.deleteTriangle(tId);
+}
+
 QDebug operator<< (QDebug d, const Quadric2D &model)
 {
     d.nospace() << "Quadric[ ";
