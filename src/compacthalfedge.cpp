@@ -262,3 +262,69 @@ int CompactHalfEdge::nextExternHalfEdgeOf(int vertexIdx)const
     return aux;
 }
 
+int CompactHalfEdge::findTriangleWith(const Vertex& v)
+{
+    for(int i = 0; i < sizeOfTriangles(); ++i)
+    {
+        Vertex v0, v1, v2;
+        v0 = m_vertices[m_mesh[3*i+0].vertexIndex()];
+        v1 = m_vertices[m_mesh[3*i+1].vertexIndex()];
+        v2 = m_vertices[m_mesh[3*i+2].vertexIndex()];
+
+        float a0 = Vertex::cross2D(v0,v1,v);
+        float a1 = Vertex::cross2D(v1,v2,v);
+        float a2 = Vertex::cross2D(v2,v0,v);
+
+        if(a0*a1 > 0 && a0*a2 > 0)
+            return i;
+
+    }
+
+    return -1;
+}
+
+void CompactHalfEdge::deleteTriangle(int tId)
+{
+    QVector<int> he;
+    tId *=3;
+    int vID = -1;
+
+    for(int i = 0; i < 3 ; ++i)
+    {
+        if(m_mesh[tId+i].twinIndex() >= 0)
+        {
+            vID = m_mesh[halfEdgePrevious(tId+i)].vertexIndex();
+            he.append( m_mesh[tId+i].twinIndex());
+        }
+    }
+
+    if(he.size() == 0)
+        return;
+
+    for(int i = 0; i < he.size(); ++i)
+    {
+        m_mesh[he[i]].twinIndex() = -1;
+    }
+    m_mesh.erase(m_mesh.begin()+tId, m_mesh.begin()+tId+3);
+    for(int i = 0; i < m_mesh.size(); ++i)
+    {
+        if(m_mesh[i].twinIndex() > tId)
+            m_mesh[i].twinIndex() -= 3;
+    }
+    for(int i = 0; i < m_vertices.size(); ++i)
+    {
+        if(m_vertices[i].halfedgeIndex() > tId)
+            m_vertices[i].halfedgeIndex() -= 3;
+    }
+
+    if(he.size() == 1)
+    {
+        m_vertices.erase(m_vertices.begin()+vID);
+        for(int i = 0; i < m_mesh.size(); ++i)
+        {
+            if(m_mesh[i].vertexIndex() > vID)
+                m_mesh[i].vertexIndex() -= 1;
+        }
+    }
+}
+

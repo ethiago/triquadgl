@@ -115,9 +115,16 @@ void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 
 void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
 {
-    skC->mouseRigthFinish();
-    ultimaLista = triquad->unproject(skC->getPoints());
-    exec();
+    if(ini != curr)
+    {
+        skC->mouseRigthFinish();
+        ultimaLista = triquad->unproject(skC->getPoints());
+        exec();
+    }else
+    {
+        triquad->deleteTriangleWith(triquad->unproject(curr).toVector2D());
+        display->updateGL();
+    }
 }
 
 void RenderController::mouseLeftMove(QPoint ini, QPoint curr)

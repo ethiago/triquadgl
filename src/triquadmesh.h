@@ -72,6 +72,7 @@ public:
     void globalFittingWithNormals(QVector<QVector4D> & in);
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
+    void deleteTriangleWith(const Vertex& v);
     void viewScalarField(bool v);
     bool buildMesh(CHEBuilder* builder);
 
