@@ -94,6 +94,16 @@ int CompactHalfEdge::halfEdgePrevious(int heIdx)const
     return 3*(heIdx/3) + (heIdx + 2)%3;
 }
 
+int CompactHalfEdge::vertexNext(int hId)const
+{
+    return m_mesh[halfEdgeNext(hId)].vertexIndex();
+}
+
+int CompactHalfEdge::vertexPrevious(int hId) const
+{
+    return m_mesh[halfEdgePrevious(hId)].vertexIndex();
+}
+
 int CompactHalfEdge::halfEdgeExternNext(int heIdx) const
 {
     if(m_mesh[heIdx].hasTwin())
@@ -121,11 +131,17 @@ int CompactHalfEdge::halfEdgeExternPrevious(int heIdx)const
 
 int CompactHalfEdge::halfEdgeStarNext(int heIdx) const
 {
+    if(!m_mesh[heIdx].hasTwin())
+        return halfEdgeNext(halfEdgeExternNext(heIdx));
+
     return halfEdgeNext(m_mesh[heIdx].twinIndex());
 }
 
 int CompactHalfEdge::halfEdgeStarPrevious(int heIdx)const
 {
+    if(!m_mesh[halfEdgePrevious(heIdx)].hasTwin())
+        return halfEdgeExternPrevious(halfEdgePrevious(heIdx));
+
     return m_mesh[halfEdgePrevious(heIdx)].twinIndex();
 }
 
@@ -300,6 +316,29 @@ void CompactHalfEdge::deleteTriangle(int tId)
 
     if(he.size() == 0)
         return;
+
+
+    if(he.size() > 1)
+    {
+        for(int i = 0; i < 3 ; ++i)
+        {
+            int vIdT = m_mesh[tId+i].vertexIndex();
+
+            if(m_vertices[vIdT].halfedgeIndex() == tId || m_vertices[vIdT].halfedgeIndex() == tId+1 || m_vertices[vIdT].halfedgeIndex() == tId+2)
+                m_vertices[vIdT].halfedgeIndex() = halfEdgeStarNext(m_vertices[vIdT].halfedgeIndex());
+        }
+    }else
+    {
+        int heb = m_vertices[vID].halfedgeIndex();
+        int vIdT = vertexNext(heb);
+        if(m_vertices[vIdT].halfedgeIndex() == tId || m_vertices[vIdT].halfedgeIndex() == tId+1 || m_vertices[vIdT].halfedgeIndex() == tId+2)
+            m_vertices[vIdT].halfedgeIndex() = halfEdgeStarNext(m_vertices[vIdT].halfedgeIndex());
+
+        vIdT = vertexPrevious(heb);
+        if(m_vertices[vIdT].halfedgeIndex() == tId || m_vertices[vIdT].halfedgeIndex() == tId+1 || m_vertices[vIdT].halfedgeIndex() == tId+2)
+            m_vertices[vIdT].halfedgeIndex() = halfEdgeStarNext(m_vertices[vIdT].halfedgeIndex());
+    }
+
 
     for(int i = 0; i < he.size(); ++i)
     {

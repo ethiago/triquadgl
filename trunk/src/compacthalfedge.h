@@ -35,6 +35,9 @@ public:
 
     int halfEdgeStarNext(int heIdx)const;
     int halfEdgeStarPrevious(int heIdx) const;
+
+    int vertexNext(int hId) const;
+    int vertexPrevious(int hId)const;
     int vertexId(int triangleId, int halfEdgeOffset)const;
     int sizeOfTriangles() const;
     int sizeOfVertices()const;
