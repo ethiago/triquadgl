@@ -18,6 +18,7 @@ signals:
     void viewMesh(bool);
     void loadMesh();
     void metodoMudou(int);
+    void cheBuilderMudou(int);
     void loadSketch();
     void viewSketch(bool);
     void saveMesh();
@@ -26,11 +27,21 @@ signals:
     void clearMesh();
 
 public:
+
+    typedef struct _GRIDOPTIONS
+    {
+        float xm, xM, ym, yM;
+        int xN, yN;
+    }GRIDOPTIONS;
+
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void setGLDisplay(GLDisplay *);
     int metodoSelecionado();
+    int cheBuilderSelecionado();
     void addMetodo(const QString&);
+    void addCHEBuilder(const QString& label);
+    GRIDOPTIONS getGridOptions();
 
 private:
     Ui::MainWindow *ui;

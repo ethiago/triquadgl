@@ -21,6 +21,7 @@ public:
     const QVector<HalfEdge>& mesh()const;
 
     void clear();
+    bool isEmpty()const;
 
 
     void addVertices(const QVector<Vertex>&);

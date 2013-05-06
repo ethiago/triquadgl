@@ -6,6 +6,7 @@
 #include "QVector"
 #include "quadric2d.h"
 #include "compacthalfedge.h"
+#include "chebuilder.h"
 
 #define MESHFILEEXTENSION "msh"
 
@@ -72,7 +73,7 @@ public:
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
     void viewScalarField(bool v);
-    void buildMesh(const QVector<QVector4D>& ps);
+    bool buildMesh(CHEBuilder* builder);
 
     void clearDrawPoints();
     bool loadMesh(const QString &filename);

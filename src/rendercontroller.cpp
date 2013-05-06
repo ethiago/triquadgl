@@ -9,16 +9,23 @@
 #include "Object3D.h"
 #include "triquadmesh.h"
 #include "sketchcontroller.h"
+#include "chebuilderdefault.h"
+#include "chebuilderregulargrid.h"
+#include "chebuilderquadtreefrompointcloud.h"
+#include "chebuilderregulargridfrompointcloud.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
     QObject(parent)
 {
+    mw = mainWindow;
     skC = new SketchController();
     this->display = new GLDisplay();
     mainWindow->setGLDisplay(display);
     metodo = 0;
-    configCombo(mainWindow);
+    cheBuilder = 0;
+    configComboMetodo();
+    configComboCHEBuilder();
     {  // esta ordem deve ser mantida
         display->updateGL();
 
@@ -69,6 +76,9 @@ RenderController::RenderController(MainWindow *mainWindow,
 
     connect(mainWindow, SIGNAL(metodoMudou(int)),
             this, SLOT(metodoMudou(int)));
+
+    connect(mainWindow,SIGNAL(cheBuilderMudou(int)),
+            this, SLOT(cheBuilderMudou(int)));
 
     connect(mainWindow, SIGNAL(viewScalarField(bool)),
             this, SLOT(viewScalarField(bool)));
@@ -232,7 +242,7 @@ void RenderController::loadSketch()
     exec();
 }
 
-void RenderController::configCombo(MainWindow *mw)
+void RenderController::configComboMetodo()
 {
     mw->addMetodo("3 Camadas");
     mw->addMetodo("2 Camadas");
@@ -242,11 +252,24 @@ void RenderController::configCombo(MainWindow *mw)
     metodo = mw->metodoSelecionado();
 }
 
+void RenderController::configComboCHEBuilder()
+{
+    mw->addCHEBuilder("Default");
+    mw->addCHEBuilder("Regular Grid");
+    mw->addCHEBuilder("Regular Grid From Point Cloud");
+    mw->addCHEBuilder("QuadTree From Point Cloud");
+    metodo = mw->metodoSelecionado();
+}
+
 void RenderController::metodoMudou(int m )
 {
     metodo = m;
-    qDebug() << metodo;
     exec();
+}
+
+void RenderController::cheBuilderMudou(int v )
+{
+    cheBuilder = v;
 }
 
 void RenderController::clearMesh()
@@ -258,7 +281,31 @@ void RenderController::clearMesh()
 void RenderController::exec()
 {
     if(triquad->isEmpty())
-        triquad->buildMesh(ultimaLista);
+    {
+        MainWindow::GRIDOPTIONS opt;
+        CHEBuilder *builder;
+        switch (cheBuilder)
+        {
+        case 0:
+            builder = new CHEBuilderDefault();
+            break;
+        case 1:
+            opt = mw->getGridOptions();
+            builder = new CHEBuilderRegularGrid(opt.xm, opt.xM, opt.ym, opt.yM, opt.xN, opt.yN);
+            break;
+        case 2:
+            opt = mw->getGridOptions();
+            builder = new CHEBuilderRegularGridFromPointCloud(ultimaLista, opt.xN, opt.yN);
+            break;
+        case 3:
+            builder = new CHEBuilderOctreeFromPointCloud(ultimaLista);
+            break;
+        }
+        bool built = triquad->buildMesh(builder);
+        delete builder;
+        if(!built)
+            return;
+    }
 
     switch (metodo)
     {

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
-    <height>300</height>
+    <width>707</width>
+    <height>504</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,21 +19,14 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Metodo:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="cmb_Metodo"/>
-    </item>
-    <item>
      <widget class="QWidget" name="renderWidget" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout"/>
+      <layout class="QHBoxLayout" name="renderLayout"/>
      </widget>
     </item>
    </layout>
@@ -54,7 +47,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>567</width>
+     <width>707</width>
      <height>21</height>
     </rect>
    </property>
@@ -79,13 +72,223 @@
    </widget>
    <widget class="QMenu" name="menuConfigurations">
     <property name="title">
-     <string>Configurations</string>
+     <string>Result</string>
     </property>
     <addaction name="actionSaveImageAs"/>
    </widget>
    <addaction name="menuMesh"/>
    <addaction name="menuSketch"/>
    <addaction name="menuConfigurations"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Configurations</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="configurationLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Metodo:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmb_Metodo"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelCHEBuilder">
+       <property name="text">
+        <string>Mesh Builder:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmb_cheBuilder"/>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="limits">
+       <property name="title">
+        <string>Regular Grid Options</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Grid's Limit</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Left:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Botton:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Right:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Top:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="xMin">
+             <property name="minimum">
+              <double>-100.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>-0.500000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="xMax">
+             <property name="maximum">
+              <double>100.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.500000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDoubleSpinBox" name="yMax">
+             <property name="maximum">
+              <double>100.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.500000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QDoubleSpinBox" name="yMin">
+             <property name="minimum">
+              <double>-100.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.050000000000000</double>
+             </property>
+             <property name="value">
+              <double>-0.500000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="buckets">
+          <property name="title">
+           <string>Number of Buckes</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Horizontal:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Vertical:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="xBuckets">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>30</number>
+             </property>
+             <property name="value">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="yBuckets">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>30</number>
+             </property>
+             <property name="value">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionSaveImageAs">
    <property name="text">

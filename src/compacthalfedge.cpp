@@ -23,6 +23,11 @@ void CompactHalfEdge::clear()
     m_mesh.clear();
 }
 
+bool CompactHalfEdge::isEmpty()const
+{
+    return (m_vertices.size() == 0 || m_mesh.size() == 0);
+}
+
 const QVector<Vertex>&   CompactHalfEdge::vertices()const
 {
     return m_vertices;
