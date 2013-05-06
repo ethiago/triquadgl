@@ -9,6 +9,7 @@
 #include <QList>
 #include <QPair>
 #include <QTimer>
+#include "chebuilder.h"
 
 class MainWindow;
 class Object3D;
@@ -21,11 +22,13 @@ class RenderController : public QObject
 {
     Q_OBJECT
 
+    MainWindow *mw;
     QTimer timer;
     GLDisplay *display;
     TriQuadMesh *triquad;
     SketchController *skC;
     int metodo;
+    int cheBuilder;
     QVector<QVector4D> ultimaLista;
 
     QPoint temp;
@@ -39,7 +42,8 @@ public:
 
 private:
     QString saveImage();
-    void configCombo(MainWindow *mw);
+    void configComboMetodo();
+    void configComboCHEBuilder();
     void exec();
 
 public slots:
@@ -56,6 +60,7 @@ public slots:
     void loadMesh();
     void loadSketch();
     void metodoMudou(int);
+    void cheBuilderMudou(int);
     void saveMesh();
     void saveSketch();
     void timeout();

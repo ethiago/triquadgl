@@ -6,10 +6,6 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 #include "Curve.h"
-#include "chebuilderdefault.h"
-#include "chebuilderregulargrid.h"
-#include "chebuilderquadtreefrompointcloud.h"
-#include "chebuilderregulargridfrompointcloud.h"
 
 TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1)
@@ -33,14 +29,11 @@ void TriQuadMesh::clear()
     che.clear();
 }
 
-void TriQuadMesh::buildMesh(const QVector<QVector4D>& ps)
+bool TriQuadMesh::buildMesh(CHEBuilder *builder)
 {
-    //CHEBuilderRegularGrid builder(-2,2,-1,1,10,5);
-    //CHEBuilderDefault builder;
-    //CHEBuilderOctreeFromPointCloud builder(ps);
-    CHEBuilderRegularGridFromPointCloud builder(ps,7,7);
-    builder.build();
-    che = builder.che();
+    builder->build();
+    che = builder->che();
+    return !che.isEmpty();
 }
 
 Object3D* TriQuadMesh::copy() const
