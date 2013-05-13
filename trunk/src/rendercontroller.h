@@ -69,6 +69,7 @@ public slots:
     void viewScalarField(bool);
     void clearMesh();
     void linearFilter(bool);
+    void configsUpdated();
 };
 
 #endif // RENDERCONTROLLER_H

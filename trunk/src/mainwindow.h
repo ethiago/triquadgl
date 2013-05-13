@@ -26,6 +26,7 @@ signals:
     void viewScalarField(bool);
     void clearMesh();
     void linearFilter(bool);
+    void configsUpdated();
 
 public:
 
@@ -43,6 +44,8 @@ public:
     void addMetodo(const QString&);
     void addCHEBuilder(const QString& label);
     GRIDOPTIONS getGridOptions();
+    float getKDistance();
+    bool includeVertices();
 
 private:
     Ui::MainWindow *ui;

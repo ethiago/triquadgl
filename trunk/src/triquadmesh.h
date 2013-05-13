@@ -63,15 +63,13 @@ public:
     void move(const QPoint& ini, const QPoint& curr);
     void finish();
     void cancel();
-    void fitting(const QVector<QPoint> &);
-    void fittingG(QVector<QVector4D> &in);
-    void globalFitting_2layers(QVector<QVector4D> & in);
-    void globalFitting_2layers_freef(QVector<QVector4D> & in);
-    void globalFittingG_3layers_freef(QVector<QVector4D> & in);
-    void globalFitting_3layers(QVector<QVector4D> & in);
-    void globalFitting_5layers(QVector<QVector4D> & in);
-    void fittingGG(QVector<QVector4D> &in);
-    void globalFittingWithNormals(QVector<QVector4D> & in);
+
+    void globalFitting_2layers(QVector<QVector4D> & in, float k);
+    void globalFitting_2layers_freef(QVector<QVector4D> & in, float k);
+    void globalFittingG_3layers_freef(QVector<QVector4D> & in, float k, bool includeVertices);
+    void globalFitting_3layers(QVector<QVector4D> & in, float k, bool includeVertices);
+    void globalFitting_5layers(QVector<QVector4D> & in, float k);
+
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
     void deleteTriangleWith(const Vertex& v);

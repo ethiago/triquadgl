@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionView_Scalar_Field, SIGNAL(toggled(bool)),this, SIGNAL(viewScalarField(bool)));
     connect(ui->actionClear_Mesh, SIGNAL(triggered()), this, SIGNAL(clearMesh()));
     connect(ui->actionLinear_Filter, SIGNAL(toggled(bool)), this, SIGNAL(linearFilter(bool)));
+    connect(ui->kDistance, SIGNAL(editingFinished()), this, SIGNAL(configsUpdated()) );
+    connect(ui->includeVertices, SIGNAL(clicked()), this, SIGNAL(configsUpdated()) );
 }
 
 MainWindow::~MainWindow()
@@ -62,4 +64,14 @@ MainWindow::GRIDOPTIONS MainWindow::getGridOptions()
     opt.xN = ui->xBuckets->value();
     opt.yN = ui->yBuckets->value();
     return opt;
+}
+
+float MainWindow::getKDistance()
+{
+    return ui->kDistance->value();
+}
+
+bool MainWindow::includeVertices()
+{
+    return ui->includeVertices->isChecked();
 }

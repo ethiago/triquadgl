@@ -90,6 +90,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(linearFilter(bool)),
             this, SLOT(linearFilter(bool)) );
 
+    connect(mainWindow, SIGNAL(configsUpdated()),
+            this, SLOT(configsUpdated()) );
+
     mainWindow->showMaximized();
 
 }
@@ -325,22 +328,25 @@ void RenderController::exec()
             return;
     }
 
+    float k = mw->getKDistance();
+    bool includeVertices = mw->includeVertices();
+
     switch (metodo)
     {
     case 0:
-        triquad->globalFitting_3layers(ultimaLista);
+        triquad->globalFitting_3layers(ultimaLista, k, includeVertices);
         break;
     case 1:
-        triquad->globalFitting_2layers(ultimaLista);
+        triquad->globalFitting_2layers(ultimaLista, k);
         break;
     case 2:
-        triquad->globalFitting_5layers(ultimaLista);
+        triquad->globalFitting_5layers(ultimaLista, k);
         break;
     case 3:
-        triquad->globalFitting_2layers_freef(ultimaLista);
+        triquad->globalFitting_2layers_freef(ultimaLista, k);
         break;
     case 4:
-        triquad->globalFittingG_3layers_freef(ultimaLista);
+        triquad->globalFittingG_3layers_freef(ultimaLista, k, includeVertices);
         break;
     }
     display->updateGL();
@@ -379,5 +385,10 @@ void RenderController::linearFilter(bool v)
         ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
     else
         ultimaLista = triquad->unproject(skC->getPoints());
+    exec();
+}
+
+void RenderController::configsUpdated()
+{
     exec();
 }
