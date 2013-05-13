@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>707</width>
-    <height>504</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>707</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMesh">
@@ -69,6 +69,8 @@
     <addaction name="actionView_Sketch"/>
     <addaction name="actionLoad_Sketch"/>
     <addaction name="actionSave_Sketch"/>
+    <addaction name="separator"/>
+    <addaction name="actionLinear_Filter"/>
    </widget>
    <widget class="QMenu" name="menuConfigurations">
     <property name="title">
@@ -116,7 +118,7 @@
       <widget class="QComboBox" name="cmb_cheBuilder"/>
      </item>
      <item>
-      <widget class="QGroupBox" name="limits">
+      <widget class="QGroupBox" name="gridOptions">
        <property name="title">
         <string>Regular Grid Options</string>
        </property>
@@ -128,7 +130,7 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="limits">
           <property name="title">
            <string>Grid's Limit</string>
           </property>
@@ -354,6 +356,14 @@
   <action name="actionClear_Mesh">
    <property name="text">
     <string>Clear Mesh</string>
+   </property>
+  </action>
+  <action name="actionLinear_Filter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Linear Filter</string>
    </property>
   </action>
  </widget>
