@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_Sketch, SIGNAL(triggered()), this, SIGNAL(saveSketch()));
     connect(ui->actionView_Scalar_Field, SIGNAL(toggled(bool)),this, SIGNAL(viewScalarField(bool)));
     connect(ui->actionClear_Mesh, SIGNAL(triggered()), this, SIGNAL(clearMesh()));
+    connect(ui->actionLinear_Filter, SIGNAL(toggled(bool)), this, SIGNAL(linearFilter(bool)));
 }
 
 MainWindow::~MainWindow()

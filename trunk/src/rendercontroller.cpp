@@ -24,6 +24,7 @@ RenderController::RenderController(MainWindow *mainWindow,
     mainWindow->setGLDisplay(display);
     metodo = 0;
     cheBuilder = 0;
+    m_linearFilter = false;
     configComboMetodo();
     configComboCHEBuilder();
     {  // esta ordem deve ser mantida
@@ -83,7 +84,11 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewScalarField(bool)),
             this, SLOT(viewScalarField(bool)));
 
-    connect(mainWindow, SIGNAL(clearMesh()), this, SLOT(clearMesh()));
+    connect(mainWindow, SIGNAL(clearMesh()),
+            this, SLOT(clearMesh()));
+
+    connect(mainWindow, SIGNAL(linearFilter(bool)),
+            this, SLOT(linearFilter(bool)) );
 
     mainWindow->showMaximized();
 
@@ -118,7 +123,10 @@ void RenderController::mouseRigthFinish(QPoint ini, QPoint curr)
     if(ini != curr)
     {
         skC->mouseRigthFinish();
-        ultimaLista = triquad->unproject(skC->getPoints());
+        if(m_linearFilter)
+            ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
+        else
+            ultimaLista = triquad->unproject(skC->getPoints());
         exec();
     }else
     {
@@ -245,7 +253,10 @@ void RenderController::loadSketch()
 
     skC->loadSketch(filename);
 
-    ultimaLista = triquad->unproject(skC->getPoints());
+    if(m_linearFilter)
+        ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
+    else
+        ultimaLista = triquad->unproject(skC->getPoints());
     exec();
 }
 
@@ -359,4 +370,14 @@ void RenderController::viewScalarField(bool v)
 {
     triquad->viewScalarField(v);
     display->updateGL();
+}
+
+void RenderController::linearFilter(bool v)
+{
+    m_linearFilter = v;
+    if(m_linearFilter)
+        ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
+    else
+        ultimaLista = triquad->unproject(skC->getPoints());
+    exec();
 }

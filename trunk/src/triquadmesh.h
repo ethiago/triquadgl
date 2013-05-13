@@ -56,7 +56,9 @@ public:
     void changeOrigin(bool v);
 
     QVector4D unproject(const QPoint&);
+    QVector4D unproject(const QPointF&);
     QVector<QVector4D> unproject(const QVector<QPoint>&);
+    QVector<QVector4D> unproject(const QVector<QPointF>&);
 
     void move(const QPoint& ini, const QPoint& curr);
     void finish();

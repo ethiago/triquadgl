@@ -25,6 +25,7 @@ signals:
     void saveSketch();
     void viewScalarField(bool);
     void clearMesh();
+    void linearFilter(bool);
 
 public:
 

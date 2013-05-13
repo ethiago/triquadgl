@@ -33,6 +33,8 @@ class RenderController : public QObject
 
     QPoint temp;
 
+    bool m_linearFilter;
+
 public:
     explicit RenderController(MainWindow *mainWindow,
                               QObject *parent = 0);
@@ -66,6 +68,7 @@ public slots:
     void timeout();
     void viewScalarField(bool);
     void clearMesh();
+    void linearFilter(bool);
 };
 
 #endif // RENDERCONTROLLER_H

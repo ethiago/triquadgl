@@ -254,7 +254,34 @@ QVector4D TriQuadMesh::unproject(const QPoint& p)
     return v;
 }
 
+QVector4D TriQuadMesh::unproject(const QPointF& p)
+{
+    QVector4D v(p);
+    v.setW( 1.0 );
+    v.setX(2.0*(v.x() - vwp[0]));
+    v.setY(2.0*(v.y() - vwp[1]));
+    v.setX(v.x()/vwp[2] -1.0);
+    v.setY(-(v.y()/vwp[3] -1.0));
+
+    v = mvpi*v;
+    v /= v.w();
+    v.setZ(1.0);
+    return v;
+}
+
 QVector<QVector4D> TriQuadMesh::unproject(const QVector<QPoint>& v)
+{
+    QVector<QVector4D> ret;
+
+    for(int i = 0; i < v.size(); ++i)
+    {
+        ret.append(unproject(v[i]));
+    }
+
+    return ret;
+}
+
+QVector<QVector4D> TriQuadMesh::unproject(const QVector<QPointF>& v)
 {
     QVector<QVector4D> ret;
 

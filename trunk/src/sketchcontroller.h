@@ -23,6 +23,7 @@ public:
     void cancel();
 
     QVector<QPoint> getPoints(void);
+    QVector<QPointF> getPointsLinearFilter(void);
 
     bool loadSketch(const QString& fileName);
     bool saveSketch(const QString& fileName);

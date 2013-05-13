@@ -1,5 +1,6 @@
 #include "sketchcontroller.h"
 #include <QtOpenGL>
+#include "curveN/curven.hpp"
 
 SketchController::SketchController(QObject *parent) :
     QObject(parent)
@@ -43,6 +44,24 @@ void SketchController::draw()
 QVector<QPoint> SketchController::getPoints(void)
 {
     return last;
+}
+
+QVector<QPointF> SketchController::getPointsLinearFilter(void)
+{
+    PolygonalCurve <float , 2> curveFilter;
+    for(int i = 0; i < last.size(); ++i)
+    {
+        curveFilter.add(PointN<float,2>(last[i].x(), last[i].y()));
+    }
+    curveFilter.lineFilter(0.5,4);
+
+    QVector<QPointF> ret;
+    for(int i = 0; i < curveFilter.size(); ++i)
+    {
+        ret.append(QPointF(curveFilter[i][0], curveFilter[i][1]));
+    }
+    return ret;
+
 }
 
 bool SketchController::loadSketch(const QString& fn )
