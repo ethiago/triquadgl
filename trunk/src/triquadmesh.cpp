@@ -7,6 +7,8 @@
 #include <gsl/gsl_vector.h>
 #include "Curve.h"
 
+#define SIGN(x) ((x)<0?-1.0:1.0)
+
 TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1)
 {
@@ -367,7 +369,7 @@ QVector3D TriQuadMesh::bary(const QVector4D& p, int *idx)
     return QVector3D();
 }
 
-void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> &pontos, float k)
+void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> pontos, float k)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -454,7 +456,7 @@ void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> &pontos, float k)
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> &pontos, float k)
+void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> pontos, float k)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -544,296 +546,7 @@ void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> &pontos, float 
     drawPoints2(pontos2DL);
 }
 
-void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> &pontos, float k, bool includeVertices)
-{
-    QVector<QVector3D> b;
-    QVector<int> idx;
-    QVector<QVector2D> pontos2DL;
-    QVector<QVector2D> pontos2D;
-    QVector<QVector2D> pontos2DU;
-    QVector<float> distances(che.sizeOfTriangles()*3);
-    QVector<float> signal(che.sizeOfTriangles()*3);
-    QVector<bool> mapDistances(che.sizeOfTriangles()*3);
-    for(int i = 0; i < mapDistances.size(); ++i)
-        mapDistances[i] = false;
-
-    clearDrawPoints();
-
-
-    int np = configPoints(pontos, b, idx);
-    int nq = che.sizeOfVertices();
-    int nc = 6;
-    if(np < nq*nc)
-        return;
-
-    Curve c(pontos.size());
-    for(int i = 0; i < pontos.size(); ++i)
-    {
-        c.x(i) = pontos[i].x();
-        c.y(i) = pontos[i].y();
-    }
-    c.compute_nosso_curv(1);
-
-    float extraPoints = 0.0;
-    if(includeVertices)
-        extraPoints = che.sizeOfTriangles()*3;
-
-    gsl_matrix * A = gsl_matrix_calloc (np*3 + extraPoints, nq*nc);
-    gsl_vector * B = gsl_vector_calloc(np*3 + extraPoints);
-
-    for (int i = 1; i < np-1; ++i)
-    {
-        double bar[3];
-        QVector4D p[3];
-
-        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
-        p[1] = pontos[i];
-        pontos2DU.append(p[0].toVector2D());
-        pontos2D.append(pontos[i].toVector2D());
-        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
-        pontos2DL.append(p[2].toVector2D());
-
-        int tId = idx[i];
-
-        if(includeVertices)
-        {
-            for(int v = 0; v < 3; ++v)
-            {
-                int vId = che.vertexId(tId,v);
-                Vertex vertex = che.vertex(vId);
-                float d = vertex.distanceTo(Vertex(pontos[i].x(), pontos[i].y()));
-                if(!mapDistances[tId*3+v] || d < distances[tId*3+v])
-                {
-                    mapDistances[tId*3+v] = true;
-                    distances[tId*3+v] = d;
-                    QVector2D n(c.nx(i), c.ny(i));
-                    QVector2D dd(vertex.toVector2D() - pontos[i].toVector2D());
-                    signal[tId*3+v] = 1.0;
-                    if(QVector2D::dotProduct(n,dd) < 0)
-                        signal[tId*3+v] = -1.0;
-                }
-            }
-        }
-
-        for(int k = 0; k < 3; ++k)
-        {
-            if(k == 1)
-            {
-                bar[0] = b[i].x();
-                bar[1] = b[i].y();
-                bar[2] = b[i].z();
-                tId = idx[i];
-            }
-            else
-            {
-                int idx;
-                QVector3D bp = bary(p[k], &idx);
-                if(idx < 0)
-                    continue;
-                bar[0] = bp.x();
-                bar[1] = bp.y();
-                bar[2] = bp.z();
-                tId = idx;
-            }
-
-            for (int j = 0; j < 3; ++j)
-            {
-                int vId = che.vertexId(tId,j);
-                gsl_matrix_set (A, i*3 + k, vId*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
-                gsl_matrix_set (A, i*3 + k, vId*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
-                gsl_matrix_set (A, i*3 + k, vId*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
-                gsl_matrix_set (A, i*3 + k, vId*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
-                gsl_matrix_set (A, i*3 + k, vId*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
-                gsl_matrix_set (A, i*3 + k, vId*nc + 5,      1.0             *bar[j]); //1
-                gsl_vector_set( B, i*3 + k, 1-k);
-            }
-        }
-    }
-
-    if(includeVertices)
-    {
-        for(int i = 0; i < che.sizeOfTriangles(); ++i)
-        {
-            for(int j = 0; j < 3; ++j)
-            {
-                int vId = che.vertexId(i,j);
-                Vertex v = che.vertex(vId);
-                float dist = distances[i*3+j] * signal[i*3+j];
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 0,     v.x()*v.x()); //x^2
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 1, 2.0*v.x()*v.y()); //2xy
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 2, 2.0*v.x()      ); //2x
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 3,     v.y()*v.y()); //y^2
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 4, 2.0*v.y()      ); //2y
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 5, 1.0            ); //1
-                gsl_vector_set (B,np*3 + i*3 + j, dist);
-                if(dist > 0)
-                    pontos2DU.append(v.toVector2D());
-                else
-                    pontos2DL.append(v.toVector2D());
-
-            }
-        }
-    }
-
-    QVector<Quadric2D> qs = fittingGLOBAL_flivre(A,B);
-
-    gsl_matrix_free (A);
-    gsl_vector_free (B);
-
-    for(int i = 0; i < qs.size(); ++i)
-    {
-        che.vertex(i).quadric() = qs[i];
-    }
-    drawPoints(pontos2D);
-    drawPoints1(pontos2DU);
-    drawPoints2(pontos2DL);
-}
-
-void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> &pontos, float k, bool includeVertices)
-{
-    QVector<QVector3D> b;
-    QVector<int> idx;
-    QVector<QVector2D> pontos2D;
-    QVector<QVector2D> pontos2DL;
-    QVector<QVector2D> pontos2DU;
-    QVector<float> distances(che.sizeOfTriangles()*3);
-    QVector<float> signal(che.sizeOfTriangles()*3);
-    QVector<bool> mapDistances(che.sizeOfTriangles()*3);
-    for(int i = 0; i < mapDistances.size(); ++i)
-        mapDistances[i] = false;
-    clearDrawPoints();
-
-
-    int np = configPoints(pontos, b, idx);
-    int nq = che.sizeOfVertices();
-    int nc = 5;
-    if(np < nq*nc)
-        return;
-
-    Curve c(pontos.size());
-    for(int i = 0; i < pontos.size(); ++i)
-    {
-        c.x(i) = pontos[i].x();
-        c.y(i) = pontos[i].y();
-    }
-    c.compute_nosso_curv(1);
-
-    float extraPoints = 0.0;
-    if(includeVertices)
-        extraPoints = che.sizeOfTriangles()*3;
-
-    gsl_matrix * A = gsl_matrix_calloc (np*3 + extraPoints, nq*nc);
-    gsl_vector * B = gsl_vector_calloc(np*3 + extraPoints);
-
-    for (int i = 1; i < np-1; ++i)
-    {
-        double bar[3];
-        QVector4D p[3];
-
-        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
-        pontos2DU.append(p[0].toVector2D());
-        p[1] = pontos[i];
-        pontos2D.append(p[1].toVector2D());
-        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
-        pontos2DL.append(p[2].toVector2D());
-
-        int tId = idx[i];
-
-        if(includeVertices)
-        {
-            for(int v = 0; v < 3; ++v)
-            {
-                int vId = che.vertexId(tId,v);
-                Vertex vertex = che.vertex(vId);
-                float d = vertex.distanceTo(Vertex(pontos[i].x(), pontos[i].y()));
-                if(!mapDistances[tId*3+v] || d < distances[tId*3+v])
-                {
-                    mapDistances[tId*3+v] = true;
-                    distances[tId*3+v] = d;
-                    QVector2D n(c.nx(i), c.ny(i));
-                    QVector2D dd(vertex.toVector2D() - pontos[i].toVector2D());
-                    signal[tId*3+v] = 1.0;
-                    if(QVector2D::dotProduct(n,dd) < 0)
-                        signal[tId*3+v] = -1.0;
-                }
-            }
-        }
-
-        for(int k = 0; k < 3; ++k)
-        {
-            if(k == 1)
-            {
-                bar[0] = b[i].x();
-                bar[1] = b[i].y();
-                bar[2] = b[i].z();
-                tId = idx[i];
-            }
-            else
-            {
-                int idx;
-                QVector3D bp = bary(p[k], &idx);
-                if(idx < 0)
-                    continue;
-                bar[0] = bp.x();
-                bar[1] = bp.y();
-                bar[2] = bp.z();
-                tId = idx;
-            }
-
-            for (int j = 0; j < 3; ++j)
-            {
-                int vId = che.vertexId(tId, j);
-                gsl_matrix_set (A, i*3 + k, vId*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
-                gsl_matrix_set (A, i*3 + k, vId*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
-                gsl_matrix_set (A, i*3 + k, vId*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
-                gsl_matrix_set (A, i*3 + k, vId*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
-                gsl_matrix_set (A, i*3 + k, vId*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
-                gsl_vector_set( B, i*3 + k, 2-k);
-
-            }
-        }
-    }
-
-    if(includeVertices)
-    {
-        for(int i = 0; i < che.sizeOfTriangles(); ++i)
-        {
-            for(int j = 0; j < 3; ++j)
-            {
-                int vId = che.vertexId(i,j);
-                Vertex v = che.vertex(vId);
-                float dist = distances[i*3+j] * signal[i*3+j];
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 0,     v.x()*v.x()); //x^2
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 1, 2.0*v.x()*v.y()); //2xy
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 2, 2.0*v.x()      ); //2x
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 3,     v.y()*v.y()); //y^2
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 4, 2.0*v.y()      ); //2y
-                gsl_matrix_set (A,np*3 + i*3 + j, vId*nc + 5, 1.0            ); //1
-                gsl_vector_set (B,np*3 + i*3 + j, dist+1);
-                if(dist > 0)
-                    pontos2DU.append(v.toVector2D());
-                else
-                    pontos2DL.append(v.toVector2D());
-
-            }
-        }
-    }
-
-    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
-
-    gsl_matrix_free (A);
-    gsl_vector_free (B);
-
-    for(int i = 0; i < qs.size(); ++i)
-    {
-        che.vertex(i).quadric() = qs[i];
-    }
-    drawPoints(pontos2D);
-    drawPoints1(pontos2DU);
-    drawPoints2(pontos2DL);
-}
-
-void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> &pontos, float k)
+void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> pontos, float k)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
@@ -924,6 +637,269 @@ void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> &pontos, float k)
     drawPoints1(pontos2DU);
     drawPoints2(pontos2DL);
 }
+
+
+
+void TriQuadMesh::calcDistances(const QVector<QVector4D> &pontos, QVector<float>* distances, QVector<int>* idxPoint)
+{
+    QVector<bool> map(che.sizeOfVertices());
+    for(int i = 0; i < map.size(); ++i)
+        map[i] = false;
+
+    for(int i = 0; i < che.sizeOfVertices(); ++i)
+    {
+        for(int j = 0; j < pontos.size(); ++j)
+        {
+            Vertex vertex = che.vertex(i);
+            float d = vertex.distanceTo(pontos[j].toVector2D());
+            if(!map[i] || d < distances->at(i))
+            {
+                map[i] = true;
+                distances->operator [](i) = d;
+                idxPoint-> operator [](i) = j;
+            }
+        }
+    }
+}
+
+void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> pontos, float k, bool includeVertices)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2D;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = che.sizeOfVertices();
+    int nc = 6;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    float extraPoints = 0.0;
+    if(includeVertices)
+        extraPoints = che.sizeOfVertices();
+
+    gsl_matrix * A = gsl_matrix_calloc (np*3 + extraPoints, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*3 + extraPoints);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[3];
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        p[1] = pontos[i];
+        pontos2DU.append(p[0].toVector2D());
+        pontos2D.append(pontos[i].toVector2D());
+        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[2].toVector2D());
+
+        int tId;
+        for(int k = 0; k < 3; ++k)
+        {
+            if(k == 1)
+            {
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                tId = idx[i];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                tId = idx;
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+                int vId = che.vertexId(tId,j);
+                gsl_matrix_set (A, i*3 + k, vId*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*3 + k, vId*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*3 + k, vId*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*3 + k, vId*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*3 + k, vId*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_matrix_set (A, i*3 + k, vId*nc + 5,      1.0             *bar[j]); //1
+                gsl_vector_set( B, i*3 + k, 1-k);
+            }
+        }
+    }
+
+    QVector<float> distances(che.sizeOfVertices());
+    QVector<int> pointsIndex(che.sizeOfVertices());
+    calcDistances(pontos, &distances, &pointsIndex);
+
+    if(includeVertices)
+    {
+        for(int i = 0; i < che.sizeOfVertices(); ++i)
+        {
+            Vertex v = che.vertex(i);
+            int pIdx = pointsIndex[i];
+            float dist = distances[i] * SIGN(QVector2D::dotProduct(v.toVector2D()-pontos[pIdx].toVector2D(), QVector2D(c.nx(pIdx), c.ny(pIdx))));
+            gsl_matrix_set (A,np*3 + i, i*nc + 0,     v.x()*v.x()); //x^2
+            gsl_matrix_set (A,np*3 + i, i*nc + 1, 2.0*v.x()*v.y()); //2xy
+            gsl_matrix_set (A,np*3 + i, i*nc + 2, 2.0*v.x()      ); //2x
+            gsl_matrix_set (A,np*3 + i, i*nc + 3,     v.y()*v.y()); //y^2
+            gsl_matrix_set (A,np*3 + i, i*nc + 4, 2.0*v.y()      ); //2y
+            gsl_matrix_set (A,np*3 + i, i*nc + 5, 1.0            ); //1
+            gsl_vector_set (B,np*3 + i, dist+1);
+            if(dist > 0)
+                pontos2DU.append(v.toVector2D());
+            else
+                pontos2DL.append(v.toVector2D());
+
+        }
+    }
+
+    QVector<Quadric2D> qs = fittingGLOBAL_flivre(A,B);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        che.vertex(i).quadric() = qs[i];
+    }
+    drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
+void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> pontos, float k, bool includeVertices)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+    QVector<QVector2D> pontos2D;
+    QVector<QVector2D> pontos2DL;
+    QVector<QVector2D> pontos2DU;
+    clearDrawPoints();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = che.sizeOfVertices();
+    int nc = 5;
+    if(np < nq*nc)
+        return;
+
+    Curve c(pontos.size());
+    for(int i = 0; i < pontos.size(); ++i)
+    {
+        c.x(i) = pontos[i].x();
+        c.y(i) = pontos[i].y();
+    }
+    c.compute_nosso_curv(1);
+
+    float extraPoints = 0.0;
+    if(includeVertices)
+        extraPoints = che.sizeOfVertices();
+
+    gsl_matrix * A = gsl_matrix_calloc (np*3 + extraPoints, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np*3 + extraPoints);
+
+    for (int i = 1; i < np-1; ++i)
+    {
+        double bar[3];
+        QVector4D p[3];
+
+        p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DU.append(p[0].toVector2D());
+        p[1] = pontos[i];
+        pontos2D.append(p[1].toVector2D());
+        p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
+        pontos2DL.append(p[2].toVector2D());
+
+        int tId;
+
+        for(int k = 0; k < 3; ++k)
+        {
+            if(k == 1)
+            {
+                bar[0] = b[i].x();
+                bar[1] = b[i].y();
+                bar[2] = b[i].z();
+                tId = idx[i];
+            }
+            else
+            {
+                int idx;
+                QVector3D bp = bary(p[k], &idx);
+                if(idx < 0)
+                    continue;
+                bar[0] = bp.x();
+                bar[1] = bp.y();
+                bar[2] = bp.z();
+                tId = idx;
+            }
+
+            for (int j = 0; j < 3; ++j)
+            {
+                int vId = che.vertexId(tId, j);
+                gsl_matrix_set (A, i*3 + k, vId*nc + 0,     p[k].x()*p[k].x()*bar[j]); //x^2
+                gsl_matrix_set (A, i*3 + k, vId*nc + 1, 2.0*p[k].x()*p[k].y()*bar[j]); //2xy
+                gsl_matrix_set (A, i*3 + k, vId*nc + 2, 2.0*p[k].x()         *bar[j]); //2x
+                gsl_matrix_set (A, i*3 + k, vId*nc + 3,     p[k].y()*p[k].y()*bar[j]); //y^2
+                gsl_matrix_set (A, i*3 + k, vId*nc + 4, 2.0*p[k].y()         *bar[j]); //2y
+                gsl_vector_set( B, i*3 + k, 2-k);
+
+            }
+        }
+    }
+
+    QVector<float> distances(che.sizeOfVertices());
+    QVector<int> pointsIndex(che.sizeOfVertices());
+    calcDistances(pontos, &distances, &pointsIndex);
+
+    if(includeVertices)
+    {
+        for(int i = 0; i < che.sizeOfVertices(); ++i)
+        {
+            Vertex v = che.vertex(i);
+            int pIdx = pointsIndex[i];
+            float dist = distances[i] * SIGN(QVector2D::dotProduct(v.toVector2D()-pontos[pIdx].toVector2D(), QVector2D(c.nx(pIdx), c.ny(pIdx))));
+            gsl_matrix_set (A,np*3 + i, i*nc + 0,     v.x()*v.x()); //x^2
+            gsl_matrix_set (A,np*3 + i, i*nc + 1, 2.0*v.x()*v.y()); //2xy
+            gsl_matrix_set (A,np*3 + i, i*nc + 2, 2.0*v.x()      ); //2x
+            gsl_matrix_set (A,np*3 + i, i*nc + 3,     v.y()*v.y()); //y^2
+            gsl_matrix_set (A,np*3 + i, i*nc + 4, 2.0*v.y()      ); //2y
+            gsl_vector_set (B,np*3 + i, dist+1);
+            if(dist > 0)
+                pontos2DU.append(v.toVector2D());
+            else
+                pontos2DL.append(v.toVector2D());
+
+        }
+    }
+
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        che.vertex(i).quadric() = qs[i];
+    }
+    drawPoints(pontos2D);
+    drawPoints1(pontos2DU);
+    drawPoints2(pontos2DL);
+}
+
 
 QMatrix4x4 TriQuadMesh::buildInv(int triangleId)
 {

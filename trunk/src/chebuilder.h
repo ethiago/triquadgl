@@ -11,6 +11,7 @@ protected:
 
 public:
     CHEBuilder();
+    virtual ~CHEBuilder();
 
     const CompactHalfEdge& che()const;
 
