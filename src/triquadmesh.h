@@ -64,11 +64,11 @@ public:
     void finish();
     void cancel();
 
-    void globalFitting_2layers(QVector<QVector4D> & in, float k);
-    void globalFitting_2layers_freef(QVector<QVector4D> & in, float k);
-    void globalFittingG_3layers_freef(QVector<QVector4D> & in, float k, bool includeVertices);
-    void globalFitting_3layers(QVector<QVector4D> & in, float k, bool includeVertices);
-    void globalFitting_5layers(QVector<QVector4D> & in, float k);
+    void globalFitting_2layers(QVector<QVector4D> in, float k);
+    void globalFitting_2layers_freef(QVector<QVector4D>  in, float k);
+    void globalFittingG_3layers_freef(QVector<QVector4D>  in, float k, bool includeVertices);
+    void globalFitting_3layers(QVector<QVector4D>  in, float k, bool includeVertices);
+    void globalFitting_5layers(QVector<QVector4D>  in, float k);
 
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
@@ -94,6 +94,7 @@ private:
     QVector4D buscaNo(const QVector4D& p, int *idx);
     int configPoints(QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
     QVector3D bary(const QVector4D& p, int *idx);
+    void calcDistances(const QVector<QVector4D> &pontos, QVector<float>* distances, QVector<int> *idx);
 };
 
 QDebug operator<< (QDebug d, const Quadric2D &model);

@@ -263,6 +263,23 @@ void RenderController::loadSketch()
     exec();
 }
 
+void RenderController::metodoMudou(int m )
+{
+    metodo = m;
+    exec();
+}
+
+void RenderController::cheBuilderMudou(int v )
+{
+    cheBuilder = v;
+}
+
+void RenderController::clearMesh()
+{
+    triquad->clear();
+    display->updateGL();
+}
+
 void RenderController::configComboMetodo()
 {
     mw->addMetodo("3 Camadas");
@@ -280,23 +297,6 @@ void RenderController::configComboCHEBuilder()
     mw->addCHEBuilder("Regular Grid From Point Cloud");
     mw->addCHEBuilder("QuadTree From Point Cloud");
     metodo = mw->metodoSelecionado();
-}
-
-void RenderController::metodoMudou(int m )
-{
-    metodo = m;
-    exec();
-}
-
-void RenderController::cheBuilderMudou(int v )
-{
-    cheBuilder = v;
-}
-
-void RenderController::clearMesh()
-{
-    triquad->clear();
-    display->updateGL();
 }
 
 void RenderController::exec()
