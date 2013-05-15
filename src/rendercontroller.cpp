@@ -287,6 +287,8 @@ void RenderController::configComboMetodo()
     mw->addMetodo("5 Camadas");
     mw->addMetodo("2 Camadas - f livre");
     mw->addMetodo("3 Camadas - f livre");
+    mw->addMetodo("3 Camadas - f livre (K Distance)");
+    mw->addMetodo("1 Camada  - f livre (K Distance)");
     metodo = mw->metodoSelecionado();
 }
 
@@ -347,6 +349,12 @@ void RenderController::exec()
         break;
     case 4:
         triquad->globalFittingG_3layers_freef(ultimaLista, k, includeVertices);
+        break;
+    case 5:
+        triquad->globalFittingG_3layers_freef_kDistance(ultimaLista, k, includeVertices);
+        break;
+    case 6:
+        triquad->globalFittingG_1layers_freef_kDistance(ultimaLista, k, includeVertices);
         break;
     }
     display->updateGL();
