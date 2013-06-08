@@ -68,9 +68,10 @@ public:
     void globalFitting_2layers_freef(QVector<QVector4D>  in, float k);
     void globalFittingG_3layers_freef(QVector<QVector4D>  in, float k, bool includeVertices);
     void globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
-    void globalFittingG_1layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
+    void globalFittingG_1layers_freef(QVector<QVector4D> pontos);
     void globalFitting_3layers(QVector<QVector4D>  in, float k, bool includeVertices);
     void globalFitting_5layers(QVector<QVector4D>  in, float k);
+    void globalFitting_1layer(QVector<QVector4D>  in, bool includeVertices);
 
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
