@@ -282,6 +282,7 @@ void RenderController::clearMesh()
 
 void RenderController::configComboMetodo()
 {
+    mw->addMetodo("1 Camada");
     mw->addMetodo("3 Camadas");
     mw->addMetodo("2 Camadas");
     mw->addMetodo("5 Camadas");
@@ -336,25 +337,28 @@ void RenderController::exec()
     switch (metodo)
     {
     case 0:
-        triquad->globalFitting_3layers(ultimaLista, k, includeVertices);
+        triquad->globalFitting_1layer(ultimaLista, includeVertices);
         break;
     case 1:
-        triquad->globalFitting_2layers(ultimaLista, k);
+        triquad->globalFitting_3layers(ultimaLista, k, includeVertices);
         break;
     case 2:
-        triquad->globalFitting_5layers(ultimaLista, k);
+        triquad->globalFitting_2layers(ultimaLista, k);
         break;
     case 3:
-        triquad->globalFitting_2layers_freef(ultimaLista, k);
+        triquad->globalFitting_5layers(ultimaLista, k);
         break;
     case 4:
-        triquad->globalFittingG_3layers_freef(ultimaLista, k, includeVertices);
+        triquad->globalFitting_2layers_freef(ultimaLista, k);
         break;
     case 5:
-        triquad->globalFittingG_3layers_freef_kDistance(ultimaLista, k, includeVertices);
+        triquad->globalFittingG_3layers_freef(ultimaLista, k, includeVertices);
         break;
     case 6:
-        triquad->globalFittingG_1layers_freef_kDistance(ultimaLista, k, includeVertices);
+        triquad->globalFittingG_3layers_freef_kDistance(ultimaLista, k, includeVertices);
+        break;
+    case 7:
+        triquad->globalFittingG_1layers_freef(ultimaLista);
         break;
     }
     display->updateGL();
