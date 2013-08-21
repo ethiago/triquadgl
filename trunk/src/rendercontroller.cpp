@@ -121,6 +121,7 @@ void RenderController::drawModel(void)
 
 void RenderController::mouseRigthMove(QPoint ini, QPoint curr)
 {
+    ini.rx();
     skC->mouseRigthMove(curr, triquad->unproject(curr));
     display->updateGL();
 }
@@ -311,7 +312,7 @@ void RenderController::exec()
     if(triquad->isEmpty())
     {
         MainWindow::GRIDOPTIONS opt;
-        CHEBuilder *builder;
+        CHEBuilder *builder = NULL;
         switch (cheBuilder)
         {
         case 0:
@@ -330,7 +331,8 @@ void RenderController::exec()
             break;
         }
         bool built = triquad->buildMesh(builder);
-        delete builder;
+        if(builder)
+            delete builder;
         if(!built)
             return;
     }
@@ -415,18 +417,16 @@ void RenderController::fittingMeasure()
     display->updateGL();
 
     QImage input = display->grabFrameBuffer();
-    input.save("srcInput.png", "png");
     FastMarching fm(input);
-    input = fm.run();
-    input.save("input.png", "png");
+    fm.run();
 
     triquad->configureRenderTriQuad();
     display->updateGL();
 
     QImage result = display->grabFrameBuffer();
-    result.save("srcTriquad.png", "png");
     FastMarching fm2(result);
-    result = fm2.run();
+    fm2.run();
 
-    result.save("triquad.png", "png");
+    qDebug() << fm.distanceTo(fm2);
+    qDebug() << fm2.distanceTo(fm);
 }
