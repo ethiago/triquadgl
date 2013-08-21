@@ -37,23 +37,15 @@ void QuadTree::build(const QVector<QVector4D>& points)
     }
 
     recursivilyBuild(root, in);
-
-    qDebug() << "####### FIM! ###########";
-
 }
 
 void QuadTree::recursivilyBuild(QuadTreeNode *node, QVector<QPoint>& points)
 {
-    qDebug() << points;
-
-    qDebug() << "(" << node->xMin << "," << node->yMin << ") - " << "(" << node->xMax << "," << node->yMax << ")";
-
     if(points.size() < subdivisionQuantityThreshold)
     {
         if(points.size() > 0)
         {
             node->hasPoint = true;
-            qDebug() << "Folha";
         }
         return;
     }
