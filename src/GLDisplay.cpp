@@ -17,6 +17,7 @@ GLDisplay::GLDisplay(QWidget *parent) : QGLWidget(parent),
     setStyleSheet("border: 2px solid black;");
 
     setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
 }
 
 GLDisplay::~GLDisplay()
@@ -91,7 +92,7 @@ void GLDisplay::paintGL()
 
     emit drawModel();
 
-    glFlush();
+    swapBuffers();
 }
 
 void GLDisplay::mousePressEvent ( QMouseEvent * event )

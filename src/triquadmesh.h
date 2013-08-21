@@ -28,6 +28,8 @@ class TriQuadMesh : public Object3D
     bool showSketch;
     bool origin;
     bool showScalarField;
+    bool showInputLine;
+    bool showTriQuad;
 
     int vwp[4];
     QMatrix4x4 mvpi;
@@ -82,6 +84,9 @@ public:
     void clearDrawPoints();
     bool loadMesh(const QString &filename);
     bool saveMesh(const QString &filename)const;
+
+    void configureRenderInputLine();
+    void configureRenderTriQuad();
 
 private:
     void drawOrigin();
