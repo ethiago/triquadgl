@@ -13,6 +13,7 @@
 #include "chebuilderregulargrid.h"
 #include "chebuilderquadtreefrompointcloud.h"
 #include "chebuilderregulargridfrompointcloud.h"
+#include "fastmarching.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
@@ -92,6 +93,9 @@ RenderController::RenderController(MainWindow *mainWindow,
 
     connect(mainWindow, SIGNAL(configsUpdated()),
             this, SLOT(configsUpdated()) );
+
+    connect(mainWindow, SIGNAL(fittingMeasure()),
+            this, SLOT(fittingMeasure()) );
 
     mainWindow->showMaximized();
 
@@ -403,4 +407,26 @@ void RenderController::linearFilter(bool v)
 void RenderController::configsUpdated()
 {
     exec();
+}
+
+void RenderController::fittingMeasure()
+{
+    triquad->configureRenderInputLine();
+    display->updateGL();
+
+    QImage input = display->grabFrameBuffer();
+    input.save("srcInput.png", "png");
+    FastMarching fm(input);
+    input = fm.run();
+    input.save("input.png", "png");
+
+    triquad->configureRenderTriQuad();
+    display->updateGL();
+
+    QImage result = display->grabFrameBuffer();
+    result.save("srcTriquad.png", "png");
+    FastMarching fm2(result);
+    result = fm2.run();
+
+    result.save("triquad.png", "png");
 }

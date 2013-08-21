@@ -77,6 +77,7 @@
      <string>Result</string>
     </property>
     <addaction name="actionSaveImageAs"/>
+    <addaction name="actionFitting_Measure"/>
    </widget>
    <addaction name="menuMesh"/>
    <addaction name="menuSketch"/>
@@ -407,6 +408,11 @@
    </property>
    <property name="text">
     <string>Linear Filter</string>
+   </property>
+  </action>
+  <action name="actionFitting_Measure">
+   <property name="text">
+    <string>Fitting Measure</string>
    </property>
   </action>
  </widget>

@@ -10,7 +10,8 @@
 #define SIGN(x) ((x)<0?-1.0:1.0)
 
 TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
-    Object3D(center, parent), origin(true), idxMaisProximo(-1)
+    Object3D(center, parent), origin(true), idxMaisProximo(-1),
+    showInputLine(false), showTriQuad(true)
 {
     setInputType(GL_TRIANGLES);
     buildObject();
@@ -128,6 +129,17 @@ void TriQuadMesh::drawGeometry(void)
         drawPoints2();
     }
 
+    if(showInputLine)
+    {
+        glColor4f(1.0, 0.0, 0.0, 1.0);
+        glPointSize(1.0);
+        glBegin(GL_LINE_STRIP);
+        for(int i = 0; i < dp.size(); ++i)
+            glVertex3f(dp[i].x(), dp[i].y(), 2.0);
+        glEnd();
+    }
+
+
     if(showMesh)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -146,27 +158,31 @@ void TriQuadMesh::drawGeometry(void)
         }glEnd();
         glLineWidth(1);
     }
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    program.bind();
-    program.setUniformValue(locationScalar,showScalarField);
-    glBegin(GL_TRIANGLES);
+
+    if(showTriQuad)
     {
-        for(int i = 0; i < che.sizeOfTriangles(); ++i)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        program.bind();
+        program.setUniformValue(locationScalar,showScalarField);
+        glBegin(GL_TRIANGLES);
         {
-            for(int j = 0; j < 3; ++j)
+            for(int i = 0; i < che.sizeOfTriangles(); ++i)
             {
-                int k = che.vertexId(i,j);
-                program.setAttributeValue(locationABC, che.vertex(k).quadric().abc());
-                program.setAttributeValue(locationDEF, che.vertex(k).quadric().def());
+                for(int j = 0; j < 3; ++j)
+                {
+                    int k = che.vertexId(i,j);
+                    program.setAttributeValue(locationABC, che.vertex(k).quadric().abc());
+                    program.setAttributeValue(locationDEF, che.vertex(k).quadric().def());
 
-                glVertex2f(che.vertex(k).x(),che.vertex(k).y());
+                    glVertex2f(che.vertex(k).x(),che.vertex(k).y());
 
+                }
             }
-        }
 
-    }glEnd();
+        }glEnd();
 
-    program.release();
+        program.release();
+    }
 
 }
 
@@ -1332,4 +1348,22 @@ bool TriQuadMesh::saveMesh(const QString &filename) const
 
     f.close();
     return true;
+}
+
+void TriQuadMesh::configureRenderInputLine()
+{
+    showInputLine = true;
+    showMesh = false;
+    showSketch = false;
+    showScalarField = false;
+    showTriQuad = false;
+}
+
+void TriQuadMesh::configureRenderTriQuad()
+{
+    showInputLine = false;
+    showMesh = false;
+    showSketch = false;
+    showScalarField = false;
+    showTriQuad = true;
 }

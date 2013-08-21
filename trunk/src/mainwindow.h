@@ -27,6 +27,7 @@ signals:
     void clearMesh();
     void linearFilter(bool);
     void configsUpdated();
+    void fittingMeasure();
 
 public:
 

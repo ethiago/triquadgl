@@ -15,7 +15,7 @@ void main ()
         {
             gl_FragColor = vec4(0.0,0.0,0.0,1.0) ;
 
-            if(abs(f) > abs(fwidth(f)))
+            if(abs(f) > abs(fwidth(f))*0.5)
                 discard;
         }else
         {

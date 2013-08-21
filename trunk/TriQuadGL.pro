@@ -9,7 +9,7 @@ win32 {
 }
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas# -lGLU
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
     INCLUDEPATH += /opt/local/include
 }
 
@@ -35,7 +35,8 @@ HEADERS  += src/curveN/catmullrom.hpp \
     src/chebuilderregulargrid.h \
     src/chebuilderdefault.h \
     src/chebuilderquadtreefrompointcloud.h \
-    src/chebuilderregulargridfrompointcloud.h
+    src/chebuilderregulargridfrompointcloud.h \
+    src/fastmarching.h
 
 SOURCES  += src/main.cpp \
         src/curveN/catmullrom.hpp \
@@ -57,7 +58,8 @@ SOURCES  += src/main.cpp \
     src/chebuilderregulargrid.cpp \
     src/chebuilderdefault.cpp \
     src/chebuilderquadtreefrompointcloud.cpp \
-    src/chebuilderregulargridfrompointcloud.cpp
+    src/chebuilderregulargridfrompointcloud.cpp \
+    src/fastmarching.cpp
 
 
 FORMS    += src/mainwindow.ui
