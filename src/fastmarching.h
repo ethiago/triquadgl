@@ -11,22 +11,27 @@ class FastMarching : public QObject
 
     QImage m_src;
 
-    bool **map;
-    float **values;
+    bool **m_map;
+    float **m_values;
+
+    bool alreadyRun;
 
 public:
     explicit FastMarching(const QImage& src, QObject *parent = 0);
+    virtual ~FastMarching();
 
-    void setSource(const QImage& src);
+    const float ** values() const;
 
-    QImage run();
+    float distanceTo(const FastMarching& fm);
+
+    void run();
     
 private:
 
     void flood();
     bool isValid(int i, int j);
-    void allocMats();
-    void freeMats();
+    void allocMap();
+    void freeMap();
     float maxValues();
     
 
@@ -38,6 +43,7 @@ private:
 
         TexelStruct& operator=(const TexelStruct& t){
             i = t.i; j = t.j; value = t.value;
+            return *this;
         }
 
         bool operator<(const TexelStruct& t)const{

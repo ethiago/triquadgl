@@ -3,62 +3,78 @@
 #include <qmath.h>
 
 FastMarching::FastMarching(const QImage& src,QObject *parent) :
-    QObject(parent)
+    QObject(parent), alreadyRun(false)
 {
     m_src = src;
-}
 
-void FastMarching::setSource(const QImage& src)
-{
-    m_src = src;
-}
-
-void FastMarching::allocMats()
-{
-    map    = new bool* [m_src.width()];
-    values = new float*[m_src.width()];
+    m_values = new float*[m_src.width()];
     for(int i = 0; i < m_src.width(); ++i)
     {
-        map   [i] = new bool [m_src.height()];
-        values[i] = new float[m_src.height()];
+        m_values[i] = new float[m_src.height()];
         for(int j = 0; j < m_src.height(); ++j)
         {
-            map   [i][j] = false;
-            values[i][j] =  -1.0;
+            m_values[i][j] =  -1.0;
         }
     }
 }
 
-void FastMarching::freeMats()
+FastMarching::~FastMarching()
 {
     for(int i = 0; i < m_src.width(); ++i)
     {
-        delete [] map[i];
-        delete [] values[i];
+        delete [] m_values[i];
     }
-    delete [] map;
-    delete [] values;
+    delete [] m_values;
+}
+
+void FastMarching::allocMap()
+{
+    m_map    = new bool* [m_src.width()];
+    for(int i = 0; i < m_src.width(); ++i)
+    {
+        m_map   [i] = new bool [m_src.height()];
+        for(int j = 0; j < m_src.height(); ++j)
+        {
+            m_map   [i][j] = false;
+        }
+    }
+}
+
+void FastMarching::freeMap()
+{
+    for(int i = 0; i < m_src.width(); ++i)
+    {
+        delete [] m_map[i];
+    }
+    delete [] m_map;
+}
+
+const float ** FastMarching::values()const
+{
+    return const_cast<const float **>(m_values);
 }
 
 float FastMarching::maxValues()
 {
-    float max = values[0][0];
+    float max = m_values[0][0];
     for(int i = 0; i < m_src.width(); ++i)
     {
         for(int j = 0; j < m_src.height(); ++j)
         {
-            if(values[i][j] > max)
-                max = values[i][j];
+            if(m_values[i][j] > max)
+                max = m_values[i][j];
         }
     }
     return max;
 }
 
-QImage FastMarching::run()
+void FastMarching::run()
 {
-    QImage result(m_src.size(), m_src.format());
+    if(alreadyRun)
+        return;
+    alreadyRun = true;
 
-    allocMats();
+    allocMap();
 
     for(int j = 0; j < m_src.height(); ++j)
     {
@@ -71,8 +87,8 @@ QImage FastMarching::run()
             if(r < 250 || g < 250 || b < 250)
             {
                 fila.push(TexelStruct(i,j,0.0));
-                map[i][j] = true;
-                values[i][j] = 0.0;
+                m_map[i][j] = true;
+                m_values[i][j] = 0.0;
             }
         }
     }
@@ -80,21 +96,19 @@ QImage FastMarching::run()
     flood();
 
 
-    float max = maxValues();
+//    float max = maxValues();
 
-    for(int i = 0; i < m_src.width(); ++i)
-    {
-        for(int j = 0; j < m_src.height(); ++j)
-        {
-            int v = (int)((values[i][j]*255.0)/max + 0.5);
-            result.setPixel(i,j,qRgba(v,v,v,255));
-        }
-    }
+//    for(int i = 0; i < m_src.width(); ++i)
+//    {
+//        for(int j = 0; j < m_src.height(); ++j)
+//        {
+//            int v = (int)((m_values[i][j]*255.0)/max + 0.5);
+//            result.setPixel(i,j,qRgba(v,v,v,255));
+//        }
+//    }
 
 
-    freeMats();
-
-    return result;
+    freeMap();
 }
 
 bool FastMarching::isValid(int i, int j)
@@ -117,28 +131,44 @@ void FastMarching::flood()
         int x = curr.i;
         int y = curr.j;
 
-        //qDebug() <<QPoint(x,y);
         for(int k = 0; k < 8; ++k)
         {
             int xi = x+i[k];
             int yj = y+j[k];
-            //qDebug() << " " <<QPoint(x+i,y+j);
             if(!isValid(xi,yj))
                 continue;
 
-            if(!map[xi][yj])
+            if(!m_map[xi][yj])
             {
-                values[xi][yj] = curr.value + dist[k];
-                map[xi][yj] = true;
-                fila.push(TexelStruct(xi,yj,values[xi][yj]));
-            }else if(curr.value + dist[k] < values[xi][yj])
+                m_values[xi][yj] = curr.value + dist[k];
+                m_map[xi][yj] = true;
+                fila.push(TexelStruct(xi,yj,m_values[xi][yj]));
+            }else if(curr.value + dist[k] < m_values[xi][yj])
             {
-                values[xi][yj] = curr.value + dist[k];
-            }else if(values[xi][yj] + dist[k]  <  curr.value)
+                m_values[xi][yj] = curr.value + dist[k];
+            }else if(m_values[xi][yj] + dist[k]  <  curr.value)
             {
-                values[x][y]    = values[xi][yj] + dist[k];
-                values[xi][yj] += dist[k];
+                m_values[xi][yj] += dist[k];
+                m_values[x][y]    = m_values[xi][yj];
             }
         }
     }
+}
+
+float FastMarching::distanceTo(const FastMarching& fm)
+{
+    float sum = 0.0;
+    int cnt = 0;
+    for(int i = 0; i < m_src.width(); ++i)
+    {
+        for(int j = 0; j < m_src.height(); ++j)
+        {
+            if(m_values[i][j] < 0.1)
+            {
+                sum += fm.values()[i][j];
+                cnt++;
+            }
+        }
+    }
+    return sum/cnt;
 }
