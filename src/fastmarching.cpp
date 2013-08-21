@@ -54,7 +54,7 @@ const float ** FastMarching::values()const
     return const_cast<const float **>(m_values);
 }
 
-float FastMarching::maxValues()
+float FastMarching::maxValues() const
 {
     float max = m_values[0][0];
     for(int i = 0; i < m_src.width(); ++i)
@@ -95,23 +95,26 @@ void FastMarching::run()
 
     flood();
 
-
-//    float max = maxValues();
-
-//    for(int i = 0; i < m_src.width(); ++i)
-//    {
-//        for(int j = 0; j < m_src.height(); ++j)
-//        {
-//            int v = (int)((m_values[i][j]*255.0)/max + 0.5);
-//            result.setPixel(i,j,qRgba(v,v,v,255));
-//        }
-//    }
-
-
     freeMap();
 }
 
-bool FastMarching::isValid(int i, int j)
+QImage FastMarching::getImage()const
+{
+    QImage result(m_src.size(), QImage::Format_ARGB32);
+    float max = maxValues();
+
+    for(int i = 0; i < m_src.width(); ++i)
+    {
+        for(int j = 0; j < m_src.height(); ++j)
+        {
+            int v = (int)((m_values[i][j]*255.0)/max + 0.5);
+            result.setPixel(i,j,qRgba(v,v,v,255));
+        }
+    }
+    return result;
+}
+
+bool FastMarching::isValid(int i, int j) const
 {
     return (i >= 0 && i < m_src.width() && j >=0 && j < m_src.height());
 }

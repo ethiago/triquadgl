@@ -23,16 +23,17 @@ public:
     const float ** values() const;
 
     float distanceTo(const FastMarching& fm);
+    QImage getImage()const;
 
     void run();
     
 private:
 
     void flood();
-    bool isValid(int i, int j);
+    bool isValid(int i, int j)const;
     void allocMap();
     void freeMap();
-    float maxValues();
+    float maxValues()const;
     
 
     class TexelStruct{

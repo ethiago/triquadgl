@@ -415,17 +415,23 @@ void RenderController::fittingMeasure()
 {
     triquad->configureRenderInputLine();
     display->updateGL();
+    display->updateGL();
 
     QImage input = display->grabFrameBuffer();
+    input.save("srcInput.png");
     FastMarching fm(input);
     fm.run();
+    fm.getImage().save("input.png");
 
     triquad->configureRenderTriQuad();
     display->updateGL();
+    display->updateGL();
 
     QImage result = display->grabFrameBuffer();
+    result.save("srcTriquad.png");
     FastMarching fm2(result);
     fm2.run();
+    fm2.getImage().save("triquad.png");
 
     qDebug() << fm.distanceTo(fm2);
     qDebug() << fm2.distanceTo(fm);

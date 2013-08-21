@@ -194,16 +194,16 @@ void TriQuadMesh::buildObject()
 
     QGLShader *vert = new QGLShader(QGLShader::Vertex  );
     QGLShader *frag = new QGLShader(QGLShader::Fragment);
-    qDebug() << vert->compileSourceFile(":/triquadVert");
-    qDebug() << vert->log();
-    qDebug() << frag->compileSourceFile(":/triquadFrag");
-    qDebug() << frag->log();
+    vert->compileSourceFile(":/triquadVert");
+    vert->log();
+    frag->compileSourceFile(":/triquadFrag");
+    frag->log();
 
     program.addShader(vert);
     program.addShader(frag);
 
-    qDebug() << program.link();
-    qDebug() << program.log();
+    program.link();
+    program.log();
 
     locationABC = program.attributeLocation("abc");
     locationDEF = program.attributeLocation("def");

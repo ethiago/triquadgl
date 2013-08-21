@@ -24,7 +24,6 @@ QVector<Quadric2D> processa(const QMatrix4x4& vInverse)
         bary[0] = b.x();
         bary[1] = b.y();
         bary[2] = b.z();
-//        qDebug() << b.x() + b.y() + b.z() - 1.0 ;
         for (int j = 0; j < 3; ++j)
         {
             gsl_matrix_set (A, i, j*5    ,     points[0][i]*points[0][i]*bary[j]); //x^2
@@ -48,8 +47,8 @@ QVector<Quadric2D> processa(const QMatrix4x4& vInverse)
     gsl_multifit_linear_svd( A,B, tol, &rank, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
-    qDebug() << chisq;
-    qDebug() << rank ;
+    //qDebug() << chisq;
+    //qDebug() << rank ;
 
     QVector<Quadric2D> resp;
     for(int i = 0; i < 3; ++i)
@@ -94,7 +93,7 @@ QVector<Quadric2D> processaQUAD()
     gsl_multifit_linear (A, B, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
-    qDebug() << chisq;
+    //qDebug() << chisq;
 
     QVector<Quadric2D> resp;
 
@@ -130,8 +129,8 @@ QVector<Quadric2D> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     //gsl_multifit_linear(A,B, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
-    qDebug() << chisq;
-    qDebug() << rank ;
+    //qDebug() << chisq;
+    //qDebug() << rank ;
 
     QVector<Quadric2D> resp;
 
@@ -166,8 +165,8 @@ QVector<Quadric2D> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
     //gsl_multifit_linear(A,B, x, cov, &chisq, work);
     gsl_multifit_linear_free (work);
 
-    qDebug() << chisq;
-    qDebug() << rank ;
+    //qDebug() << chisq;
+    //qDebug() << rank ;
 
     QVector<Quadric2D> resp;
     for(int i = 0; i < A->size2/6; ++i)
