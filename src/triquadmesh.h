@@ -87,6 +87,7 @@ public:
 
     void configureRenderInputLine();
     void configureRenderTriQuad();
+    void reconfigure(bool,bool,bool);
 
 private:
     void drawOrigin();

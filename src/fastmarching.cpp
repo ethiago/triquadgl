@@ -68,6 +68,19 @@ float FastMarching::maxValues() const
     return max;
 }
 
+void FastMarching::normalize()
+{
+    float maxV = maxValues();
+    maxV = sqrt(2.0)/maxV;
+    for(int i = 0; i < m_src.width(); ++i)
+    {
+        for(int j = 0; j < m_src.height(); ++j)
+        {
+            m_values[i][j] *= maxV;
+        }
+    }
+}
+
 void FastMarching::run()
 {
     if(alreadyRun)
@@ -94,6 +107,8 @@ void FastMarching::run()
     }
 
     flood();
+
+    normalize();
 
     freeMap();
 }

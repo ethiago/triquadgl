@@ -26,6 +26,8 @@ public:
     QImage getImage()const;
 
     void run();
+
+    float maxValues()const;
     
 private:
 
@@ -33,7 +35,7 @@ private:
     bool isValid(int i, int j)const;
     void allocMap();
     void freeMap();
-    float maxValues()const;
+    void normalize();
     
 
     class TexelStruct{

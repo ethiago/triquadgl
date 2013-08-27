@@ -1367,3 +1367,12 @@ void TriQuadMesh::configureRenderTriQuad()
     showScalarField = false;
     showTriQuad = true;
 }
+
+void TriQuadMesh::reconfigure(bool mesh,bool sketch, bool field)
+{
+    showInputLine = false;
+    showTriQuad = true;
+    showMesh = mesh;
+    showSketch = sketch;
+    showScalarField = field;
+}
