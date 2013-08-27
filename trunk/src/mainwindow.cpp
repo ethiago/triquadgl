@@ -76,3 +76,23 @@ bool MainWindow::includeVertices()
 {
     return ui->includeVertices->isChecked();
 }
+
+bool MainWindow::isMeshView()
+{
+    return ui->actionView_Mesh->isChecked();
+}
+
+bool MainWindow::isFieldView()
+{
+    return ui->actionView_Scalar_Field->isChecked();
+}
+
+bool MainWindow::isSketchView()
+{
+    return ui->actionView_Sketch->isChecked();
+}
+
+void MainWindow::setStatusText(const QString& text)
+{
+    ui->statusBar->showMessage(text);
+}

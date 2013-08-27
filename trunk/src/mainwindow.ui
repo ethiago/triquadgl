@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>731</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMesh">
@@ -336,6 +336,7 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSaveImageAs">
    <property name="text">
     <string>Save Image as ...</string>

@@ -48,6 +48,12 @@ public:
     float getKDistance();
     bool includeVertices();
 
+    bool isMeshView();
+    bool isFieldView();
+    bool isSketchView();
+
+    void setStatusText(const QString& text);
+
 private:
     Ui::MainWindow *ui;
 

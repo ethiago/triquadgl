@@ -367,7 +367,8 @@ void RenderController::exec()
         triquad->globalFittingG_1layers_freef(ultimaLista);
         break;
     }
-    display->updateGL();
+    fittingMeasure();
+    //display->updateGL();
 }
 
 void RenderController::saveMesh()
@@ -433,6 +434,12 @@ void RenderController::fittingMeasure()
     fm2.run();
     fm2.getImage().save("triquad.png");
 
-    qDebug() << fm.distanceTo(fm2);
-    qDebug() << fm2.distanceTo(fm);
+    float howFitted   = fm.distanceTo(fm2);
+    float moreThenFit = fm2.distanceTo(fm);
+
+    mw->setStatusText(QString::number(howFitted) + " X " + QString::number(moreThenFit));
+    triquad->reconfigure(mw->isMeshView(), mw->isSketchView(), mw->isFieldView());
+
+    display->updateGL();
+    display->updateGL();
 }
