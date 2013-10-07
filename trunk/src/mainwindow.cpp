@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->kDistance, SIGNAL(editingFinished()), this, SIGNAL(configsUpdated()) );
     connect(ui->includeVertices, SIGNAL(clicked()), this, SIGNAL(configsUpdated()) );
     connect(ui->actionFitting_Measure, SIGNAL(triggered()), this, SIGNAL(fittingMeasure()) );
+    connect(ui->meshTrans, SIGNAL(toggled(bool)), this, SIGNAL(meshTranslation(bool)) );
 }
 
 MainWindow::~MainWindow()

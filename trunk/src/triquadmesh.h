@@ -30,6 +30,7 @@ class TriQuadMesh : public Object3D
     bool showScalarField;
     bool showInputLine;
     bool showTriQuad;
+    bool meshTranslation;
 
     int vwp[4];
     QMatrix4x4 mvpi;
@@ -57,6 +58,8 @@ public:
 
     void changeOrigin(bool v);
 
+    void setMeshTranslation(bool);
+
     QVector4D unproject(const QPoint&);
     QVector4D unproject(const QPointF&);
     QVector<QVector4D> unproject(const QVector<QPoint>&);
@@ -69,6 +72,7 @@ public:
     void globalFitting_2layers(QVector<QVector4D> in, float k);
     void globalFitting_2layers_freef(QVector<QVector4D>  in, float k);
     void globalFittingG_3layers_freef(QVector<QVector4D>  in, float k, bool includeVertices);
+    void globalFittingG_3layers_freef_withGrad(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_1layers_freef(QVector<QVector4D> pontos);
     void globalFitting_3layers(QVector<QVector4D>  in, float k, bool includeVertices);
@@ -88,6 +92,8 @@ public:
     void configureRenderInputLine();
     void configureRenderTriQuad();
     void reconfigure(bool,bool,bool);
+
+    QVector<QVector2D> pointsOnEdge(const HalfEdge &h, int c = 3)const;
 
 private:
     void drawOrigin();

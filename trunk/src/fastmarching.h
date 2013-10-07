@@ -27,6 +27,8 @@ public:
 
     void run();
 
+    void normalize(float t = -1);
+
     float maxValues()const;
     
 private:
@@ -35,7 +37,7 @@ private:
     bool isValid(int i, int j)const;
     void allocMap();
     void freeMap();
-    void normalize();
+
     
 
     class TexelStruct{

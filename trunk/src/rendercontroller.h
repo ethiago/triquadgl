@@ -71,6 +71,7 @@ public slots:
     void linearFilter(bool);
     void configsUpdated();
     void fittingMeasure();
+    void meshTranslation(bool);
 };
 
 #endif // RENDERCONTROLLER_H
