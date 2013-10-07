@@ -191,3 +191,4 @@ void GLDisplay::mouseDoubleClickEvent(QMouseEvent *event)
 
     event->ignore();
 }
+

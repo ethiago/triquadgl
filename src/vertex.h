@@ -36,6 +36,8 @@ public:
 
     static bool projectVertexIntoSegment(const Vertex& _p, const Vertex& segmentV0, const Vertex& segmentV1, Vertex *ret);
     static float cross2D(const Vertex& p, const Vertex& p1, const Vertex&p2);
+
+    static bool intersection(const Vertex& Va, const Vertex& Vb, const Vertex& Pa, const Vertex& Pb, Vertex *inter);
 };
 
 

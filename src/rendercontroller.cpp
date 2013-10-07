@@ -97,6 +97,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(fittingMeasure()),
             this, SLOT(fittingMeasure()) );
 
+    connect(mainWindow, SIGNAL(meshTranslation(bool)),
+            this, SLOT(meshTranslation(bool)) );
+
     mainWindow->showMaximized();
 
 }
@@ -295,6 +298,7 @@ void RenderController::configComboMetodo()
     mw->addMetodo("3 Camadas - f livre");
     mw->addMetodo("3 Camadas - f livre (K Distance)");
     mw->addMetodo("1 Camada  - f livre (K Distance)");
+    mw->addMetodo("3 Camadas - f livre - grad");
     metodo = mw->metodoSelecionado();
 }
 
@@ -366,6 +370,9 @@ void RenderController::exec()
     case 7:
         triquad->globalFittingG_1layers_freef(ultimaLista);
         break;
+    case 8:
+        triquad->globalFittingG_3layers_freef_withGrad(ultimaLista, k, includeVertices);
+        break;
     }
     fittingMeasure();
     //display->updateGL();
@@ -417,18 +424,22 @@ void RenderController::fittingMeasure()
     triquad->configureRenderInputLine();
     display->updateGL();
     display->updateGL();
-
     QImage input = display->grabFrameBuffer();
+
+    triquad->configureRenderTriQuad();
+    display->updateGL();
+    display->updateGL();
+    QImage result = display->grabFrameBuffer();
+
+    triquad->reconfigure(mw->isMeshView(), mw->isSketchView(), mw->isFieldView());
+    display->updateGL();
+    display->updateGL();
+
     input.save("srcInput.png");
     FastMarching fm(input);
     fm.run();
     fm.getImage().save("input.png");
 
-    triquad->configureRenderTriQuad();
-    display->updateGL();
-    display->updateGL();
-
-    QImage result = display->grabFrameBuffer();
     result.save("srcTriquad.png");
     FastMarching fm2(result);
     fm2.run();
@@ -438,8 +449,10 @@ void RenderController::fittingMeasure()
     float moreThenFit = fm2.distanceTo(fm);
 
     mw->setStatusText(QString::number(howFitted) + " X " + QString::number(moreThenFit));
-    triquad->reconfigure(mw->isMeshView(), mw->isSketchView(), mw->isFieldView());
+    mw->update();
+}
 
-    display->updateGL();
-    display->updateGL();
+void RenderController::meshTranslation(bool v)
+{
+    triquad->setMeshTranslation(v);
 }

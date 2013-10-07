@@ -28,6 +28,7 @@ signals:
     void linearFilter(bool);
     void configsUpdated();
     void fittingMeasure();
+    void meshTranslation(bool);
 
 public:
 

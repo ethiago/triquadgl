@@ -1,5 +1,6 @@
 #include "vertex.h"
 #include "qmath.h"
+#include <QMatrix4x4>
 
 Vertex::Vertex(float x , float y )
 {
@@ -117,4 +118,29 @@ float Vertex::cross2D(const Vertex& p, const Vertex& p1, const Vertex& p2)
     float v2Y = p2.y()-p.y();
 
     return v1X*v2Y - v2X*v1Y;
+}
+
+bool Vertex::intersection(const Vertex& Va, const Vertex& Vb, const Vertex& Pa, const Vertex& Pb, Vertex *inter)
+{
+    QMatrix4x4 M;
+
+    M(0,0) = Vb.x() - Va.x(); M(0,1) = Pa.x() - Pb.x();
+    M(1,0) = Vb.y() - Va.y(); M(1,1) = Pa.y() - Pb.y();
+
+    bool i;
+    M = M.inverted(&i);
+
+    if(!i)
+        return false;
+
+    QVector4D B(Pa.x() - Va.x(), Pa.y() - Va.y(), 0, 0);
+    B = M*B;
+
+    if( 0 <= B.x() && B.x() <= 1.0 && 0 <= B.y() && B.y() <= 1.0)
+    {
+        *inter = Va.toVector2D() + B.x()*( Vb.toVector2D() - Va.toVector2D() );
+        return true;
+    }
+
+    return false;
 }

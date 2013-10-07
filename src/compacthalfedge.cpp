@@ -1,4 +1,5 @@
 #include "compacthalfedge.h"
+#include <QVector4D>
 
 CompactHalfEdge::CompactHalfEdge()
 {
@@ -367,3 +368,75 @@ void CompactHalfEdge::deleteTriangle(int tId)
     }
 }
 
+QVector<HalfEdge> CompactHalfEdge::getAllInternalEdges()const
+{
+    QVector<HalfEdge> ret;
+    QVector<bool> flags(m_mesh.size());
+
+    for(int i = 0; i < flags.size(); ++i)
+        flags[i] = false;
+
+
+    for(int i = 0; i < m_mesh.size(); ++i)
+    {
+        if(m_mesh[i].hasTwin() && !flags[i])
+        {
+            ret.append(m_mesh[i]);
+            flags[i] = true;
+            flags[m_mesh[i].twinIndex()] = true;
+        }
+    }
+
+    return ret;
+}
+
+int CompactHalfEdge::triangleIDFromHeId(int heid)const
+{
+    return heid%3;
+}
+
+void CompactHalfEdge::addToAllVertices(const QVector2D& v)
+{
+    for(int i = 0; i < m_vertices.size(); ++i)
+    {
+        m_vertices[i].x() += v.x();
+        m_vertices[i].y() += v.y();
+    }
+}
+
+QVector<QPair<Vertex, HalfEdge> > CompactHalfEdge::getIntersections(const QVector<QVector4D>& pontos)
+{
+    QVector<QPair<Vertex, HalfEdge> > ret;
+
+    QVector<bool> flags(m_mesh.size());
+
+    for(int i = 0; i < flags.size(); ++i)
+        flags[i] = false;
+
+    for(int i = 0; i < pontos.size() -1 ; ++i)
+    {
+        for(int j = 0; j < m_mesh.size(); ++j)
+        {
+            if(m_mesh[j].hasTwin() && !flags[j])
+            {
+                Vertex inter;
+                Vertex Va = m_vertices[m_mesh[j].vertexIndex()];
+                Vertex Vb = m_vertices[m_mesh[m_mesh[j].twinIndex() ].vertexIndex()];
+
+                Vertex Pa = Vertex(pontos[i].toVector2D() );
+                Vertex Pb = Vertex(pontos[i+1].toVector2D() );
+
+                if(Vertex::intersection(Va,Vb,Pa,Pb, &inter))
+                {
+                    ret.append(qMakePair( inter, m_mesh[j] ));
+                    flags[j] = true;
+                    flags[m_mesh[j].twinIndex()] = true;
+                }
+            }
+        }
+        for(int i = 0; i < flags.size(); ++i)
+            flags[i] = false;
+    }
+
+    return ret;
+}

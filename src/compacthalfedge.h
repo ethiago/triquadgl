@@ -53,6 +53,13 @@ public:
 
     int nextExternHalfEdgeOf    (int vertexIdx) const;
 
+    QVector<HalfEdge> getAllInternalEdges()const;
+
+    int triangleIDFromHeId(int heid)const;
+
+    void addToAllVertices(const QVector2D&);
+    QVector<QPair<Vertex, HalfEdge> > getIntersections(const QVector<QVector4D> &pontos);
+
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
