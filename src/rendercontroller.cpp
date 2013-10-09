@@ -31,7 +31,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     {  // esta ordem deve ser mantida
         display->updateGL();
 
-        triquad = new TriQuadMesh();
+        int textureName = display->bindTexture(QImage(":/texpontos"), GL_TEXTURE_2D);
+
+        triquad = new TriQuadMesh(textureName);
 
         connect(display, SIGNAL(drawModel()),
                 this, SLOT(drawModel()));

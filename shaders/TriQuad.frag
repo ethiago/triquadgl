@@ -2,14 +2,14 @@
 #extension GL_ARB_gpu_shader_fp64 : enable
 
 varying mat3 Q;
-varying vec3 p;
+varying vec3 P;
 
 uniform int showScalar;
 
 void main ()
 {
         gl_FragColor = vec4(1.0) ;
-        float f = dot(p,Q*p);
+        float f = dot(P,Q*P);
 
         if(showScalar == 0)
         {
@@ -28,5 +28,4 @@ void main ()
             if(abs(f) < abs(fwidth(f))*0.5)
                 gl_FragColor = vec4(1.0) ;
         }
-
 }

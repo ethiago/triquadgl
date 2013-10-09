@@ -9,9 +9,9 @@
 
 #define SIGN(x) ((x)<0?-1.0:1.0)
 
-TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
+TriQuadMesh::TriQuadMesh(int texName, const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1),
-    showInputLine(false), showTriQuad(true), meshTranslation(false)
+    showInputLine(false), showTriQuad(true), meshTranslation(false), m_glTextureName(texName)
 {
     setInputType(GL_TRIANGLES);
     buildObject();
@@ -19,7 +19,13 @@ TriQuadMesh::TriQuadMesh(const QVector3D& center, QObject *parent):
 
 TriQuadMesh::TriQuadMesh(const TriQuadMesh& tt): Object3D(tt), origin(false), idxMaisProximo(-1)
 {
+    m_glTextureName = tt.textureName();
     buildObject();
+}
+
+int TriQuadMesh::textureName()const
+{
+    return m_glTextureName;
 }
 
 bool TriQuadMesh::isEmpty()
@@ -36,6 +42,7 @@ bool TriQuadMesh::buildMesh(CHEBuilder *builder)
 {
     builder->build();
     che = builder->che();
+    che.maxMimCalc();
     return !che.isEmpty();
 
 //    che.clear();
@@ -161,9 +168,15 @@ void TriQuadMesh::drawGeometry(void)
 
     if(showTriQuad)
     {
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_glTextureName);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         program.bind();
         program.setUniformValue(locationScalar,showScalarField);
+        program.setUniformValue(locationMaior, che.getMaior());
+        program.setUniformValue(locationMenor, che.getMenor());
+        program.setUniformValue(locationTexture, 0);
         glBegin(GL_TRIANGLES);
         {
             for(int i = 0; i < che.sizeOfTriangles(); ++i)
@@ -181,6 +194,8 @@ void TriQuadMesh::drawGeometry(void)
 
         }glEnd();
 
+        glBindTexture(GL_TEXTURE_2D,0);
+
         program.release();
     }
 
@@ -194,13 +209,17 @@ void TriQuadMesh::buildObject()
 
     QGLShader *vert = new QGLShader(QGLShader::Vertex  );
     QGLShader *frag = new QGLShader(QGLShader::Fragment);
+    QGLShader *geom = new QGLShader(QGLShader::Geometry);
     vert->compileSourceFile(":/triquadVert");
     vert->log();
-    frag->compileSourceFile(":/triquadFrag");
+    frag->compileSourceFile(":/gradVisFrag");
     frag->log();
+    geom->compileSourceFile(":/gradVisGeom");
+    geom->log();
 
     program.addShader(vert);
     program.addShader(frag);
+    program.addShader(geom);
 
     program.link();
     program.log();
@@ -208,6 +227,11 @@ void TriQuadMesh::buildObject()
     locationABC = program.attributeLocation("abc");
     locationDEF = program.attributeLocation("def");
     locationScalar = program.uniformLocation("showScalar");
+    locationMenor = program.uniformLocation("menor");
+    locationMaior = program.uniformLocation("maior");
+    locationTexture = program.uniformLocation("sampler2d0");
+
+
 }
 
 bool TriQuadMesh::isProgramLinked()
@@ -359,11 +383,14 @@ void TriQuadMesh::move(const QPoint& ini, const QPoint& curr)
         }
     }
 
+    che.maxMimCalc();
+
 }
 
 void TriQuadMesh::finish()
 {
     idxMaisProximo = -1;
+    che.maxMimCalc();
 }
 
 void TriQuadMesh::cancel()
@@ -374,6 +401,7 @@ void TriQuadMesh::cancel()
             che.vertex(idxMaisProximo) = maisProximo;
     }
     idxMaisProximo = -1;
+    che.maxMimCalc();
 }
 
 int TriQuadMesh::configPoints( QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx )

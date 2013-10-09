@@ -10,6 +10,9 @@ class CompactHalfEdge
     QVector<Vertex> m_vertices;
     QVector<HalfEdge> m_mesh;
 
+    QVector2D m_maior;
+    QVector2D m_menor;
+
 public:
     CompactHalfEdge();
     CompactHalfEdge(const CompactHalfEdge& che);
@@ -59,6 +62,11 @@ public:
 
     void addToAllVertices(const QVector2D&);
     QVector<QPair<Vertex, HalfEdge> > getIntersections(const QVector<QVector4D> &pontos);
+
+    void maxMimCalc();
+
+    QVector2D getMaior()const;
+    QVector2D getMenor()const;
 
 
 private:

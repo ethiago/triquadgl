@@ -23,6 +23,9 @@ class TriQuadMesh : public Object3D
     int locationABC;
     int locationDEF;
     int locationScalar;
+    int locationMenor;
+    int locationMaior;
+    int locationTexture;
 
     bool showMesh;
     bool showSketch;
@@ -42,8 +45,10 @@ class TriQuadMesh : public Object3D
     QVector<QVector2D> dpL;
     QVector<QVector2D> dpU;
 
+    int m_glTextureName;
+
 public:
-    explicit TriQuadMesh(const QVector3D& center = QVector3D(),
+    explicit TriQuadMesh(int texName, const QVector3D& center = QVector3D(),
                     QObject *parent = 0);
     explicit TriQuadMesh(const TriQuadMesh& tt);
     ~TriQuadMesh();
@@ -92,6 +97,8 @@ public:
     void configureRenderInputLine();
     void configureRenderTriQuad();
     void reconfigure(bool,bool,bool);
+
+    int textureName()const;
 
     QVector<QVector2D> pointsOnEdge(const HalfEdge &h, int c = 3)const;
 

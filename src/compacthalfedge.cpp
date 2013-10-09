@@ -440,3 +440,36 @@ QVector<QPair<Vertex, HalfEdge> > CompactHalfEdge::getIntersections(const QVecto
 
     return ret;
 }
+
+QVector2D CompactHalfEdge::getMaior()const
+{
+    return m_maior;
+}
+
+QVector2D CompactHalfEdge::getMenor()const
+{
+    return m_menor;
+}
+
+void CompactHalfEdge::maxMimCalc()
+{
+    if(m_vertices.size() <= 0)
+        return;
+    m_maior = m_vertices[0].toVector2D();
+    m_menor = m_vertices[0].toVector2D();
+
+    for(int i = 0; i < m_vertices.size(); ++i)
+    {
+        if(m_vertices[i].x() > m_maior.x())
+            m_maior.setX(m_vertices[i].x());
+
+        if(m_vertices[i].y() > m_maior.y())
+            m_maior.setY(m_vertices[i].y());
+
+        if(m_vertices[i].x() < m_menor.x())
+            m_menor.setX(m_vertices[i].x());
+
+        if(m_vertices[i].y() < m_menor.y())
+            m_menor.setY(m_vertices[i].y());
+    }
+}

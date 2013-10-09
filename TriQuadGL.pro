@@ -68,4 +68,6 @@ RESOURCES += \
     Shaders.qrc
 
 OTHER_FILES += shaders/TriQuad.vert \
-        shaders/TriQuad.frag
+        shaders/TriQuad.frag \
+    shaders/TriQuad.geom \
+    shaders/TriQuadGrad.frag
