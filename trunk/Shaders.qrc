@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file alias="triquadFrag">shaders/TriQuad.frag</file>
         <file alias="triquadVert">shaders/TriQuad.vert</file>
+        <file alias="gradVisGeom">shaders/TriQuad.geom</file>
+        <file alias="gradVisFrag">shaders/TriQuadGrad.frag</file>
+        <file alias="texpontos">textures/pontos.png</file>
+        <file alias="texwnoise">textures/wnoise.png</file>
     </qresource>
 </RCC>
