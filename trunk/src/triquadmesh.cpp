@@ -12,7 +12,7 @@
 
 TriQuadMesh::TriQuadMesh(int texName, const QVector3D& center, QObject *parent):
     Object3D(center, parent), origin(true), idxMaisProximo(-1),
-    showInputLine(false), showTriQuad(true), meshTranslation(false), m_glTextureName(texName)
+    showInputLine(false), showTriQuad(true), meshTranslation(false), showScalarField(false), m_glTextureName(texName)
 {
     setInputType(GL_TRIANGLES);
     buildObject();
@@ -37,6 +37,14 @@ bool TriQuadMesh::isEmpty()
 void TriQuadMesh::clear()
 {
     che.clear();
+}
+
+void TriQuadMesh::viewGrad(bool v)
+{
+    if(v)
+        activeProgram = 1;
+    else
+        activeProgram = 0;
 }
 
 bool TriQuadMesh::buildMesh(CHEBuilder *builder)
@@ -174,11 +182,11 @@ void TriQuadMesh::drawGeometry(void)
         //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_glTextureName);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        program.bind();
-        program.setUniformValue(locationScalar,showScalarField);
-        program.setUniformValue(locationMaior, che.getMaior());
-        program.setUniformValue(locationMenor, che.getMenor());
-        program.setUniformValue(locationTexture, 0);
+        program[activeProgram].bind();
+        program[activeProgram].setUniformValue(locationScalar[activeProgram],showScalarField);
+        program[activeProgram].setUniformValue(locationMaior[activeProgram], che.getMaior());
+        program[activeProgram].setUniformValue(locationMenor[activeProgram], che.getMenor());
+        program[activeProgram].setUniformValue(locationTexture[activeProgram], 0);
         glBegin(GL_TRIANGLES);
         {
             for(int i = 0; i < che.sizeOfTriangles(); ++i)
@@ -186,8 +194,8 @@ void TriQuadMesh::drawGeometry(void)
                 for(int j = 0; j < 3; ++j)
                 {
                     int k = che.vertexId(i,j);
-                    program.setAttributeValue(locationABC, che.vertex(k).quadric().abc());
-                    program.setAttributeValue(locationDEF, che.vertex(k).quadric().def());
+                    program[activeProgram].setAttributeValue(locationABC[activeProgram], che.vertex(k).quadric().abc());
+                    program[activeProgram].setAttributeValue(locationDEF[activeProgram], che.vertex(k).quadric().def());
 
                     glVertex2f(che.vertex(k).x(),che.vertex(k).y());
 
@@ -198,7 +206,7 @@ void TriQuadMesh::drawGeometry(void)
 
         glBindTexture(GL_TEXTURE_2D,0);
 
-        program.release();
+        program[activeProgram].release();
     }
 
 }
@@ -210,39 +218,64 @@ void TriQuadMesh::buildObject()
     showScalarField = true;
 
     QGLShader *vert = new QGLShader(QGLShader::Vertex  );
+    QGLShader *vertG = new QGLShader(QGLShader::Vertex  );
     QGLShader *frag = new QGLShader(QGLShader::Fragment);
+    QGLShader *fragG = new QGLShader(QGLShader::Fragment);
     QGLShader *geom = new QGLShader(QGLShader::Geometry);
     vert->compileSourceFile(":/triquadVert");
     vert->log();
-    frag->compileSourceFile(":/gradVisFrag");
+
+    vertG->compileSourceFile(":/triquadVert");
+    vertG->log();
+
+    frag->compileSourceFile(":/triquadFrag");
     frag->log();
+
+    fragG->compileSourceFile(":/gradVisFrag");
+    fragG->log();
+
     geom->compileSourceFile(":/gradVisGeom");
     geom->log();
 
-    program.addShader(vert);
-    program.addShader(frag);
-    program.addShader(geom);
+    program[0].addShader(vert);
+    program[0].addShader(frag);
 
-    program.setGeometryInputType(GL_TRIANGLES);
-    program.setGeometryOutputType(GL_TRIANGLES);
-    program.setGeometryOutputVertexCount(3);
+    program[1].addShader(vertG);
+    program[1].addShader(fragG);
+    program[1].addShader(geom);
 
-    program.link();
-    program.log();
+    program[1].setGeometryInputType(GL_TRIANGLES);
+    program[1].setGeometryOutputType(GL_TRIANGLES);
+    program[1].setGeometryOutputVertexCount(3);
 
-    locationABC = program.attributeLocation("abc");
-    locationDEF = program.attributeLocation("def");
-    locationScalar = program.uniformLocation("showScalar");
-    locationMenor = program.uniformLocation("menor");
-    locationMaior = program.uniformLocation("maior");
-    locationTexture = program.uniformLocation("sampler2d0");
+    program[0].link();
+    program[0].log();
+
+    program[1].link();
+    program[1].log();
+
+    locationABC[0] = program[0].attributeLocation("abc");
+    locationDEF[0] = program[0].attributeLocation("def");
+    locationScalar[0] = program[0].uniformLocation("showScalar");
+    locationMenor[0] = program[0].uniformLocation("menor");
+    locationMaior[0] = program[0].uniformLocation("maior");
+    locationTexture[0] = program[0].uniformLocation("sampler2d0");
+
+    locationABC[1] = program[1].attributeLocation("abc");
+    locationDEF[1] = program[1].attributeLocation("def");
+    locationScalar[1] = program[1].uniformLocation("showScalar");
+    locationMenor[1] = program[1].uniformLocation("menor");
+    locationMaior[1] = program[1].uniformLocation("maior");
+    locationTexture[1] = program[1].uniformLocation("sampler2d0");
+
+    activeProgram = 0;
 
     SLGl3W::init();
 }
 
 bool TriQuadMesh::isProgramLinked()
 {
-    return program.isLinked();
+    return program[activeProgram].isLinked();
 }
 
 void TriQuadMesh::viewMesh(bool v)

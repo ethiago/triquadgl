@@ -9,7 +9,7 @@ win32 {
 }
 
 unix{
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lGLU -ldl
     INCLUDEPATH += /opt/local/include
 }
 
