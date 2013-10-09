@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->includeVertices, SIGNAL(clicked()), this, SIGNAL(configsUpdated()) );
     connect(ui->actionFitting_Measure, SIGNAL(triggered()), this, SIGNAL(fittingMeasure()) );
     connect(ui->meshTrans, SIGNAL(toggled(bool)), this, SIGNAL(meshTranslation(bool)) );
+    connect(ui->actionView_Grad_Field, SIGNAL(toggled(bool)), this, SIGNAL(viewGradField(bool)) );
 }
 
 MainWindow::~MainWindow()

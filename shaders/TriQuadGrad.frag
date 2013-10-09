@@ -1,6 +1,9 @@
 uniform sampler2D sampler2d0;
 uniform vec2 maior;
 uniform vec2 menor;
+
+uniform int showScalar;
+
 varying vec2 texCoord;
 
 varying mat3 Qv;
@@ -12,7 +15,7 @@ varying mat3 Qy;
 
 
 //Dados de Entrada--------------------------------------------------------------------------------
-const ivec2 dimensaoRuido = ivec2(240,240);
+const ivec2 dimensaoRuido = ivec2(1200,1200);
 const int L = int(dimensaoRuido.x/20);
 float dx = 1.0/float(dimensaoRuido.x);//tamanho do pixel em x
 float dy = 1.0/float(dimensaoRuido.y);//tamanho do pixel em y	
@@ -63,6 +66,7 @@ vec3 convolucaoCurvaIntegral (vec2 ponto)
 //Main--------------------------------------------------------------------------------------------
 void main()
 {
+    float prop = 0.7;
         float f = dot(Po,Qv*Po);
 	if(abs(f) < abs(fwidth(f))*0.5)
 	{
@@ -70,8 +74,22 @@ void main()
 	}
 	else
 	{
-                //gl_FragColor.rgb = texture2D(sampler2d0,texCoord).rgb;
-                gl_FragColor.rgb = convolucaoCurvaIntegral(texCoord);
-		gl_FragColor.a = 1.0;
+            vec3 cor = convolucaoCurvaIntegral(texCoord);
+            if(showScalar == 0)
+            {
+                gl_FragColor.rgb = cor;
+            }else
+            {
+                if(f < 0.0)
+                {
+                    f = min(-f, 1.0);
+                    gl_FragColor.rgb = cor*prop + vec3( f,0.0,0.0)*(1.0-prop);
+                }else
+                {
+                    f = min(f, 1.0);
+                    gl_FragColor.rgb = cor*prop + vec3(0.0,f,0.0)*(1.0-prop);
+                }
+            }
+            gl_FragColor.a = 1.0;
 	}
 }

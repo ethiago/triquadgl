@@ -29,6 +29,7 @@ signals:
     void configsUpdated();
     void fittingMeasure();
     void meshTranslation(bool);
+    void viewGradField(bool);
 
 public:
 

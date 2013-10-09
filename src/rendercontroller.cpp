@@ -31,7 +31,7 @@ RenderController::RenderController(MainWindow *mainWindow,
     {  // esta ordem deve ser mantida
         display->updateGL();
 
-        int textureName = display->bindTexture(QImage(":/texwnoise"), GL_TEXTURE_2D);
+        int textureName = display->bindTexture(QImage(":/texpontos"), GL_TEXTURE_2D);
 
         triquad = new TriQuadMesh(textureName);
 
@@ -103,6 +103,9 @@ RenderController::RenderController(MainWindow *mainWindow,
 
     connect(mainWindow, SIGNAL(meshTranslation(bool)),
             this, SLOT(meshTranslation(bool)) );
+
+    connect(mainWindow, SIGNAL(viewGradField(bool)),
+            this, SLOT(viewGradField(bool)) );
 
     mainWindow->showMaximized();
 
@@ -459,4 +462,10 @@ void RenderController::fittingMeasure()
 void RenderController::meshTranslation(bool v)
 {
     triquad->setMeshTranslation(v);
+}
+
+void RenderController::viewGradField(bool v)
+{
+    triquad->viewGrad(v);
+    display->updateGL();
 }

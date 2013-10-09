@@ -19,13 +19,14 @@ class TriQuadMesh : public Object3D
 {
     CompactHalfEdge che;
 
-    QGLShaderProgram program;
-    int locationABC;
-    int locationDEF;
-    int locationScalar;
-    int locationMenor;
-    int locationMaior;
-    int locationTexture;
+    QGLShaderProgram program[2];
+    int locationABC[2];
+    int locationDEF[2];
+    int locationScalar[2];
+    int locationMenor[2];
+    int locationMaior[2];
+    int locationTexture[2];
+    int activeProgram;
 
     bool showMesh;
     bool showSketch;
@@ -60,6 +61,7 @@ public:
     bool isProgramLinked();
     void viewMesh(bool v);
     void viewSketch(bool v);
+    void viewGrad(bool v);
 
     void changeOrigin(bool v);
 

@@ -72,6 +72,7 @@ public slots:
     void configsUpdated();
     void fittingMeasure();
     void meshTranslation(bool);
+    void viewGradField(bool);
 };
 
 #endif // RENDERCONTROLLER_H

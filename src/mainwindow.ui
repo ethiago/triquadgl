@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>731</width>
-    <height>673</height>
+    <height>721</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -60,6 +60,7 @@
     <addaction name="actionSave_Mesh"/>
     <addaction name="separator"/>
     <addaction name="actionView_Scalar_Field"/>
+    <addaction name="actionView_Grad_Field"/>
     <addaction name="actionClear_Mesh"/>
    </widget>
    <widget class="QMenu" name="menuSketch">
@@ -421,6 +422,14 @@
   <action name="actionFitting_Measure">
    <property name="text">
     <string>Fitting Measure</string>
+   </property>
+  </action>
+  <action name="actionView_Grad_Field">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>View Grad Field</string>
    </property>
   </action>
  </widget>
