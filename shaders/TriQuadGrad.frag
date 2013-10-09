@@ -26,8 +26,9 @@ vec2 mapToDomain(vec2 texcoord)
 //Funcoes-----------------------------------------------------------------------------------------
 //Defenido o Campo Vetorial
 vec2 campoVetorial(vec2 ponto)
-{	
-        return vec2(dot(Po,Qx*Po), dot(Po,Qy*Po));
+{
+       vec3 T =2.0*(Qv*vec3(ponto,1.0));
+        return vec2( T.x + dot(Po,Qx*Po), T.y + dot(Po,Qy*Po));
 }
 
 //Computando a Covolucao ao longo da Curva Integral reverente ao pixel ponto=(x,y)=texCoord
@@ -69,8 +70,8 @@ void main()
 	}
 	else
 	{
-                gl_FragColor.rgb = texture2D(sampler2d0,texCoord).rgb;
-                //gl_FragColor.rgb = convolucaoCurvaIntegral(texCoord);
+                //gl_FragColor.rgb = texture2D(sampler2d0,texCoord).rgb;
+                gl_FragColor.rgb = convolucaoCurvaIntegral(texCoord);
 		gl_FragColor.a = 1.0;
 	}
 }

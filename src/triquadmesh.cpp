@@ -6,6 +6,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 #include "Curve.h"
+#include "slgl3w.h"
 
 #define SIGN(x) ((x)<0?-1.0:1.0)
 
@@ -169,7 +170,8 @@ void TriQuadMesh::drawGeometry(void)
     if(showTriQuad)
     {
 
-        glActiveTexture(GL_TEXTURE0);
+        SLGl3W::activeTexture();
+        //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_glTextureName);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         program.bind();
@@ -221,6 +223,10 @@ void TriQuadMesh::buildObject()
     program.addShader(frag);
     program.addShader(geom);
 
+    program.setGeometryInputType(GL_TRIANGLES);
+    program.setGeometryOutputType(GL_TRIANGLES);
+    program.setGeometryOutputVertexCount(3);
+
     program.link();
     program.log();
 
@@ -231,7 +237,7 @@ void TriQuadMesh::buildObject()
     locationMaior = program.uniformLocation("maior");
     locationTexture = program.uniformLocation("sampler2d0");
 
-
+    SLGl3W::init();
 }
 
 bool TriQuadMesh::isProgramLinked()
@@ -1065,7 +1071,6 @@ void TriQuadMesh::globalFittingG_3layers_freef_withGrad(QVector<QVector4D> ponto
     int nq = che.sizeOfVertices();
     int nc = 6;
     int nr = edges.size();
-    qDebug() << "Intersecoes: " << nr;
     if(np+nr*2 < nq*nc)
         return;
 

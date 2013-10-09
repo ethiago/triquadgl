@@ -20,6 +20,8 @@ class Object3D : public QObject
     QMatrix4x4 m_modelView;
     QMatrix4x4 m_projection;
 
+    QSize m_windowSize;
+
     //for glu objects
     int m_slices;
     int m_stacks;
@@ -69,12 +71,16 @@ public:
     QMatrix4x4 modelViewMatrix();
     QMatrix4x4 projectionMatrix();
 
+    const QSize& windowSize();
+
 protected:
 
     void setInputType(int input);
     void setStacks(int stacks);
     void setSlices(int slices);
 
+private slots:
+    void resizeWindow(const QSize& size);
 };
 
 #endif // OBJECT3D_H

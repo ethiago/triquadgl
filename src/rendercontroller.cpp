@@ -31,12 +31,14 @@ RenderController::RenderController(MainWindow *mainWindow,
     {  // esta ordem deve ser mantida
         display->updateGL();
 
-        int textureName = display->bindTexture(QImage(":/texpontos"), GL_TEXTURE_2D);
+        int textureName = display->bindTexture(QImage(":/texwnoise"), GL_TEXTURE_2D);
 
         triquad = new TriQuadMesh(textureName);
 
         connect(display, SIGNAL(drawModel()),
                 this, SLOT(drawModel()));
+        connect(display, SIGNAL(resizeWindow(QSize)),
+                triquad, SLOT(resizeWindow(QSize)));
     }
 
     connect(display, SIGNAL(mouseLefthFinish(QPoint,QPoint)),

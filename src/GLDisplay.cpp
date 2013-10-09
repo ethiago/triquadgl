@@ -49,6 +49,7 @@ void GLDisplay::initializeGL()
 void GLDisplay::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
+    emit resizeWindow(QSize(width,height));
 }
 
 float GLDisplay::xDist(float aspect)
