@@ -36,7 +36,11 @@ HEADERS  += src/curveN/catmullrom.hpp \
     src/chebuilderdefault.h \
     src/chebuilderquadtreefrompointcloud.h \
     src/chebuilderregulargridfrompointcloud.h \
-    src/fastmarching.h
+    src/fastmarching.h \
+    src/glcorearb.h \
+    src/gl3w.h \
+    src/slgl3w.h
+
 
 SOURCES  += src/main.cpp \
         src/curveN/catmullrom.hpp \
@@ -59,7 +63,9 @@ SOURCES  += src/main.cpp \
     src/chebuilderdefault.cpp \
     src/chebuilderquadtreefrompointcloud.cpp \
     src/chebuilderregulargridfrompointcloud.cpp \
-    src/fastmarching.cpp
+    src/fastmarching.cpp \
+    src/gl3w.c \
+    src/slgl3w.cpp
 
 
 FORMS    += src/mainwindow.ui

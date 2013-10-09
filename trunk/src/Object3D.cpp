@@ -164,4 +164,13 @@ QMatrix4x4 Object3D::glGetMatrix(GLenum fetchType)
     return ret;
 }
 
+const QSize& Object3D::windowSize()
+{
+    return m_windowSize;
+}
+
+void Object3D::resizeWindow(const QSize& size)
+{
+    m_windowSize = size;
+}
 

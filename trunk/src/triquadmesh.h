@@ -117,6 +117,10 @@ private:
     int configPoints(QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
     QVector3D bary(const QVector4D& p, int *idx);
     void calcDistances(const QVector<QVector4D> &pontos, QVector<float>* distances, QVector<int> *idx);
+
+public slots:
+    void resizeWindow(const QSize&);
+
 };
 
 QDebug operator<< (QDebug d, const Quadric2D &model);

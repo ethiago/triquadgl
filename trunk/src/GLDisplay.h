@@ -27,6 +27,7 @@ signals:
     void mouseLefthFinish(QPoint ini, QPoint curr);
     void mouseCancel();
     void mouseDoubleClickLeft(QPoint);
+    void resizeWindow(const QSize&);
 
 public:
     GLDisplay(QWidget *parent = 0);
