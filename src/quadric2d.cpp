@@ -43,6 +43,16 @@ const Quadric2D& Quadric2D::operator=(const Quadric2D& q)
     return *this;
 }
 
+Quadric2D Quadric2D::operator*(float f)const
+{
+    return Quadric2D(m_a*f, m_b*f, m_c*f, m_d*f, m_e*f, m_f*f);
+}
+
+Quadric2D Quadric2D::operator+(const Quadric2D& q)const
+{
+    return Quadric2D(m_a+q.a(), m_b+q.b(), m_c+q.c(), m_d+q.d(), m_e+q.e(), m_f+q.f());
+}
+
 QMatrix3x3 Quadric2D::toMatrixForm() const
 {
     QMatrix3x3 m;

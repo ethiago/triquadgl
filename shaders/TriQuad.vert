@@ -9,7 +9,7 @@ attribute vec3 def;
 
 varying mat3 Q;
 varying vec3 P;
-varying vec2 texCoordIn;
+varying vec2 texCoord;
 
 void main ()
 {
@@ -25,6 +25,6 @@ void main ()
 
     gl_Position =   ftransform();
     gl_FrontColor = gl_Color;
-    texCoordIn.x = (P.x - menor.x)/(maior.x - menor.x);
-    texCoordIn.y = (P.y - menor.y)/(maior.y - menor.y);
+    texCoord.x = (P.x - menor.x)/(maior.x - menor.x);
+    texCoord.y = (P.y - menor.y)/(maior.y - menor.y);
 }
