@@ -6,11 +6,16 @@ uniform int showScalar;
 
 varying vec2 texCoord;
 
-varying mat3 Qv;
-varying vec3 Po;
+varying mat3 Q;
+varying vec3 P;
 
-varying mat3 Qx;
-varying mat3 Qy;
+uniform vec3 Qxabc;
+uniform vec3 Qxdef;
+uniform vec3 Qyabc;
+uniform vec3 Qydef;
+
+mat3 Qx;
+mat3 Qy;
 
 
 
@@ -30,8 +35,8 @@ vec2 mapToDomain(vec2 texcoord)
 //Defenido o Campo Vetorial
 vec2 campoVetorial(vec2 ponto)
 {
-       vec3 T =2.0*(Qv*vec3(ponto,1.0));
-        return vec2( T.x + dot(Po,Qx*Po), T.y + dot(Po,Qy*Po));
+       vec3 T =2.0*(Q*vec3(ponto,1.0));
+        return vec2( T.x + dot(P,Qx*P), T.y + dot(P,Qy*P));
 }
 
 //Computando a Covolucao ao longo da Curva Integral reverente ao pixel ponto=(x,y)=texCoord
@@ -66,8 +71,24 @@ vec3 convolucaoCurvaIntegral (vec2 ponto)
 //Main--------------------------------------------------------------------------------------------
 void main()
 {
+    Qx[0][0]            = Qxabc[0];
+    Qx[1][0] = Qx[0][1] = Qxabc[1];
+    Qx[2][0] = Qx[0][2] = Qxabc[2];
+
+    Qx[1][1]            = Qxdef[0];
+    Qx[2][1] = Qx[1][2] = Qxdef[1];
+    Qx[2][2]            = Qxdef[2];
+
+    Qy[0][0]            = Qyabc[0];
+    Qy[1][0] = Qy[0][1] = Qyabc[1];
+    Qy[2][0] = Qy[0][2] = Qyabc[2];
+
+    Qy[1][1]            = Qydef[0];
+    Qy[2][1] = Qy[1][2] = Qydef[1];
+    Qy[2][2]            = Qydef[2];
+
     float prop = 0.7;
-        float f = dot(Po,Qv*Po);
+        float f = dot(P,Q*P);
 	if(abs(f) < abs(fwidth(f))*0.5)
 	{
                 gl_FragColor = vec4(1.0) ;

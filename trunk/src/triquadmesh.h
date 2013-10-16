@@ -26,6 +26,10 @@ class TriQuadMesh : public Object3D
     int locationMenor[2];
     int locationMaior[2];
     int locationTexture[2];
+    int locationQxABC[2];
+    int locationQxDEF[2];
+    int locationQyABC[2];
+    int locationQyDEF[2];
     int activeProgram;
 
     bool showMesh;
@@ -103,6 +107,8 @@ public:
     int textureName()const;
 
     QVector<QVector2D> pointsOnEdge(const HalfEdge &h, int c = 3)const;
+
+
 
 private:
     void drawOrigin();

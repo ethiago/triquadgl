@@ -37,6 +37,8 @@ public:
 
 
     const Quadric2D& operator=(const Quadric2D& q);
+    Quadric2D operator*(float)const;
+    Quadric2D operator+(const Quadric2D& q)const;
 
 };
 

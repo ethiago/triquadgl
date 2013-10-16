@@ -191,6 +191,17 @@ void TriQuadMesh::drawGeometry(void)
         {
             for(int i = 0; i < che.sizeOfTriangles(); ++i)
             {
+                int v0 = che.vertexId(i,0);
+                int v1 = che.vertexId(i,1);
+                int v2 = che.vertexId(i,2);
+                QMatrix4x4 W = buildInv(i);
+                Quadric2D Qx = che.vertex(v0).quadric()* W(0,0) + che.vertex(v1).quadric()* W(1,0) + che.vertex(v2).quadric()* W(2,0);
+                Quadric2D Qy = che.vertex(v0).quadric()* W(0,1) + che.vertex(v1).quadric()* W(1,1) + che.vertex(v2).quadric()* W(2,1);
+
+                program[activeProgram].setUniformValue(locationQxABC[activeProgram], Qx.abc());
+                program[activeProgram].setUniformValue(locationQxDEF[activeProgram], Qx.def());
+                program[activeProgram].setUniformValue(locationQyABC[activeProgram], Qy.abc());
+                program[activeProgram].setUniformValue(locationQyDEF[activeProgram], Qy.def());
                 for(int j = 0; j < 3; ++j)
                 {
                     int k = che.vertexId(i,j);
@@ -221,7 +232,8 @@ void TriQuadMesh::buildObject()
     QGLShader *vertG = new QGLShader(QGLShader::Vertex  );
     QGLShader *frag = new QGLShader(QGLShader::Fragment);
     QGLShader *fragG = new QGLShader(QGLShader::Fragment);
-    QGLShader *geom = new QGLShader(QGLShader::Geometry);
+    //QGLShader *geom = new QGLShader(QGLShader::Geometry);
+
     vert->compileSourceFile(":/triquadVert");
     vert->log();
 
@@ -234,19 +246,19 @@ void TriQuadMesh::buildObject()
     fragG->compileSourceFile(":/gradVisFrag");
     fragG->log();
 
-    geom->compileSourceFile(":/gradVisGeom");
-    geom->log();
+    //geom->compileSourceFile(":/gradVisGeom");
+    //geom->log();
 
     program[0].addShader(vert);
     program[0].addShader(frag);
 
     program[1].addShader(vertG);
     program[1].addShader(fragG);
-    program[1].addShader(geom);
+    //program[1].addShader(geom);
 
-    program[1].setGeometryInputType(GL_TRIANGLES);
-    program[1].setGeometryOutputType(GL_TRIANGLES);
-    program[1].setGeometryOutputVertexCount(3);
+    //program[1].setGeometryInputType(GL_TRIANGLES);
+    //program[1].setGeometryOutputType(GL_TRIANGLES);
+    //program[1].setGeometryOutputVertexCount(3);
 
     program[0].link();
     program[0].log();
@@ -267,6 +279,10 @@ void TriQuadMesh::buildObject()
     locationMenor[1] = program[1].uniformLocation("menor");
     locationMaior[1] = program[1].uniformLocation("maior");
     locationTexture[1] = program[1].uniformLocation("sampler2d0");
+    locationQxABC[1] = program[1].uniformLocation("Qxabc");
+    locationQxDEF[1] = program[1].uniformLocation("Qxdef");
+    locationQyABC[1] = program[1].uniformLocation("Qyabc");
+    locationQyDEF[1] = program[1].uniformLocation("Qydef");
 
     activeProgram = 0;
 
