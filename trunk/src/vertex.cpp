@@ -81,6 +81,20 @@ Vertex& Vertex::operator=(const QVector2D& v)
     return *this;
 }
 
+Vertex Vertex::operator+(const Vertex& v)const
+{
+    Vertex nv(m_x+v.x(), m_y+v.y());
+    nv.quadric() = quadric() + v.quadric();
+    return nv;
+}
+
+Vertex Vertex::operator*(float f) const
+{
+    Vertex v(m_x * f, m_y * f);
+    v.quadric() = quadric()*f;
+    return v;
+}
+
 QVector2D Vertex::toVector2D()const
 {
     return QVector2D(m_x,m_y);

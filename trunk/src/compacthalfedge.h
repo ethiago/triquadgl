@@ -50,6 +50,8 @@ public:
     Vertex& vertex(int i);
 
     void addVertex(const Vertex& v);
+    void addVertexAsNewExternalTriangle(const Vertex& v);
+    void addVertexInExistingTriangle(const Vertex& v, int triangleID);
     void joinVerticesAt(const Vertex& v);
     int findTriangleWith(const Vertex& v);
     void deleteTriangle(int tId);
@@ -71,6 +73,7 @@ public:
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
+    QVector3D getBairicentricCoordinate(const Vertex& v, int triangleID);
 
 };
 

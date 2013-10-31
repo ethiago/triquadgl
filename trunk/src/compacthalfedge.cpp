@@ -176,7 +176,7 @@ int CompactHalfEdge::sizeOfVertices() const
     return m_vertices.size();
 }
 
-void CompactHalfEdge::addVertex(const Vertex& p)
+void CompactHalfEdge::addVertexAsNewExternalTriangle(const Vertex& p)
 {
     int heIdx = -1;
     float dist = 0.0;
@@ -213,7 +213,55 @@ void CompactHalfEdge::addVertex(const Vertex& p)
     m_vertices.append(p);
 
     addTriangle(m_mesh[halfEdgeNext(heIdx)].vertexIndex(), m_mesh[heIdx].vertexIndex(), vId);
+}
 
+QVector3D CompactHalfEdge::getBairicentricCoordinate(const Vertex& v, int triangleID)
+{
+    int v0 = vertexId(triangleID, 0);
+    int v1 = vertexId(triangleID, 1);
+    int v2 = vertexId(triangleID, 2);
+
+    float t = Vertex::cross2D(m_vertices[v0], m_vertices[v1], m_vertices[v2]);
+    float a0 = Vertex::cross2D(m_vertices[v1],m_vertices[v2],v);
+    float a1 = Vertex::cross2D(m_vertices[v2],m_vertices[v0],v);
+    float a2 = Vertex::cross2D(m_vertices[v0],m_vertices[v1],v);
+
+    return QVector3D(a0/t,a1/t,a2/t);
+}
+
+void CompactHalfEdge::addVertexInExistingTriangle(const Vertex& v, int triangleID)
+{
+
+    if(!m_mesh[triangleID*3 + 0].hasTwin() || !m_mesh[triangleID*3 + 1].hasTwin() ||
+            !m_mesh[triangleID*3 + 2].hasTwin())
+        return;
+
+    QVector3D bar = getBairicentricCoordinate(v, triangleID);
+    int v0 = vertexId(triangleID,0);
+    int v1 = vertexId(triangleID,1);
+    int v2 = vertexId(triangleID,2);
+
+    Vertex nv = m_vertices[v0]*bar.x() +
+            m_vertices[v1]*bar.y() +
+            m_vertices[v2]*bar.z();
+
+    int inv = m_vertices.size();
+    m_vertices.append(nv);
+    addTriangle(v0, v1, inv);
+    addTriangle(v1, v2, inv);
+    addTriangle(v2, v0, inv);
+
+    deleteTriangle(triangleID);
+
+}
+
+void CompactHalfEdge::addVertex(const Vertex& p)
+{
+    int tId = findTriangleWith(p);
+    if(tId < 0)
+        addVertexAsNewExternalTriangle(p);
+    else
+        addVertexInExistingTriangle(p,tId);
 }
 
 void CompactHalfEdge::joinVerticesAt(const Vertex& p)

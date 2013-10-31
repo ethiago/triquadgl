@@ -31,6 +31,8 @@ public:
 
     Vertex& operator=(const Vertex&);
     Vertex& operator=(const QVector2D&);
+    Vertex operator+(const Vertex&) const;
+    Vertex operator*(float) const;
 
     QVector2D toVector2D()const;
 
