@@ -14,8 +14,7 @@ void main ()
         if(showScalar == 0)
         {
             gl_FragColor = vec4(0.0,0.0,0.0,1.0) ;
-
-            if(abs(f) > abs(fwidth(f))*0.5)
+            if(abs(f) > abs(fwidth(f))*1.5 )
                 discard;
         }else
         {

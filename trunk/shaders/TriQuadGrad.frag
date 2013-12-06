@@ -89,7 +89,7 @@ void main()
 
     float prop = 0.7;
         float f = dot(P,Q*P);
-	if(abs(f) < abs(fwidth(f))*0.5)
+        if(abs(f) < abs(fwidth(f)))
 	{
                 gl_FragColor = vec4(1.0) ;
 	}

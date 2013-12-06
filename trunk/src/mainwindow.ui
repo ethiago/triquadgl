@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TriQuadGL</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>731</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMesh">
@@ -77,6 +77,7 @@
     <property name="title">
      <string>Result</string>
     </property>
+    <addaction name="actionShow_TriQuad"/>
     <addaction name="actionSaveImageAs"/>
     <addaction name="actionFitting_Measure"/>
    </widget>
@@ -361,7 +362,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View Mesh</string>
+    <string>Show Mesh</string>
    </property>
   </action>
   <action name="actionOpen_Mesh">
@@ -392,7 +393,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View Sketch</string>
+    <string>Show Sketch</string>
    </property>
   </action>
   <action name="actionView_Scalar_Field">
@@ -403,7 +404,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View Scalar Field</string>
+    <string>Show Scalar Field</string>
    </property>
   </action>
   <action name="actionClear_Mesh">
@@ -429,7 +430,18 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View Grad Field</string>
+    <string>Show Grad Field</string>
+   </property>
+  </action>
+  <action name="actionShow_TriQuad">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show TriQuad</string>
    </property>
   </action>
  </widget>
