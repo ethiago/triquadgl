@@ -107,6 +107,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(viewGradField(bool)),
             this, SLOT(viewGradField(bool)) );
 
+    connect(mainWindow, SIGNAL(showTriQuad(bool)),
+            this, SLOT(showTriQuad(bool)) );
+
     mainWindow->showMaximized();
 
 }
@@ -269,7 +272,7 @@ void RenderController::loadSketch()
     if(filename.isEmpty())
         return;
 
-    skC->loadSketch(filename);
+    skC->loadSketch(filename, triquad);
 
     if(m_linearFilter)
         ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
@@ -381,8 +384,8 @@ void RenderController::exec()
         triquad->globalFittingG_3layers_freef_withGrad(ultimaLista, k, includeVertices);
         break;
     }
-    fittingMeasure();
-    //display->updateGL();
+    //fittingMeasure();
+    display->updateGL();
 }
 
 void RenderController::saveMesh()
@@ -402,7 +405,7 @@ void RenderController::saveSketch()
     if(filename.isEmpty())
         return;
 
-    skC->saveSketch(filename);
+    skC->saveSketch(filename, triquad);
 }
 
 void RenderController::viewScalarField(bool v)
@@ -467,5 +470,11 @@ void RenderController::meshTranslation(bool v)
 void RenderController::viewGradField(bool v)
 {
     triquad->viewGrad(v);
+    display->updateGL();
+}
+
+void RenderController::showTriQuad(bool v)
+{
+    triquad->viewTriQuad(v);
     display->updateGL();
 }

@@ -147,8 +147,9 @@ void TriQuadMesh::drawGeometry(void)
 
     if(showInputLine)
     {
-        glColor4f(1.0, 0.0, 0.0, 1.0);
+        glColor4f(0.0, 0.0, 0.0, 1.0);
         glPointSize(1.0);
+        glLineWidth(2);
         glBegin(GL_LINE_STRIP);
         for(int i = 0; i < dp.size(); ++i)
             glVertex3f(dp[i].x(), dp[i].y(), 2.0);
@@ -352,7 +353,8 @@ void TriQuadMesh::afterTransformations(void)
     QMatrix4x4 mvm = glGetMatrix(GL_MODELVIEW_MATRIX);
     QMatrix4x4 pjm = glGetMatrix(GL_PROJECTION_MATRIX);
 
-    mvpi = (pjm*mvm).inverted();
+    mvp = pjm*mvm;
+    mvpi = mvp.inverted();
 }
 
 QVector4D TriQuadMesh::unproject(const QPoint& p)
@@ -368,6 +370,15 @@ QVector4D TriQuadMesh::unproject(const QPoint& p)
     v /= v.w();
     v.setZ(1.0);
     return v;
+}
+
+QPoint TriQuadMesh::project(const QVector4D &v)
+{
+    QVector2D v2 = QVector4D(mvp*v).toVector2DAffine();
+    int x = ((v2.x() + 1.0)/2.0)*vwp[2] + vwp[0];
+    int y = ((-v2.y() + 1.0)/2.0)*vwp[3] + vwp[1];
+
+    return QPoint(x,y);
 }
 
 QVector4D TriQuadMesh::unproject(const QPointF& p)
@@ -1100,6 +1111,7 @@ void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> pontos, float 
     for(int i = 0; i < qs.size(); ++i)
     {
         che.vertex(i).quadric() = qs[i];
+        qDebug() << qs[i].f();
     }
     drawPoints(pontos2D);
     drawPoints1(pontos2DU);
@@ -1672,4 +1684,9 @@ void TriQuadMesh::reconfigure(bool mesh,bool sketch, bool field)
 void TriQuadMesh::setMeshTranslation(bool v)
 {
     meshTranslation = v;
+}
+
+void TriQuadMesh::viewTriQuad(bool v)
+{
+    showTriQuad = v;
 }

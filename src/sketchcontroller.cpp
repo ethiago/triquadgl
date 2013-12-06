@@ -1,6 +1,7 @@
 #include "sketchcontroller.h"
 #include <QtOpenGL>
 #include "curveN/curven.hpp"
+#include "triquadmesh.h"
 
 SketchController::SketchController(QObject *parent) :
     QObject(parent)
@@ -64,7 +65,7 @@ QVector<QPointF> SketchController::getPointsLinearFilter(void)
 
 }
 
-bool SketchController::loadSketch(const QString& fn )
+bool SketchController::loadSketch(const QString& fn , TriQuadMesh* triquad)
 {
     QFile f(fn);
 
@@ -81,14 +82,18 @@ bool SketchController::loadSketch(const QString& fn )
 
     for(int i = 0; i < qtd; ++i)
     {
-        int x,y;
+        float x,y;
         s >> x >> y;
-        last.append(QPoint(x,y));
+
+        QPoint p = triquad->project(QVector4D(x,y,0.0,1.0));
+        qDebug() << p;
+
+        last.append(p);
     }
     return true;
 }
 
-bool SketchController::saveSketch(const QString& fileName )
+bool SketchController::saveSketch(const QString& fileName, TriQuadMesh* triquad )
 {
     QFile f(fileName);
 
@@ -100,7 +105,8 @@ bool SketchController::saveSketch(const QString& fileName )
     s << last.size() << "\n";
     for(int i = 0; i < last.size(); ++i)
     {
-        s << last[i].x() << " " << last[i].y() << "\n";
+        QVector4D v = triquad->unproject(last[i]);
+        s << v.x() << " " << v.y() << "\n";
     }
 
     f.close();

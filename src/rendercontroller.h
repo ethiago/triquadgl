@@ -73,6 +73,7 @@ public slots:
     void fittingMeasure();
     void meshTranslation(bool);
     void viewGradField(bool);
+    void showTriQuad(bool);
 };
 
 #endif // RENDERCONTROLLER_H

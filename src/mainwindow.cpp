@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionFitting_Measure, SIGNAL(triggered()), this, SIGNAL(fittingMeasure()) );
     connect(ui->meshTrans, SIGNAL(toggled(bool)), this, SIGNAL(meshTranslation(bool)) );
     connect(ui->actionView_Grad_Field, SIGNAL(toggled(bool)), this, SIGNAL(viewGradField(bool)) );
+    connect(ui->actionShow_TriQuad, SIGNAL(toggled(bool)), this, SIGNAL(showTriQuad(bool)) );
 }
 
 MainWindow::~MainWindow()

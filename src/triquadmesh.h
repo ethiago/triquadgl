@@ -42,6 +42,7 @@ class TriQuadMesh : public Object3D
 
     int vwp[4];
     QMatrix4x4 mvpi;
+    QMatrix4x4 mvp;
 
     int idxMaisProximo;
     QVector2D maisProximo;
@@ -66,11 +67,13 @@ public:
     void viewMesh(bool v);
     void viewSketch(bool v);
     void viewGrad(bool v);
+    void viewTriQuad(bool v);
 
     void changeOrigin(bool v);
 
     void setMeshTranslation(bool);
 
+    QPoint project(const QVector4D& v);
     QVector4D unproject(const QPoint&);
     QVector4D unproject(const QPointF&);
     QVector<QVector4D> unproject(const QVector<QPoint>&);
