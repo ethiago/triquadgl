@@ -610,6 +610,46 @@ void TriQuadMesh::globalFitting_1layer(QVector<QVector4D>  pontos,  bool include
     drawPoints2(pontos2DL);
 }
 
+void TriQuadMesh::fitting_quadrica(QVector<QVector4D>  pontos)
+{
+    QVector<QVector2D> pontos2D;
+    clearDrawPoints();
+
+    int np = pontos.size();
+    int nc = 5;
+    if(np < nc)
+        return;
+
+    gsl_matrix * A = gsl_matrix_calloc (np, nc);
+    gsl_vector * B = gsl_vector_calloc(np);
+
+    for (int i = 0; i < np; ++i)
+    {
+        QVector2D p = pontos[i].toVector2D();
+        pontos2D.append(p);
+
+        gsl_vector_set( B, i , 1);
+
+        gsl_matrix_set (A, i ,  0,     p.x()*p.x()); //x^2
+        gsl_matrix_set (A, i ,  1, 2.0*p.x()*p.y()); //2xy
+        gsl_matrix_set (A, i ,  2, 2.0*p.x()      ); //2x
+        gsl_matrix_set (A, i ,  3,     p.y()*p.y()); //y^2
+        gsl_matrix_set (A, i ,  4, 2.0*p.y()      ); //2y
+    }
+
+
+    QVector<Quadric2D> qs = fittingGLOBAL(A,B, -1.0);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < che.sizeOfVertices(); ++i)
+    {
+        che.vertex(i).quadric() = qs[0];
+    }
+    drawPoints(pontos2D);
+}
+
 void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> pontos, float k)
 {
     QVector<QVector3D> b;

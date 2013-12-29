@@ -13,6 +13,7 @@
 #include "chebuilderregulargrid.h"
 #include "chebuilderquadtreefrompointcloud.h"
 #include "chebuilderregulargridfrompointcloud.h"
+#include "chebuilderequilateralmesh.h"
 #include "fastmarching.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
@@ -309,6 +310,7 @@ void RenderController::configComboMetodo()
     mw->addMetodo("3 Camadas - f livre (K Distance)");
     mw->addMetodo("1 Camada  - f livre (K Distance)");
     mw->addMetodo("3 Camadas - f livre - grad");
+    mw->addMetodo("Q");
     metodo = mw->metodoSelecionado();
 }
 
@@ -318,6 +320,7 @@ void RenderController::configComboCHEBuilder()
     mw->addCHEBuilder("Regular Grid");
     mw->addCHEBuilder("Regular Grid From Point Cloud");
     mw->addCHEBuilder("QuadTree From Point Cloud");
+    mw->addCHEBuilder("Equilateral Mesh From Point Cloud");
     metodo = mw->metodoSelecionado();
 }
 
@@ -325,7 +328,7 @@ void RenderController::exec()
 {
     if(triquad->isEmpty())
     {
-        MainWindow::GRIDOPTIONS opt;
+        MainWindow::GRIDOPTIONS opt = mw->getGridOptions();
         CHEBuilder *builder = NULL;
         switch (cheBuilder)
         {
@@ -333,15 +336,16 @@ void RenderController::exec()
             builder = new CHEBuilderDefault();
             break;
         case 1:
-            opt = mw->getGridOptions();
             builder = new CHEBuilderRegularGrid(opt.xm, opt.xM, opt.ym, opt.yM, opt.xN, opt.yN);
             break;
         case 2:
-            opt = mw->getGridOptions();
             builder = new CHEBuilderRegularGridFromPointCloud(ultimaLista, opt.xN, opt.yN);
             break;
         case 3:
             builder = new CHEBuilderOctreeFromPointCloud(ultimaLista);
+            break;
+        case 4:
+            builder = new CHEBuilderEquilateralMesh(ultimaLista, opt.xN);
             break;
         }
         bool built = triquad->buildMesh(builder);
@@ -383,6 +387,10 @@ void RenderController::exec()
     case 8:
         triquad->globalFittingG_3layers_freef_withGrad(ultimaLista, k, includeVertices);
         break;
+    case 9:
+        triquad->fitting_quadrica(ultimaLista);
+        break;
+
     }
     //fittingMeasure();
     display->updateGL();
