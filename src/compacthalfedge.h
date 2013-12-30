@@ -70,6 +70,11 @@ public:
     QVector2D getMaior()const;
     QVector2D getMenor()const;
 
+    int numberOfInternalVertices();
+    QVector<int> getNeighbours(int vId);
+    QVector<int> getInternalVertices();
+    bool isVertexInternal(int vId);
+
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);

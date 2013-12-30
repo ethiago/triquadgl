@@ -93,6 +93,7 @@ public:
     void globalFitting_5layers(QVector<QVector4D>  in, float k);
     void globalFitting_1layer(QVector<QVector4D>  in, bool includeVertices);
     void fitting_quadrica(QVector<QVector4D>  pontos);
+    void globalFittingG_3layers_freef_withAverage(QVector<QVector4D> pontos, float kDistance);
 
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
