@@ -311,6 +311,7 @@ void RenderController::configComboMetodo()
     mw->addMetodo("1 Camada  - f livre (K Distance)");
     mw->addMetodo("3 Camadas - f livre - grad");
     mw->addMetodo("Q");
+    mw->addMetodo("3 Camadas - f livre - AVG");
     metodo = mw->metodoSelecionado();
 }
 
@@ -389,6 +390,9 @@ void RenderController::exec()
         break;
     case 9:
         triquad->fitting_quadrica(ultimaLista);
+        break;
+    case 10:
+        triquad->globalFittingG_3layers_freef_withAverage(ultimaLista, k);
         break;
 
     }

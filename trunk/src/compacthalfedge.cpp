@@ -521,3 +521,52 @@ void CompactHalfEdge::maxMimCalc()
             m_menor.setY(m_vertices[i].y());
     }
 }
+
+bool CompactHalfEdge::isVertexInternal(int vId)
+{
+    int heIdFirst = m_vertices[vId].halfedgeIndex();
+    int heId = heIdFirst;
+    do{
+        if( heId == -1 || !m_mesh[heId].hasTwin())
+            return false;
+
+        heId = halfEdgeNext(m_mesh[heId].twinIndex());
+
+    }while(heId != heIdFirst);
+
+    return true;
+}
+
+QVector<int> CompactHalfEdge::getNeighbours(int vId)
+{
+    QVector<int> ret;
+
+    int heIdFirst = m_vertices[vId].halfedgeIndex();
+    int heId = heIdFirst;
+    do{
+        ret.append( m_mesh[m_mesh[heId].twinIndex()].vertexIndex());
+
+        heId = halfEdgeNext(m_mesh[heId].twinIndex());
+
+    }while(heId != heIdFirst);
+
+    return ret;
+}
+
+QVector<int> CompactHalfEdge::getInternalVertices()
+{
+    QVector<int> ret;
+
+    for(int i = 0; i < m_vertices.size(); ++i)
+    {
+        if(isVertexInternal(i))
+            ret.append(i);
+    }
+
+    return ret;
+}
+
+int CompactHalfEdge::numberOfInternalVertices()
+{
+    return getInternalVertices().size();
+}
