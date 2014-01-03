@@ -340,7 +340,7 @@ QMatrix4x4 TriQuadMesh::glGetMatrix(GLenum fetchType)
     QMatrix4x4 ret;
     GLfloat mat[16];
     glGetFloatv(fetchType, mat);
-    qreal *m = ret.data();
+    float *m = ret.data();
     for (int index = 0; index < 16; ++index)
         m[index] = mat[index];
 

@@ -1,11 +1,13 @@
-QT       += core gui opengl
+QT       += core gui opengl widgets
 
 TARGET = TriQuadGL
 TEMPLATE = app
 
 win32 {
     LIBS += -L"C:\Program Files\GnuWin32\lib" -lgsl -lgslcblas
+    LIBS += -L"C:\Program Files (x86)\GnuWin32\lib" -lgsl -lgslcblas
     INCLUDEPATH += "C:\Program Files\GnuWin32\include"
+    INCLUDEPATH += "C:\Program Files (x86)\GnuWin32\include"
 }
 
 unix{

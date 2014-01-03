@@ -1,4 +1,5 @@
-#include <QtGui/QApplication>
+#include <QtWidgets>
+//#include <QtGui/QApplication>
 #include <QDebug>
 #include "mainwindow.h"
 #include "rendercontroller.h"
