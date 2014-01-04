@@ -134,7 +134,7 @@ QVector<Quadric2D> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
 
     QVector<Quadric2D> resp;
 
-    for(int i = 0; i < A->size2/5; ++i)
+    for(unsigned int i = 0; i < A->size2/5; ++i)
     {
         float x1 = gsl_vector_get(x, i*5);
         float x2 = gsl_vector_get(x, i*5 + 1); // b/2
@@ -169,7 +169,7 @@ QVector<Quadric2D> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
     //qDebug() << rank ;
 
     QVector<Quadric2D> resp;
-    for(int i = 0; i < A->size2/6; ++i)
+    for(unsigned int i = 0; i < A->size2/6; ++i)
     {
         float x1 = gsl_vector_get(x, i*6);
         float x2 = gsl_vector_get(x, i*6 + 1);// b/2

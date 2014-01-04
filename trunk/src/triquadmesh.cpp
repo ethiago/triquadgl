@@ -11,16 +11,11 @@
 #define SIGN(x) ((x)<0?-1.0:1.0)
 
 TriQuadMesh::TriQuadMesh(int texName, const QVector3D& center, QObject *parent):
-    Object3D(center, parent), origin(true), idxMaisProximo(-1),
-    showInputLine(false), showTriQuad(true), meshTranslation(false), showScalarField(false), m_glTextureName(texName)
+    Object3D(center, parent), showMesh(true), showSketch(true),  origin(true),
+    showScalarField(false), showInputLine(false), showTriQuad(true),
+    meshTranslation(false), idxMaisProximo(-1),  m_glTextureName(texName)
 {
     setInputType(GL_TRIANGLES);
-    buildObject();
-}
-
-TriQuadMesh::TriQuadMesh(const TriQuadMesh& tt): Object3D(tt), origin(false), idxMaisProximo(-1)
-{
-    m_glTextureName = tt.textureName();
     buildObject();
 }
 
@@ -70,11 +65,6 @@ bool TriQuadMesh::buildMesh(CHEBuilder *builder)
 //    che.addVertices(v);
 //    che.addTriangle(0,1,2);
 //    return true;
-}
-
-Object3D* TriQuadMesh::copy() const
-{
-    return new TriQuadMesh(*this);
 }
 
 TriQuadMesh::~TriQuadMesh()

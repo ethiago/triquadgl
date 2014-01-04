@@ -321,7 +321,7 @@ void RenderController::configComboCHEBuilder()
     mw->addCHEBuilder("Regular Grid");
     mw->addCHEBuilder("Regular Grid From Point Cloud");
     mw->addCHEBuilder("QuadTree From Point Cloud");
-    //mw->addCHEBuilder("Equilateral Mesh From Point Cloud");
+    mw->addCHEBuilder("Equilateral Mesh From Point Cloud");
     metodo = mw->metodoSelecionado();
 }
 
@@ -345,9 +345,9 @@ void RenderController::exec()
         case 3:
             builder = new CHEBuilderOctreeFromPointCloud(ultimaLista);
             break;
-//        case 4:
-//            builder = new CHEBuilderEquilateralMesh(ultimaLista, opt.xN);
-//            break;
+        case 4:
+            builder = new CHEBuilderEquilateralMesh(ultimaLista, opt.xN);
+            break;
         }
         bool built = triquad->buildMesh(builder);
         if(builder)

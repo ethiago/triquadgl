@@ -1,5 +1,6 @@
 #include "compacthalfedge.h"
 #include <QVector4D>
+#include <assert.h>
 
 CompactHalfEdge::CompactHalfEdge()
 {
@@ -45,17 +46,14 @@ void CompactHalfEdge::addVertices(const QVector<Vertex>& vList)
 
 const Vertex& CompactHalfEdge::vertex(int i)const
 {
-    if(i < 0 || i >= m_vertices.size())
-        return Vertex();
+    assert(i >= 0 && i < m_vertices.size());
 
     return m_vertices[i];
 }
 
 Vertex& CompactHalfEdge::vertex(int i)
 {
-    Vertex v;
-    if(i < 0 || i >= m_vertices.size())
-        return v;
+    assert(i >= 0 && i < m_vertices.size());
 
     return m_vertices[i];
 }

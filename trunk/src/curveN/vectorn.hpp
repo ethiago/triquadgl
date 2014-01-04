@@ -331,7 +331,8 @@ public:
         assert (dim == 3);
         this->coord [0] = x;
         this->coord [1] = y;
-        this->coord [2] = z;
+        if(dim == 3)
+            this->coord [2] = z;
     }
 
     /// @brief Set coordinates from a vector
