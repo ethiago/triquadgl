@@ -41,7 +41,8 @@ HEADERS  += src/curveN/catmullrom.hpp \
     src/fastmarching.h \
     src/glcorearb.h \
     src/gl3w.h \
-    src/slgl3w.h
+    src/slgl3w.h \
+    src/chebuilderequilateralmesh.h
 
 
 SOURCES  += src/main.cpp \
@@ -67,7 +68,8 @@ SOURCES  += src/main.cpp \
     src/chebuilderregulargridfrompointcloud.cpp \
     src/fastmarching.cpp \
     src/gl3w.c \
-    src/slgl3w.cpp
+    src/slgl3w.cpp \
+    src/chebuilderequilateralmesh.cpp
 
 
 FORMS    += src/mainwindow.ui

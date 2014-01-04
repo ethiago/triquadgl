@@ -56,10 +56,7 @@ class TriQuadMesh : public Object3D
 public:
     explicit TriQuadMesh(int texName, const QVector3D& center = QVector3D(),
                     QObject *parent = 0);
-    explicit TriQuadMesh(const TriQuadMesh& tt);
     ~TriQuadMesh();
-
-    virtual Object3D* copy() const;
 
     void clear();
     bool isEmpty();

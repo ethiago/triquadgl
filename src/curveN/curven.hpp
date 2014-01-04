@@ -1104,7 +1104,7 @@ public:
         real err = EPS ) const 
     {
         real u;
-        unsigned int index;
+        unsigned int index = 0;
         Point pr;
 
         c1 = (*this);

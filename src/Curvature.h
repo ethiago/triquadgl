@@ -17,10 +17,6 @@
 #ifndef _CURVATURE_H_
 #define _CURVATURE_H_
 
-#ifdef WIN32
-#pragma warning(disable:4786)
-#endif // WIN32
-
 #define DOUBLE_REAL
 //#define FLOAT_REAL
 //#define INTERVAL_REAL
@@ -127,7 +123,6 @@ inline const int  rint ( const real &x ) { return (int)x ; }
 //inline const real nan() { return NaN ; }
 //inline int rint ( real x ) { return (int)x ; }
 
-#pragma warning(disable:4786)
 
 #else  // WIN32
 #define _nan() nan("n-char-sequence")

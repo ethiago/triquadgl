@@ -57,7 +57,7 @@ QVector<QPointF> SketchController::getPointsLinearFilter(void)
     curveFilter.lineFilter(0.5,4);
 
     QVector<QPointF> ret;
-    for(int i = 0; i < curveFilter.size(); ++i)
+    for(unsigned int i = 0; i < curveFilter.size(); ++i)
     {
         ret.append(QPointF(curveFilter[i][0], curveFilter[i][1]));
     }
