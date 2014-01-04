@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ShaderLab>
+	<shaders>
+		<vertex>plot.vert</vertex>
+		<fragment>plot.frag</fragment>
+	</shaders>
+	<model>
+		<id>9</id>
+	</model>
+</ShaderLab>
