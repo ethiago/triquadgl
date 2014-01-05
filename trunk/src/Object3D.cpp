@@ -107,7 +107,8 @@ void Object3D::draw(void)
     glRotatef(degreeFromCos(t.scalar()),
               0, 0, t.z());
 
-    glMultMatrixf(rotations().constData());
+    //glMultMatrixf(rotations().constData());
+    glMultMatrixd(rotations().constData());
 
     m_modelView = glGetMatrix(GL_MODELVIEW_MATRIX);
     m_projection = glGetMatrix(GL_PROJECTION_MATRIX);
@@ -157,7 +158,8 @@ QMatrix4x4 Object3D::glGetMatrix(GLenum fetchType)
     QMatrix4x4 ret;
     GLfloat mat[16];
     glGetFloatv(fetchType, mat);
-    float *m = ret.data();
+    //float *m = ret.data();
+    qreal *m = ret.data();
     for (int index = 0; index < 16; ++index)
         m[index] = mat[index];
 
