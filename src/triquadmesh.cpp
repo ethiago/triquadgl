@@ -150,7 +150,7 @@ void TriQuadMesh::drawGeometry(void)
     if(showMesh)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glLineWidth(2);
+        glLineWidth(3);
         glColor3f(0.7, 0.7, 0.7);
         glBegin(GL_TRIANGLES);
         {
@@ -330,7 +330,8 @@ QMatrix4x4 TriQuadMesh::glGetMatrix(GLenum fetchType)
     QMatrix4x4 ret;
     GLfloat mat[16];
     glGetFloatv(fetchType, mat);
-    float *m = ret.data();
+    //float *m = ret.data();
+    qreal *m = ret.data();
     for (int index = 0; index < 16; ++index)
         m[index] = mat[index];
 

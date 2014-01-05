@@ -15,6 +15,7 @@
 #include "chebuilderregulargridfrompointcloud.h"
 #include "chebuilderequilateralmesh.h"
 #include "fastmarching.h"
+#include "fakefm.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
@@ -472,6 +473,9 @@ void RenderController::fittingMeasure()
 
     mw->setStatusText(QString::number(howFitted) + " X " + QString::number(moreThenFit));
     mw->update();
+
+    FakeFM ffm;
+    ffm.run();
 }
 
 void RenderController::meshTranslation(bool v)
