@@ -14,6 +14,8 @@ uniform vec3 Qxdef;
 uniform vec3 Qyabc;
 uniform vec3 Qydef;
 
+uniform float larg;
+
 mat3 Qx;
 mat3 Qy;
 
@@ -89,7 +91,7 @@ void main()
 
     float prop = 0.7;
         float f = dot(P,Q*P);
-        if(abs(f) < abs(fwidth(f)))
+        if(abs(f) < abs(fwidth(f))*larg )
 	{
                 gl_FragColor = vec4(1.0) ;
 	}

@@ -27,6 +27,12 @@ CHEBuilderEquilateralMesh::CHEBuilderEquilateralMesh(const QVector<QVector4D> &p
             xmax = pointCloud[i].x();
     }
 
+    float hX = xmax-xmin;
+
+    xmax += hX*0.005;
+    xmin -= hX*0.005;
+
+
     l = (xmax - xmin)/nSubX;
     h = (sqrt(3.0)*l)/2.0;
 

@@ -43,7 +43,8 @@ HEADERS  += src/curveN/catmullrom.hpp \
     src/gl3w.h \
     src/slgl3w.h \
     src/chebuilderequilateralmesh.h \
-    src/fakefm.h
+    src/fakefm.h \
+    src/errorcomputing.h
 
 
 SOURCES  += src/main.cpp \
@@ -71,7 +72,8 @@ SOURCES  += src/main.cpp \
     src/gl3w.c \
     src/slgl3w.cpp \
     src/chebuilderequilateralmesh.cpp \
-    src/fakefm.cpp
+    src/fakefm.cpp \
+    src/errorcomputing.cpp
 
 
 FORMS    += src/mainwindow.ui

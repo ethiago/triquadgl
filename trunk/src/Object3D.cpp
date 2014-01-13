@@ -175,4 +175,3 @@ void Object3D::resizeWindow(const QSize& size)
 {
     m_windowSize = size;
 }
-

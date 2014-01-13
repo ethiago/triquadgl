@@ -23,7 +23,8 @@ public:
     const float ** values() const;
 
     float distanceTo(const FastMarching& fm);
-    QImage getImage()const;
+    const QImage &getImage()const;
+    QImage getMapImage()const;
 
     void run();
 

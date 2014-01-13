@@ -61,6 +61,7 @@ public slots:
     void viewSketch(bool);
     void loadMesh();
     void loadSketch();
+    void loadSketchSC();
     void metodoMudou(int);
     void cheBuilderMudou(int);
     void saveMesh();
@@ -74,6 +75,7 @@ public slots:
     void meshTranslation(bool);
     void viewGradField(bool);
     void showTriQuad(bool);
+    void triQuadForVis(bool);
 };
 
 #endif // RENDERCONTROLLER_H

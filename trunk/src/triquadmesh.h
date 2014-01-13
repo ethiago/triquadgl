@@ -30,6 +30,7 @@ class TriQuadMesh : public Object3D
     int locationQxDEF[2];
     int locationQyABC[2];
     int locationQyDEF[2];
+    int locationLarg[2];
     int activeProgram;
 
     bool showMesh;
@@ -39,6 +40,7 @@ class TriQuadMesh : public Object3D
     bool showInputLine;
     bool showTriQuad;
     bool meshTranslation;
+    float larg;
 
     int vwp[4];
     QMatrix4x4 mvpi;
@@ -47,6 +49,7 @@ class TriQuadMesh : public Object3D
     int idxMaisProximo;
     QVector2D maisProximo;
 
+    QVector<QVector2D> inputLine;
     QVector<QVector2D> dp;
     QVector<QVector2D> dpL;
     QVector<QVector2D> dpU;
@@ -69,6 +72,8 @@ public:
     void changeOrigin(bool v);
 
     void setMeshTranslation(bool);
+
+    void setVis(bool v);
 
     QPoint project(const QVector4D& v);
     QVector4D unproject(const QPoint&);
