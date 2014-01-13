@@ -93,6 +93,31 @@ bool SketchController::loadSketch(const QString& fn , TriQuadMesh* triquad)
     return true;
 }
 
+bool SketchController::loadSketchScreenCoordinates(const QString& fn)
+{
+    QFile f(fn);
+
+    if(!f.open(QIODevice::ReadOnly))
+        return false;
+
+    QTextStream s(f.readAll());
+    f.close();
+
+    last.clear();
+
+    int qtd;
+    s >> qtd;
+
+    for(int i = 0; i < qtd; ++i)
+    {
+        int x,y;
+        s >> x >> y;
+
+        last.append(QPoint(x,y));
+    }
+    return true;
+}
+
 bool SketchController::saveSketch(const QString& fileName, TriQuadMesh* triquad )
 {
     QFile f(fileName);

@@ -116,7 +116,7 @@ void FastMarching::run()
     freeMap();
 }
 
-QImage FastMarching::getImage()const
+QImage FastMarching::getMapImage()const
 {
     QImage result(m_src.size(), QImage::Format_ARGB32);
     float max = maxValues();
@@ -130,6 +130,11 @@ QImage FastMarching::getImage()const
         }
     }
     return result;
+}
+
+const QImage& FastMarching::getImage()const
+{
+    return m_src;
 }
 
 bool FastMarching::isValid(int i, int j) const

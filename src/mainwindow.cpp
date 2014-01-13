@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cmb_Metodo, SIGNAL(activated(int)), SIGNAL(metodoMudou(int)));
     connect(ui->cmb_cheBuilder, SIGNAL(activated(int)), this, SIGNAL(cheBuilderMudou(int)));
     connect(ui->actionLoad_Sketch, SIGNAL(triggered()), this, SIGNAL(loadSketch()) );
+    connect(ui->actionLoad_From_Screen_Coordinate, SIGNAL(triggered()), this, SIGNAL(loadSketchSC()) );
     connect(ui->actionView_Sketch, SIGNAL(toggled(bool)), this, SIGNAL(viewSketch(bool)));
     connect(ui->actionSave_Mesh, SIGNAL(triggered()), this, SIGNAL(saveMesh()));
     connect(ui->actionSave_Sketch, SIGNAL(triggered()), this, SIGNAL(saveSketch()));
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->meshTrans, SIGNAL(toggled(bool)), this, SIGNAL(meshTranslation(bool)) );
     connect(ui->actionView_Grad_Field, SIGNAL(toggled(bool)), this, SIGNAL(viewGradField(bool)) );
     connect(ui->actionShow_TriQuad, SIGNAL(toggled(bool)), this, SIGNAL(showTriQuad(bool)) );
+    connect(ui->lengthVis, SIGNAL(toggled(bool)), this, SIGNAL(lengthForVis(bool)) );
 }
 
 MainWindow::~MainWindow()

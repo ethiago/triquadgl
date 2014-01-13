@@ -27,6 +27,7 @@ public:
     QVector<QPoint> getPoints(void);
     QVector<QPointF> getPointsLinearFilter(void);
 
+    bool loadSketchScreenCoordinates(const QString& fileName);
     bool loadSketch(const QString& fileName, TriQuadMesh *triquad);
     bool saveSketch(const QString& fileName, TriQuadMesh* triquad);
 

@@ -13,10 +13,15 @@
 TriQuadMesh::TriQuadMesh(int texName, const QVector3D& center, QObject *parent):
     Object3D(center, parent), showMesh(true), showSketch(true),  origin(true),
     showScalarField(false), showInputLine(false), showTriQuad(true),
-    meshTranslation(false), idxMaisProximo(-1),  m_glTextureName(texName)
+    meshTranslation(false), idxMaisProximo(-1),  m_glTextureName(texName), larg(1.5)
 {
     setInputType(GL_TRIANGLES);
     buildObject();
+}
+
+void TriQuadMesh::setVis(bool v)
+{
+    larg = v?1.5:0.5;
 }
 
 int TriQuadMesh::textureName()const
@@ -139,10 +144,10 @@ void TriQuadMesh::drawGeometry(void)
     {
         glColor4f(0.0, 0.0, 0.0, 1.0);
         glPointSize(1.0);
-        glLineWidth(2);
+        glLineWidth(1);
         glBegin(GL_LINE_STRIP);
-        for(int i = 0; i < dp.size(); ++i)
-            glVertex3f(dp[i].x(), dp[i].y(), 2.0);
+        for(int i = 0; i < inputLine.size(); ++i)
+            glVertex3f(inputLine[i].x(), inputLine[i].y(), 2.0);
         glEnd();
     }
 
@@ -159,7 +164,7 @@ void TriQuadMesh::drawGeometry(void)
                 for(int j = 0; j < 3; ++j)
                 {
                     int k = che.vertexId(i,j);
-                    glVertex3f(che.vertex( k ).x(), che.vertex( k ).y(), 2.0);
+                    glVertex3f(che.vertex( k ).x(), che.vertex( k ).y(), 1.0);
                 }
             }
         }glEnd();
@@ -178,6 +183,7 @@ void TriQuadMesh::drawGeometry(void)
         program[activeProgram].setUniformValue(locationMaior[activeProgram], che.getMaior());
         program[activeProgram].setUniformValue(locationMenor[activeProgram], che.getMenor());
         program[activeProgram].setUniformValue(locationTexture[activeProgram], 0);
+        program[activeProgram].setUniformValue(locationLarg[activeProgram], larg);
         glBegin(GL_TRIANGLES);
         {
             for(int i = 0; i < che.sizeOfTriangles(); ++i)
@@ -263,6 +269,7 @@ void TriQuadMesh::buildObject()
     locationMenor[0] = program[0].uniformLocation("menor");
     locationMaior[0] = program[0].uniformLocation("maior");
     locationTexture[0] = program[0].uniformLocation("sampler2d0");
+    locationLarg[0] = program[0].uniformLocation("larg");
 
     locationABC[1] = program[1].attributeLocation("abc");
     locationDEF[1] = program[1].attributeLocation("def");
@@ -274,6 +281,7 @@ void TriQuadMesh::buildObject()
     locationQxDEF[1] = program[1].uniformLocation("Qxdef");
     locationQyABC[1] = program[1].uniformLocation("Qyabc");
     locationQyDEF[1] = program[1].uniformLocation("Qydef");
+    locationLarg[1] = program[1].uniformLocation("larg");
 
     activeProgram = 0;
 
@@ -516,6 +524,8 @@ void TriQuadMesh::globalFitting_1layer(QVector<QVector4D>  pontos,  bool include
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DL;
     QVector<QVector2D> pontos2DU;
+    inputLine.clear();
+
     clearDrawPoints();
 
 
@@ -550,6 +560,7 @@ void TriQuadMesh::globalFitting_1layer(QVector<QVector4D>  pontos,  bool include
 
         QVector2D p = pontos[i].toVector2D();
         pontos2D.append(p);
+        inputLine.append(p);
 
         gsl_vector_set( B, i , 1);
         for (int j = 0; j < 3; ++j)
@@ -604,6 +615,7 @@ void TriQuadMesh::globalFitting_1layer(QVector<QVector4D>  pontos,  bool include
 void TriQuadMesh::fitting_quadrica(QVector<QVector4D>  pontos)
 {
     QVector<QVector2D> pontos2D;
+    inputLine.clear();
     clearDrawPoints();
 
     int np = pontos.size();
@@ -618,6 +630,7 @@ void TriQuadMesh::fitting_quadrica(QVector<QVector4D>  pontos)
     {
         QVector2D p = pontos[i].toVector2D();
         pontos2D.append(p);
+        inputLine.append(p);
 
         gsl_vector_set( B, i , 1);
 
@@ -645,9 +658,11 @@ void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> pontos, float k)
 {
     QVector<QVector3D> b;
     QVector<int> idx;
+    QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DL;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -672,6 +687,8 @@ void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> pontos, float k)
         double bar[3];
         QVector4D p[3];
 
+        pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
         pontos2DU.append(p[0].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
@@ -724,6 +741,7 @@ void TriQuadMesh::globalFitting_2layers(QVector<QVector4D> pontos, float k)
         che.vertex(i).quadric() = qs[i];
     }
     //drawPoints(pontos2D);
+    //dp = pontos2D;
     drawPoints1(pontos2DU);
     drawPoints2(pontos2DL);
 }
@@ -736,7 +754,7 @@ void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> pontos, float k, bool
     QVector<QVector2D> pontos2DL;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
-
+    inputLine.clear();
 
     int np = configPoints(pontos, b, idx);
     int nq = che.sizeOfVertices();
@@ -768,6 +786,7 @@ void TriQuadMesh::globalFitting_3layers(QVector<QVector4D> pontos, float k, bool
         pontos2DU.append(p[0].toVector2D());
         p[1] = pontos[i];
         pontos2D.append(p[1].toVector2D());
+        inputLine.append(p[1].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -855,6 +874,7 @@ void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> pontos, float k)
     QVector<QVector2D> pontos2DL;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
     int np = configPoints(pontos, b, idx);
     int nq = che.sizeOfVertices();
@@ -884,6 +904,7 @@ void TriQuadMesh::globalFitting_5layers(QVector<QVector4D> pontos, float k)
         pontos2DU.append(p[1].toVector2D());
         p[2] = pontos[i];
         pontos2D.append(p[2].toVector2D());
+        inputLine.append(p[2].toVector2D());
         p[3] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
         pontos2DL.append(p[3].toVector2D());
         p[4] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k*2).toVector4D();
@@ -947,6 +968,7 @@ void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> pontos, float k
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -974,6 +996,7 @@ void TriQuadMesh::globalFitting_2layers_freef(QVector<QVector4D> pontos, float k
         p[0] = pontos[i] + (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
         pontos2DU.append(p[0].toVector2D());
         //pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*k).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -1037,6 +1060,7 @@ void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> pontos, float 
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -1069,6 +1093,7 @@ void TriQuadMesh::globalFittingG_3layers_freef(QVector<QVector4D> pontos, float 
         p[1] = pontos[i];
         pontos2DU.append(p[0].toVector2D());
         pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*kDistance).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -1156,6 +1181,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_withAverage(QVector<QVector4D> po
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -1185,6 +1211,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_withAverage(QVector<QVector4D> po
         p[1] = pontos[i];
         pontos2DU.append(p[0].toVector2D());
         pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*kDistance).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -1279,6 +1306,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_withGrad(QVector<QVector4D> ponto
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
     int np = configPoints(pontos, b, idx);
     QVector<QPair<Vertex, HalfEdge> > edges = che.getIntersections(pontos);
@@ -1312,6 +1340,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_withGrad(QVector<QVector4D> ponto
         p[1] = pontos[i];
         pontos2DU.append(p[0].toVector2D());
         pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*kDistance).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -1466,6 +1495,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pont
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -1498,6 +1528,7 @@ void TriQuadMesh::globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pont
         p[1] = pontos[i];
         pontos2DU.append(p[0].toVector2D());
         pontos2D.append(pontos[i].toVector2D());
+        inputLine.append(pontos[i].toVector2D());
         p[2] = pontos[i] - (QVector2D(c.nx(i), c.ny(i)).normalized()*kDistance).toVector4D();
         pontos2DL.append(p[2].toVector2D());
 
@@ -1591,6 +1622,7 @@ void TriQuadMesh::globalFittingG_1layers_freef(QVector<QVector4D> pontos)
     QVector<QVector2D> pontos2D;
     QVector<QVector2D> pontos2DU;
     clearDrawPoints();
+    inputLine.clear();
 
 
     int np = configPoints(pontos, b, idx);
@@ -1619,6 +1651,7 @@ void TriQuadMesh::globalFittingG_1layers_freef(QVector<QVector4D> pontos)
 
         p = pontos[i];
         pontos2D.append(p.toVector2D());
+        inputLine.append(p.toVector2D());
 
         int tId;
 

@@ -20,6 +20,7 @@ signals:
     void metodoMudou(int);
     void cheBuilderMudou(int);
     void loadSketch();
+    void loadSketchSC();
     void viewSketch(bool);
     void saveMesh();
     void saveSketch();
@@ -31,6 +32,7 @@ signals:
     void meshTranslation(bool);
     void viewGradField(bool);
     void showTriQuad(bool);
+    void lengthForVis(bool);
 
 public:
 

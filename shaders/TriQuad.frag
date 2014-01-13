@@ -5,6 +5,7 @@ varying mat3 Q;
 varying vec3 P;
 
 uniform int showScalar;
+uniform float larg;
 
 void main ()
 {
@@ -14,7 +15,7 @@ void main ()
         if(showScalar == 0)
         {
             gl_FragColor = vec4(0.0,0.0,0.0,1.0) ;
-            if(abs(f) > abs(fwidth(f))*1.5 )
+            if(abs(f) > abs(fwidth(f))*larg )
                 discard;
         }else
         {
@@ -24,7 +25,7 @@ void main ()
             else
                 gl_FragColor.g = f;
 
-            if(abs(f) < abs(fwidth(f))*0.5)
+            if(abs(f) < abs(fwidth(f))*larg)
                 gl_FragColor = vec4(1.0) ;
         }
 }

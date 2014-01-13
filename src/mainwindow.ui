@@ -69,6 +69,7 @@
     </property>
     <addaction name="actionView_Sketch"/>
     <addaction name="actionLoad_Sketch"/>
+    <addaction name="actionLoad_From_Screen_Coordinate"/>
     <addaction name="actionSave_Sketch"/>
     <addaction name="separator"/>
     <addaction name="actionLinear_Filter"/>
@@ -330,6 +331,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="lengthVis">
+       <property name="text">
+        <string>Lenght for Vis</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -442,6 +453,11 @@
    </property>
    <property name="text">
     <string>Show TriQuad</string>
+   </property>
+  </action>
+  <action name="actionLoad_From_Screen_Coordinate">
+   <property name="text">
+    <string>Load From Screen Coordinate</string>
    </property>
   </action>
  </widget>

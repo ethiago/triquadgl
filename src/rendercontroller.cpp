@@ -16,6 +16,7 @@
 #include "chebuilderequilateralmesh.h"
 #include "fastmarching.h"
 #include "fakefm.h"
+#include "errorcomputing.h"
 
 RenderController::RenderController(MainWindow *mainWindow,
                                    QObject *parent):
@@ -73,6 +74,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(loadSketch()),
             this, SLOT(loadSketch()));
 
+    connect(mainWindow, SIGNAL(loadSketchSC()),
+            this, SLOT(loadSketchSC()));
+
     connect(mainWindow, SIGNAL(viewSketch(bool)),
             this, SLOT(viewSketch(bool)) );
 
@@ -111,6 +115,9 @@ RenderController::RenderController(MainWindow *mainWindow,
 
     connect(mainWindow, SIGNAL(showTriQuad(bool)),
             this, SLOT(showTriQuad(bool)) );
+
+    connect(mainWindow, SIGNAL(lengthForVis(bool)),
+            this, SLOT(triQuadForVis(bool)) );
 
     mainWindow->showMaximized();
 
@@ -275,6 +282,22 @@ void RenderController::loadSketch()
         return;
 
     skC->loadSketch(filename, triquad);
+
+    if(m_linearFilter)
+        ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
+    else
+        ultimaLista = triquad->unproject(skC->getPoints());
+    exec();
+}
+
+void RenderController::loadSketchSC()
+{
+    QString filename = QFileDialog::getOpenFileName(0, "Sketch File Loader", QString(), QString("*.")+SKETCHFILEEXTENSION );
+
+    if(filename.isEmpty())
+        return;
+
+    skC->loadSketchScreenCoordinates(filename);
 
     if(m_linearFilter)
         ultimaLista = triquad->unproject(skC->getPointsLinearFilter());
@@ -458,24 +481,20 @@ void RenderController::fittingMeasure()
     display->updateGL();
     display->updateGL();
 
-    input.save("srcInput.png");
-    FastMarching fm(input);
-    fm.run();
-    fm.getImage().save("input.png");
+    ErrorComputing e(input, result);
 
-    result.save("srcTriquad.png");
-    FastMarching fm2(result);
-    fm2.run();
-    fm2.getImage().save("triquad.png");
+    float howFitted   = e.getNormalizedFittingError();
+    float moreThenFit = e.getNormalizedExtraConponentsError();
 
-    float howFitted   = fm.distanceTo(fm2);
-    float moreThenFit = fm2.distanceTo(fm);
+    QString errorReport = QString::number(howFitted) + " X " + QString::number(moreThenFit);
 
-    mw->setStatusText(QString::number(howFitted) + " X " + QString::number(moreThenFit));
+
+    qDebug() << errorReport;
+    mw->setStatusText(errorReport);
     mw->update();
 
-    FakeFM ffm;
-    ffm.run();
+    //FakeFM ffm;
+    //ffm.run();
 }
 
 void RenderController::meshTranslation(bool v)
@@ -492,5 +511,11 @@ void RenderController::viewGradField(bool v)
 void RenderController::showTriQuad(bool v)
 {
     triquad->viewTriQuad(v);
+    display->updateGL();
+}
+
+void RenderController::triQuadForVis(bool v)
+{
+    triquad->setVis(v);
     display->updateGL();
 }
