@@ -1,6 +1,7 @@
 #include "compacthalfedge.h"
 #include <QVector4D>
 #include <assert.h>
+#include <QMatrix4x4>
 
 CompactHalfEdge::CompactHalfEdge()
 {
@@ -438,7 +439,7 @@ QVector<HalfEdge> CompactHalfEdge::getAllInternalEdges()const
 
 int CompactHalfEdge::triangleIDFromHeId(int heid)const
 {
-    return heid%3;
+    return heid/3;
 }
 
 void CompactHalfEdge::addToAllVertices(const QVector2D& v)
@@ -567,4 +568,109 @@ QVector<int> CompactHalfEdge::getInternalVertices()
 int CompactHalfEdge::numberOfInternalVertices()
 {
     return getInternalVertices().size();
+}
+
+QVector< QVector<int> > CompactHalfEdge::getInternalEdges()
+{
+    QVector< QVector<int> > ret;
+
+    QVector<bool> flags(m_mesh.size());
+
+    for(int i = 0; i < flags.size(); ++i)
+        flags[i] = false;
+
+    for(int i = 0; i < m_mesh.size(); ++i)
+    {
+        if(m_mesh[i].hasTwin() && !flags[i])
+        {
+            flags[i] = true;
+            flags[m_mesh[i].twinIndex()] = true;
+
+            int alfa = triangleIDFromHeId(i);
+            int beta = triangleIDFromHeId(m_mesh[i].twinIndex());
+
+//            qDebug() << "he:" << i << ", twin:" << m_mesh[i].twinIndex();
+//            qDebug() << "alpha:" << alfa << ", beta:" << beta;
+
+            int T1[3], T2[3];
+
+            T1[0] = vertexId(alfa,0);
+            T1[1] = vertexId(alfa,1);
+            T1[2] = vertexId(alfa,2);
+
+            T2[0] = vertexId(beta,0);
+            T2[1] = vertexId(beta,1);
+            T2[2] = vertexId(beta,2);
+
+//            qDebug() << T1[0] << " " << T1[1] << " " << T1[2];
+//            qDebug() << T2[0] << " " << T2[1] << " " << T2[2];
+
+            if(T1[1] != T2[0] && T1[1] != T2[1] && T1[1] != T2[2])
+            {
+                int t = T1[0];
+                T1[0] = T1[1];
+                T1[1] = T1[2];
+                T1[2] = t;
+            }else if(T1[2] != T2[0] && T1[2] != T2[1] && T1[2] != T2[2])
+            {
+                int t = T1[2];
+                T1[2] = T1[1];
+                T1[1] = T1[0];
+                T1[0] = t;
+            }
+
+            if(T2[1] != T1[0] && T2[1] != T1[1] && T2[1] != T1[2])
+            {
+                int t = T2[2];
+                T2[2] = T2[1];
+                T2[1] = T2[0];
+                T2[0] = t;
+            }else if(T2[0] != T1[0] && T2[0] != T1[1] && T2[0] != T1[2])
+            {
+                int t = T2[0];
+                T2[0] = T2[1];
+                T2[1] = T2[2];
+                T2[2] = t;
+            }
+            QVector<int> t;
+            t.append(T1[0]);
+            t.append(T1[1]);
+            t.append(T1[2]);
+            t.append(T2[2]);
+
+//            qDebug() << t;
+
+            ret.append( t );
+        }
+    }
+    return ret;
+}
+
+QVector3D CompactHalfEdge::getBaricentric(int idxT, QVector2D nP)
+{
+    QMatrix4x4 m;
+    for(int i = 0; i < 3; ++i)
+    {
+        m(0,i) = vertex(vertexId(idxT,i)).x();
+        m(1,i) = vertex(vertexId(idxT,i)).y();
+        m(2,i) = 1.0;
+        m(3,i) = m(i,3) = 0.0;
+    }
+    m(3,3) = 1.0;
+
+    return ( m.inverted() * QVector4D(nP, 1.0,0.0) ).toVector3D();
+}
+
+void CompactHalfEdge::recalcVertex(int idxV, const QVector2D& newPosition)
+{
+    int alfa = triangleIDFromHeId( vertex(idxV).halfedgeIndex() );
+
+
+    QVector3D b = getBaricentric(alfa, newPosition);
+
+    m_vertices[idxV] = newPosition;
+    m_vertices[idxV].quadric() = vertex( vertexId( alfa, 0 ) ).quadric() * b.x() +
+            vertex( vertexId( alfa, 1 ) ).quadric() * b.y() +
+            vertex( vertexId( alfa, 2 ) ).quadric() * b.z();
+
 }

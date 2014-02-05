@@ -81,6 +81,7 @@
     <addaction name="actionShow_TriQuad"/>
     <addaction name="actionSaveImageAs"/>
     <addaction name="actionFitting_Measure"/>
+    <addaction name="actionMake_Smooth"/>
    </widget>
    <addaction name="menuMesh"/>
    <addaction name="menuSketch"/>
@@ -302,6 +303,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="kDistance">
+          <property name="decimals">
+           <number>2</number>
+          </property>
           <property name="maximum">
            <double>1.000000000000000</double>
           </property>
@@ -337,6 +341,13 @@
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="iso">
+       <property name="text">
+        <string>Isoform</string>
        </property>
       </widget>
      </item>
@@ -458,6 +469,11 @@
   <action name="actionLoad_From_Screen_Coordinate">
    <property name="text">
     <string>Load From Screen Coordinate</string>
+   </property>
+  </action>
+  <action name="actionMake_Smooth">
+   <property name="text">
+    <string>Make Smooth</string>
    </property>
   </action>
  </widget>

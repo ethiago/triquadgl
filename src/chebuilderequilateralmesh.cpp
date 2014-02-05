@@ -29,8 +29,8 @@ CHEBuilderEquilateralMesh::CHEBuilderEquilateralMesh(const QVector<QVector4D> &p
 
     float hX = xmax-xmin;
 
-    xmax += hX*0.005;
-    xmin -= hX*0.005;
+//    xmax += hX*0.007;
+//    xmin -= hX*0.007;
 
 
     l = (xmax - xmin)/nSubX;

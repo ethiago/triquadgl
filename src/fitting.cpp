@@ -151,6 +151,23 @@ QVector<Quadric2D> fittingGLOBAL(gsl_matrix * A, gsl_vector * B, float f)
     return resp;
 }
 
+ gsl_vector* simpleFitting(gsl_matrix * A, gsl_vector * B)
+{
+    gsl_matrix *cov = gsl_matrix_alloc (A->size2, A->size2);
+    gsl_vector * x = gsl_vector_alloc(A->size2);
+
+    gsl_multifit_linear_workspace * work = gsl_multifit_linear_alloc (A->size1,A->size2);
+    real chisq = 0.0;
+    real tol = 0.000001 ;
+    size_t rank = 0 ;
+    gsl_multifit_linear_svd( A,B, tol, &rank, x, cov, &chisq, work);
+    qDebug() << "rank: " << rank << ", chisq: " << chisq;
+    //gsl_multifit_linear(A,B, x, cov, &chisq, work);
+    gsl_multifit_linear_free (work);
+
+    return x;
+}
+
 QVector<Quadric2D> fittingGLOBAL_flivre(gsl_matrix * A, gsl_vector * B)
 {
 

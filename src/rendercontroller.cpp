@@ -119,6 +119,12 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(lengthForVis(bool)),
             this, SLOT(triQuadForVis(bool)) );
 
+    connect(mainWindow, SIGNAL(makeSmooth()),
+            this, SLOT(makeSmooth()) );
+
+    connect(mainWindow, SIGNAL(isoform(bool)),
+            this, SLOT(isoform(bool)) );
+
     mainWindow->showMaximized();
 
 }
@@ -336,6 +342,8 @@ void RenderController::configComboMetodo()
     mw->addMetodo("3 Camadas - f livre - grad");
     mw->addMetodo("Q");
     mw->addMetodo("3 Camadas - f livre - AVG");
+    mw->addMetodo("3 Camadas - (K Distance)");
+    mw->addMetodo("3 Camadas - grad");
     metodo = mw->metodoSelecionado();
 }
 
@@ -418,6 +426,12 @@ void RenderController::exec()
     case 10:
         triquad->globalFittingG_3layers_freef_withAverage(ultimaLista, k);
         break;
+    case 11:
+        triquad->globalFitting_3layers_kDistance(ultimaLista, k, includeVertices);
+        break;
+    case 12:
+        triquad->globalFittingG_3layers_withGrad(ultimaLista, k, includeVertices);
+        break;
 
     }
     //fittingMeasure();
@@ -486,7 +500,8 @@ void RenderController::fittingMeasure()
     float howFitted   = e.getNormalizedFittingError();
     float moreThenFit = e.getNormalizedExtraConponentsError();
 
-    QString errorReport = QString::number(howFitted) + " X " + QString::number(moreThenFit);
+    QString errorReport = QString::number(howFitted) + " X " + QString::number(moreThenFit)
+            + " = " + QString::number(qSqrt(howFitted*howFitted + moreThenFit*moreThenFit));
 
 
     qDebug() << errorReport;
@@ -518,4 +533,15 @@ void RenderController::triQuadForVis(bool v)
 {
     triquad->setVis(v);
     display->updateGL();
+}
+
+void RenderController::makeSmooth(void)
+{
+    triquad->makeSmoothAll();
+    display->updateGL();
+}
+
+void RenderController::isoform(bool v)
+{
+    triquad->isoformEditing(v);
 }

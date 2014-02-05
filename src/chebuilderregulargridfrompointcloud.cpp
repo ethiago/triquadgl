@@ -32,10 +32,10 @@ void CHEBuilderRegularGridFromPointCloud::build()
     float lx = (xM - xm);
     float ly = (yM - ym);
 
-    float perc = 0.05;
+    float perc = 0.07;
 
-    xm -= lx*0.005;
-    xM += lx*0.005;
+    xm -= lx*perc;
+    xM += lx*perc;
     ym -= ly*perc;
     yM += ly*perc;
 

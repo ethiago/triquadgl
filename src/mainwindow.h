@@ -33,6 +33,8 @@ signals:
     void viewGradField(bool);
     void showTriQuad(bool);
     void lengthForVis(bool);
+    void makeSmooth(void);
+    void isoform(bool);
 
 public:
 

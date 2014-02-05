@@ -75,6 +75,12 @@ public:
     QVector<int> getInternalVertices();
     bool isVertexInternal(int vId);
 
+    QVector< QVector<int> > getInternalEdges();
+
+    void recalcVertex(int idxV, const QVector2D& newPosition);
+
+    QVector3D getBaricentric(int idxT, QVector2D newPosition);
+
 
 private:
     void configTwin(int halfEdgeIdx, int destinyVertexIdx);
