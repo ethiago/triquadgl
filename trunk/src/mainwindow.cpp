@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionView_Grad_Field, SIGNAL(toggled(bool)), this, SIGNAL(viewGradField(bool)) );
     connect(ui->actionShow_TriQuad, SIGNAL(toggled(bool)), this, SIGNAL(showTriQuad(bool)) );
     connect(ui->lengthVis, SIGNAL(toggled(bool)), this, SIGNAL(lengthForVis(bool)) );
+    connect(ui->actionMake_Smooth, SIGNAL(triggered()), this, SIGNAL(makeSmooth()) );
+    connect(ui->iso, SIGNAL(toggled(bool)), this, SIGNAL(isoform(bool)) );
 }
 
 MainWindow::~MainWindow()

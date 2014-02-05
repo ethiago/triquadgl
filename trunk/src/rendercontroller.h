@@ -76,6 +76,8 @@ public slots:
     void viewGradField(bool);
     void showTriQuad(bool);
     void triQuadForVis(bool);
+    void makeSmooth(void);
+    void isoform(bool);
 };
 
 #endif // RENDERCONTROLLER_H

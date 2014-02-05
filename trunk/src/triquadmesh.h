@@ -40,6 +40,7 @@ class TriQuadMesh : public Object3D
     bool showInputLine;
     bool showTriQuad;
     bool meshTranslation;
+    bool isoform;
     float larg;
 
     int vwp[4];
@@ -48,6 +49,7 @@ class TriQuadMesh : public Object3D
 
     int idxMaisProximo;
     QVector2D maisProximo;
+    Quadric2D qMaisProximo;
 
     QVector<QVector2D> inputLine;
     QVector<QVector2D> dp;
@@ -92,6 +94,8 @@ public:
     void globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_1layers_freef(QVector<QVector4D> pontos);
     void globalFitting_3layers(QVector<QVector4D>  in, float k, bool includeVertices);
+    void globalFitting_3layers_kDistance(QVector<QVector4D> pontos, float k, bool includeVertices);
+    void globalFittingG_3layers_withGrad(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFitting_5layers(QVector<QVector4D>  in, float k);
     void globalFitting_1layer(QVector<QVector4D>  in, bool includeVertices);
     void fitting_quadrica(QVector<QVector4D>  pontos);
@@ -115,6 +119,9 @@ public:
 
     QVector<QVector2D> pointsOnEdge(const HalfEdge &h, int c = 3)const;
 
+    void makeSmoothAll();
+    void isoformEditing(bool v);
+
 
 
 private:
@@ -128,6 +135,7 @@ private:
     QMatrix4x4 glGetMatrix(GLenum fetchType);
     void buildObject();
     QMatrix4x4 buildInv(int triangleId);
+    QMatrix4x4 makeW(int v1,int v2, int v3);
     QVector4D buscaNo(const QVector4D& p, int *idx);
     int configPoints(QVector<QVector4D>& pontos, QVector<QVector3D>& bary, QVector<int>& idx );
     QVector3D bary(const QVector4D& p, int *idx);
