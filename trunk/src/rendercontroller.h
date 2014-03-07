@@ -78,6 +78,7 @@ public slots:
     void triQuadForVis(bool);
     void makeSmooth(void);
     void isoform(bool);
+    void loadImage(const QImage&);
 };
 
 #endif // RENDERCONTROLLER_H

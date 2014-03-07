@@ -7,6 +7,7 @@
 #include <gsl/gsl_vector.h>
 #include "Curve.h"
 #include "slgl3w.h"
+#include "chebuilderregulargrid.h"
 
 #define SIGN(x) ((x)<0?-1.0:1.0)
 
@@ -493,7 +494,7 @@ int TriQuadMesh::configPoints( QVector<QVector4D>& pontos, QVector<QVector3D>& b
         bool entrou = false;
         for(int i = 0; i < che.sizeOfTriangles(); ++i)
         {
-            QVector4D v = invs[i] * pontos[j];
+            QVector4D v = invs[i] * QVector4D(pontos[j].toVector3D(), 0.0 );
             if(v.x() >= 0.0 && v.x() <= 1.0 && v.y() >= 0.0 && v.y() <= 1.0 && v.z() >= 0.0 && v.z() <= 1.0)
             {
                 bary.push_back(v.toVector3D());
@@ -2175,6 +2176,62 @@ void TriQuadMesh::globalFittingG_1layers_freef(QVector<QVector4D> pontos)
     drawPoints2(pontos2DL);
 }
 
+void TriQuadMesh::globalFittingG_1layers_freef_special(QVector<QVector4D> pontos)
+{
+    QVector<QVector3D> b;
+    QVector<int> idx;
+
+    clearDrawPoints();
+    inputLine.clear();
+
+
+    int np = configPoints(pontos, b, idx);
+    int nq = che.sizeOfVertices();
+    int nc = 6;
+    if(np < nq*nc)
+        return;
+
+    gsl_matrix * A = gsl_matrix_calloc (np, nq*nc);
+    gsl_vector * B = gsl_vector_calloc(np);
+
+    for (int i = 0; i < np; ++i)
+    {
+        double bar[3];
+        QVector4D p;
+
+        p = pontos[i];
+
+        int tId;
+
+        bar[0] = b[i].x();
+        bar[1] = b[i].y();
+        bar[2] = b[i].z();
+        tId = idx[i];
+
+
+        for (int j = 0; j < 3; ++j)
+        {
+            int vId = che.vertexId(tId,j);
+            gsl_matrix_set (A, i , vId*nc + 0,     p.x()*p.x()*bar[j]); //x^2
+            gsl_matrix_set (A, i , vId*nc + 1, 2.0*p.x()*p.y()*bar[j]); //2xy
+            gsl_matrix_set (A, i , vId*nc + 2, 2.0*p.x()      *bar[j]); //2x
+            gsl_matrix_set (A, i , vId*nc + 3,     p.y()*p.y()*bar[j]); //y^2
+            gsl_matrix_set (A, i , vId*nc + 4, 2.0*p.y()      *bar[j]); //2y
+            gsl_matrix_set (A, i , vId*nc + 5,      1.0       *bar[j]); //1
+        }
+        gsl_vector_set( B, i , p.w());
+    }
+
+    QVector<Quadric2D> qs = fittingGLOBAL_flivre(A,B);
+
+    gsl_matrix_free (A);
+    gsl_vector_free (B);
+
+    for(int i = 0; i < qs.size(); ++i)
+    {
+        che.vertex(i).quadric() = qs[i];
+    }
+}
 
 void TriQuadMesh::calcDistances(const QVector<QVector4D> &pontos, QVector<float>* distances, QVector<int>* idxPoint)
 {
@@ -2342,4 +2399,59 @@ void TriQuadMesh::viewTriQuad(bool v)
 void TriQuadMesh::isoformEditing(bool v)
 {
     isoform = v;
+}
+
+void TriQuadMesh::specialFittingFromImage(const QImage& img)
+{
+    int size = img.width() > img.height() ? img.width() : img.height();
+
+    float sx = float(img.width())/size;
+    float sy = float(img.height())/size;
+
+    float minX = -1.3*sx;
+    float maxX =  1.3*sx;
+    float minY = -1.3*sy;
+    float maxY =  1.3*sy;
+
+    CHEBuilder * builder = new CHEBuilderRegularGrid(minX, maxX, minY, maxY, img.width()*10/size, img.height()*10/size);
+
+    this->clear();
+
+    this->buildMesh(builder);
+
+    delete builder;
+
+    QVector<QVector4D> points;
+    QVector<QVector2D> pontos2D;
+
+    float aX = maxX-minX;
+    float aY = maxY-minY;
+
+    float dx = aX/img.width();
+    float dy = aY/img.height();
+
+    float y = dy/2.0 + minY;
+    for(int i = 0; i < img.height(); ++i)
+    {
+        float x = dx/2.0 + minX;
+        for(int j = 0; j < img.width(); ++j)
+        {
+            QRgb px = img.pixel(j,i);
+            float r = qRed(px)/255.0;
+            float g = qGreen(px)/255.0;
+            float b = qBlue(px)/255.0;
+
+            pontos2D.append(QVector2D(x,y));
+            points.append(QVector4D(x,y,1.0, (r+g+b)/3.0));
+
+            x += dx;
+        }
+        y += dy;
+    }
+
+    clearDrawPoints();
+    inputLine.clear();
+
+    this->globalFittingG_1layers_freef_special(points);
+    //drawPoints(pontos2D);
 }

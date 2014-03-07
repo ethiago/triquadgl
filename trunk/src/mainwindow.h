@@ -35,6 +35,7 @@ signals:
     void lengthForVis(bool);
     void makeSmooth(void);
     void isoform(bool);
+    void imageOpened(const QImage& );
 
 public:
 
@@ -60,6 +61,9 @@ public:
     bool isSketchView();
 
     void setStatusText(const QString& text);
+
+public slots:
+    void openImage();
 
 private:
     Ui::MainWindow *ui;

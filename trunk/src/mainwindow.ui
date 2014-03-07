@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>731</width>
-    <height>721</height>
+    <height>729</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
      <x>0</x>
      <y>0</y>
      <width>731</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMesh">
@@ -83,9 +83,16 @@
     <addaction name="actionFitting_Measure"/>
     <addaction name="actionMake_Smooth"/>
    </widget>
+   <widget class="QMenu" name="menuSpecial">
+    <property name="title">
+     <string>Special</string>
+    </property>
+    <addaction name="actionLoad_Image"/>
+   </widget>
    <addaction name="menuMesh"/>
    <addaction name="menuSketch"/>
    <addaction name="menuConfigurations"/>
+   <addaction name="menuSpecial"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="floating">
@@ -474,6 +481,11 @@
   <action name="actionMake_Smooth">
    <property name="text">
     <string>Make Smooth</string>
+   </property>
+  </action>
+  <action name="actionLoad_Image">
+   <property name="text">
+    <string>Load Image ...</string>
    </property>
   </action>
  </widget>
