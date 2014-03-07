@@ -125,6 +125,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(isoform(bool)),
             this, SLOT(isoform(bool)) );
 
+    connect(mainWindow, SIGNAL(imageOpened(QImage)),
+            this, SLOT(loadImage(QImage)) );
+
     mainWindow->showMaximized();
 
 }
@@ -544,4 +547,10 @@ void RenderController::makeSmooth(void)
 void RenderController::isoform(bool v)
 {
     triquad->isoformEditing(v);
+}
+
+void RenderController::loadImage(const QImage & img)
+{
+    triquad->specialFittingFromImage(img);
+    display->updateGL();
 }

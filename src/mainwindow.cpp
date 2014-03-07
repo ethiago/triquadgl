@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "GLDisplay.h"
 #include <QDebug>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lengthVis, SIGNAL(toggled(bool)), this, SIGNAL(lengthForVis(bool)) );
     connect(ui->actionMake_Smooth, SIGNAL(triggered()), this, SIGNAL(makeSmooth()) );
     connect(ui->iso, SIGNAL(toggled(bool)), this, SIGNAL(isoform(bool)) );
+    connect(ui->actionLoad_Image, SIGNAL(triggered()), this, SLOT(openImage()) );
 }
 
 MainWindow::~MainWindow()
@@ -102,4 +104,18 @@ bool MainWindow::isSketchView()
 void MainWindow::setStatusText(const QString& text)
 {
     ui->statusBar->showMessage(text);
+}
+
+void MainWindow::openImage()
+{
+    QString fn = QFileDialog::getOpenFileName(this, "Open Image to fit", "..", tr("Images (*.png *.xpm *.jpg *.bmp *.gif)"));
+
+    if(fn.isEmpty())
+        return;
+
+    QImage img(fn);
+    if(img.isNull())
+        return;
+
+    emit imageOpened(img);
 }

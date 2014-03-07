@@ -93,6 +93,7 @@ public:
     void globalFittingG_3layers_freef_withGrad(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_1layers_freef(QVector<QVector4D> pontos);
+    void globalFittingG_1layers_freef_special(QVector<QVector4D> pontos);
     void globalFitting_3layers(QVector<QVector4D>  in, float k, bool includeVertices);
     void globalFitting_3layers_kDistance(QVector<QVector4D> pontos, float k, bool includeVertices);
     void globalFittingG_3layers_withGrad(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
@@ -100,6 +101,7 @@ public:
     void globalFitting_1layer(QVector<QVector4D>  in, bool includeVertices);
     void fitting_quadrica(QVector<QVector4D>  pontos);
     void globalFittingG_3layers_freef_withAverage(QVector<QVector4D> pontos, float kDistance);
+    void specialFittingFromImage(const QImage& img);
 
     void addVertex(const QVector4D& newVertex);
     void joinVerticesAt(const QVector4D& controlPoint);
