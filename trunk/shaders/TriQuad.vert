@@ -11,6 +11,9 @@ varying mat3 Q;
 varying vec3 P;
 varying vec2 texCoord;
 
+varying float k;
+varying vec3 corr;
+
 void main ()
 {
     Q[0][0]           = abc[0];
@@ -22,6 +25,8 @@ void main ()
     Q[2][2]           = def[2];
 
     P =  (gl_Vertex).xyw;
+    k = dot(P,Q*P);
+    corr = Q*P;
 
     gl_Position =   ftransform();
     gl_FrontColor = gl_Color;

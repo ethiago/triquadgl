@@ -128,6 +128,9 @@ RenderController::RenderController(MainWindow *mainWindow,
     connect(mainWindow, SIGNAL(imageOpened(QImage)),
             this, SLOT(loadImage(QImage)) );
 
+    connect(mainWindow, SIGNAL(localTriQuad(bool)),
+            this, SLOT(localTriquad(bool)) );
+
     mainWindow->showMaximized();
 
 }
@@ -347,6 +350,7 @@ void RenderController::configComboMetodo()
     mw->addMetodo("3 Camadas - f livre - AVG");
     mw->addMetodo("3 Camadas - (K Distance)");
     mw->addMetodo("3 Camadas - grad");
+    mw->addMetodo("3 Camadas - LocalTriQuad");
     metodo = mw->metodoSelecionado();
 }
 
@@ -434,6 +438,9 @@ void RenderController::exec()
         break;
     case 12:
         triquad->globalFittingG_3layers_withGrad(ultimaLista, k, includeVertices);
+        break;
+    case 13:
+        triquad->globalFittingG_3layers_freef_localTriQuad(ultimaLista,k);
         break;
 
     }
@@ -554,3 +561,10 @@ void RenderController::loadImage(const QImage & img)
     triquad->specialFittingFromImage(img);
     display->updateGL();
 }
+
+void RenderController::localTriquad(bool v)
+{
+    triquad->setLocalVis(v);
+    display->updateGL();
+}
+

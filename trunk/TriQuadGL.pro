@@ -12,13 +12,16 @@ win32 {
 
 unix{
     LIBS += -L/opt/local/lib/ -lgsl -lgslcblas
-#    LIBS += -ldl -lGLU                  #does not work on mac
     INCLUDEPATH += /opt/local/include
 }
 
-#<MAC>
+unix:!macx {
+LIBS += -lGLU -ldl
+}
+
+macx {
 LIBS += -framework Carbon
-#</MAC>
+}
 
 CONFIG-=app_bundle
 

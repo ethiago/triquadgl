@@ -4,13 +4,19 @@
 varying mat3 Q;
 varying vec3 P;
 
+varying float k;
+varying vec3 corr;
+
 uniform int showScalar;
+uniform int local;
 uniform float larg;
 
 void main ()
 {
         gl_FragColor = vec4(1.0) ;
         float f = dot(P,Q*P);
+        if(local == 1)
+            f += k - 2.0*dot(P,corr);
 
         if(showScalar == 0)
         {
