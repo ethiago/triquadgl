@@ -79,6 +79,7 @@ public slots:
     void makeSmooth(void);
     void isoform(bool);
     void loadImage(const QImage&);
+    void localTriquad(bool);
 };
 
 #endif // RENDERCONTROLLER_H

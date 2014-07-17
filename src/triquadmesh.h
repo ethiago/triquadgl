@@ -31,6 +31,7 @@ class TriQuadMesh : public Object3D
     int locationQyABC[2];
     int locationQyDEF[2];
     int locationLarg[2];
+    int locationLocal[2];
     int activeProgram;
 
     bool showMesh;
@@ -41,6 +42,7 @@ class TriQuadMesh : public Object3D
     bool showTriQuad;
     bool meshTranslation;
     bool isoform;
+    bool localVis;
     float larg;
 
     int vwp[4];
@@ -77,6 +79,8 @@ public:
 
     void setVis(bool v);
 
+    void setLocalVis(bool v);
+
     QPoint project(const QVector4D& v);
     QVector4D unproject(const QPoint&);
     QVector4D unproject(const QPointF&);
@@ -90,6 +94,7 @@ public:
     void globalFitting_2layers(QVector<QVector4D> in, float k);
     void globalFitting_2layers_freef(QVector<QVector4D>  in, float k);
     void globalFittingG_3layers_freef(QVector<QVector4D>  in, float k, bool includeVertices);
+    void globalFittingG_3layers_freef_localTriQuad(QVector<QVector4D>  in, float k);
     void globalFittingG_3layers_freef_withGrad(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_3layers_freef_kDistance(QVector<QVector4D> pontos, float kDistance, bool includeVertices);
     void globalFittingG_1layers_freef(QVector<QVector4D> pontos);

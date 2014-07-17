@@ -79,6 +79,7 @@
      <string>Result</string>
     </property>
     <addaction name="actionShow_TriQuad"/>
+    <addaction name="actionLocal_TriQuad"/>
     <addaction name="actionSaveImageAs"/>
     <addaction name="actionFitting_Measure"/>
     <addaction name="actionMake_Smooth"/>
@@ -486,6 +487,14 @@
   <action name="actionLoad_Image">
    <property name="text">
     <string>Load Image ...</string>
+   </property>
+  </action>
+  <action name="actionLocal_TriQuad">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Local TriQuad</string>
    </property>
   </action>
  </widget>

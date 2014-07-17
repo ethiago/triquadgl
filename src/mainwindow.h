@@ -36,6 +36,7 @@ signals:
     void makeSmooth(void);
     void isoform(bool);
     void imageOpened(const QImage& );
+    void localTriQuad(bool);
 
 public:
 

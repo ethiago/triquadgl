@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMake_Smooth, SIGNAL(triggered()), this, SIGNAL(makeSmooth()) );
     connect(ui->iso, SIGNAL(toggled(bool)), this, SIGNAL(isoform(bool)) );
     connect(ui->actionLoad_Image, SIGNAL(triggered()), this, SLOT(openImage()) );
+    connect(ui->actionLocal_TriQuad, SIGNAL(toggled(bool)), this,  SIGNAL(localTriQuad(bool)) );
+
 }
 
 MainWindow::~MainWindow()
