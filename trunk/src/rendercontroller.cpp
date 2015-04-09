@@ -14,6 +14,7 @@
 #include "chebuilderquadtreefrompointcloud.h"
 #include "chebuilderregulargridfrompointcloud.h"
 #include "chebuilderequilateralmesh.h"
+#include "chebuildervideo.h"
 #include "fastmarching.h"
 #include "fakefm.h"
 #include "errorcomputing.h"
@@ -361,6 +362,7 @@ void RenderController::configComboCHEBuilder()
     mw->addCHEBuilder("Regular Grid From Point Cloud");
     mw->addCHEBuilder("QuadTree From Point Cloud");
     mw->addCHEBuilder("Equilateral Mesh From Point Cloud");
+    mw->addCHEBuilder("Video");
     metodo = mw->metodoSelecionado();
 }
 
@@ -387,6 +389,12 @@ void RenderController::exec()
         case 4:
             builder = new CHEBuilderEquilateralMesh(ultimaLista, opt.xN);
             break;
+        case 5:
+            builder = new CHEBuilderVideo(opt.xN-1);
+            triquad->buildMesh(builder);
+            delete builder;
+            display->updateGL();
+            return;
         }
         bool built = triquad->buildMesh(builder);
         if(builder)
