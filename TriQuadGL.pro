@@ -4,9 +4,9 @@ TARGET = TriQuadGL
 TEMPLATE = app
 
 win32 {
-    LIBS += -L"C:\Program Files\GnuWin32\lib" -lgsl -lgslcblas
+#    LIBS += -L"C:\Program Files\GnuWin32\lib" -lgsl -lgslcblas
     LIBS += -L"C:\Program Files (x86)\GnuWin32\lib" -lgsl -lgslcblas
-    INCLUDEPATH += "C:\Program Files\GnuWin32\include"
+#    INCLUDEPATH += "C:\Program Files\GnuWin32\include"
     INCLUDEPATH += "C:\Program Files (x86)\GnuWin32\include"
 }
 
@@ -52,7 +52,8 @@ HEADERS  += src/curveN/catmullrom.hpp \
     src/slgl3w.h \
     src/chebuilderequilateralmesh.h \
     src/fakefm.h \
-    src/errorcomputing.h
+    src/errorcomputing.h \
+    src/chebuildervideo.h
 
 
 SOURCES  += src/main.cpp \
@@ -81,7 +82,8 @@ SOURCES  += src/main.cpp \
     src/slgl3w.cpp \
     src/chebuilderequilateralmesh.cpp \
     src/fakefm.cpp \
-    src/errorcomputing.cpp
+    src/errorcomputing.cpp \
+    src/chebuildervideo.cpp
 
 
 FORMS    += src/mainwindow.ui

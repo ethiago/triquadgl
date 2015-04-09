@@ -135,6 +135,17 @@ void TriQuadMesh::drawPoints2(const QVector<QVector2D>& ps)
 
 void TriQuadMesh::drawGeometry(void)
 {
+    glPointSize(1.0);
+    glLineWidth(1);
+    glBegin(GL_LINES);
+    glColor4f(1.0, 0.0, 0.0, 1.0);
+    glVertex3f(0.0,0.0,1.0);
+    glVertex3f(1.0,0.0,1.0);
+    glColor4f(0.0, 1.0, 0.0, 1.0);
+    glVertex3f(0.0,0.0,1.0);
+    glVertex3f(0.0,1.0,1.0);
+    glEnd();
+
     if(showSketch)
     {
         drawPoints();
